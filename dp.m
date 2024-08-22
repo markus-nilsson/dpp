@@ -491,8 +491,6 @@ classdef dp % data processor
 
             end
 
-
-
         end
 
         % return output, if it is a valid input
