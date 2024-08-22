@@ -623,6 +623,8 @@ classdef dp % data processor
                     ref.fn = output.(f{c2});
                     ref.f  = f{c2};
 
+                    ref.output = output;
+
                     ref.roi_bp = fullfile(output.bp, '..', 'roi_dp', output.id, class(node));
 
                     EG.data.ref(c_item) = ref;
@@ -633,9 +635,17 @@ classdef dp % data processor
             end
             
             % add ROI lists later
-            EG.data.roi_list = {'tmp'};
+            if (~isfield(outputs{1}, 'roi'))
+                EG.data.roi_list = {'tmp'};
 
-            EG.data.nii_fn_to_roi_fn = @(c_subject, c_roi) dp.make_roi_fn(c_subject, c_roi, EG);
+                EG.data.nii_fn_to_roi_fn = @(c_subject, c_roi) dp.make_roi_fn(c_subject, c_roi, EG);
+
+            else
+
+                EG.data.roi_list = outputs{1}.roi.names;
+                EG.data.nii_fn_to_roi_fn = @(a,b)node.eg_roi_fn(EG.data.ref(a),b);
+
+            end
 
             EG.conf.slice_mode = 'retain_slice';
             

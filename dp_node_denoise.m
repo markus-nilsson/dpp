@@ -15,7 +15,7 @@ classdef dp_node_denoise < dp_node
         function output = execute(obj, input, output)
 
             % execute mrtrix denoising (linux version here, remove &> .. to debug
-            cmd = sprintf('dwidenoise %s %s &> /dev/null', inputs.nii_fn, output.nii_fn);
+            cmd = sprintf('dwidenoise %s %s &> /dev/null', input.nii_fn, output.nii_fn);
             msf_delete(output.nii_fn);
             msf_system(cmd);
 
