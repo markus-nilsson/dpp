@@ -636,14 +636,19 @@ classdef dp % data processor
             
             % add ROI lists later
             if (~isfield(outputs{1}, 'roi'))
-                EG.data.roi_list = {'tmp'};
 
+                EG.data.roi_list = {'tmp'};
                 EG.data.nii_fn_to_roi_fn = @(c_subject, c_roi) dp.make_roi_fn(c_subject, c_roi, EG);
+                EG.roi.do_save = 0;
 
             else
 
-                EG.data.roi_list = outputs{1}.roi.names;
-                EG.data.nii_fn_to_roi_fn = @(a,b)node.eg_roi_fn(EG.data.ref(a),b);
+                roi = outputs{1}.roi;
+                roi = msf_ensure_field(roi, 'do_save', 1);
+
+                EG.data.roi_list = roi.names;
+                EG.data.nii_fn_to_roi_fn = @(a,b)dp.make_roi_fn2(EG.data.ref(a),b);
+                EG.roi.do_save = roi.do_save;
 
             end
 
@@ -657,6 +662,11 @@ classdef dp % data processor
 
 
         end
+
+        function roi_fn = make_roi_fn2(ref, c_roi)
+            roi_fn = ref.output.roi.roi_fns{c_roi};
+        end
+        
 
         function roi_fn = make_roi_fn(c_subject, c_roi, EG)
 
