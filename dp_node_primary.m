@@ -9,8 +9,15 @@ classdef dp_node_primary < dp_node
 
     methods
 
-        function type = get_type(obj)
-            type = 'primary';
+        %  not implemented yet
+        function [status, f] = input_exist(obj, input)
+            status = []; 
+            f = [];
+        end
+        
+        function [status, f] = output_exist(obj, input)
+            status = [];
+            f = [];
         end
 
     end
