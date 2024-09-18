@@ -1,4 +1,4 @@
-classdef dpm
+classdef dpm < handle
 
     % Data processing mode - implements means to process data
 
@@ -19,8 +19,8 @@ classdef dpm
 
         mode_name = get_mode_name(obj)
         opt = dp_opt(obj, opt)
-        output = run_on_one(obj, node, input, output, opt)
-        process_outputs(obj, outputs, opt)
+        output = run_on_one(obj, input, output)
+        process_outputs(obj, outputs)
 
 
     end

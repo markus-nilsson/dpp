@@ -1,15 +1,30 @@
-classdef dpm_report < dpm
+classdef dpm_mgui < dpm_iter
 
     methods
 
-        function process_outputs(outputs, opt)
+        function process_outputs(obj, outputs)
 
-            dp.open_mgui(outputs, node, opt);
+            dpm_mgui.open_mgui(outputs, obj.node, obj.node.opt);
 
         end
 
-        function open_mgui(outputs, node, opt)
+        function mode_name = get_mode_name(obj)
+            mode_name = 'mgui';
+        end
 
+        function opt = dp_opt(obj, opt)
+            1;
+        end
+
+        function output = run_on_one(obj, input, output)
+            1;
+        end
+        
+    end
+       
+    methods (Static)
+
+        function open_mgui(outputs, node, opt)
 
             % Build the EG.data.ref structure
             c_item = 1;
@@ -26,6 +41,10 @@ classdef dpm_report < dpm
                         if (~contains(output.(f{c2}), '.nii.gz')), continue; end
                     catch me
                         disp(me.message);
+                    end
+
+                    if (~exist(output.(f{c2}), 'file'))
+                        continue;
                     end
 
                     id = strrep(output.id, '/', ' ');
@@ -47,7 +66,8 @@ classdef dpm_report < dpm
             % add ROI lists later
             EG.data.roi_list = {'tmp'};
 
-            EG.data.nii_fn_to_roi_fn = @(c_subject, c_roi) dp.make_roi_fn(c_subject, c_roi, EG);
+            EG.data.nii_fn_to_roi_fn = @(c_subject, c_roi) ...
+                dpm_mgui.make_roi_fn(c_subject, c_roi, EG);
 
             EG.conf.slice_mode = 'retain_slice';
             

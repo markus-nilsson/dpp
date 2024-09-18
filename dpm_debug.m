@@ -6,7 +6,7 @@ classdef dpm_debug < dpm_execute
             mode_name = 'debug';
         end
 
-        function dp_opt(opt)
+        function opt = dp_opt(obj, opt)
             opt.do_try_catch = 0;
             opt.verbose = 1;
         end

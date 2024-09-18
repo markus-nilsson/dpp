@@ -4,14 +4,13 @@ classdef dpm_report < dpm
 
         function mode_name = get_mode_name(obj)
             mode_name = 'report';
-        end
-        
+        end       
 
         function opt = dp_opt(obj, opt)
-            opt.verbose = 1;
+            1;
         end
 
-        function output = run_on_one(obj, input, output, opt)
+        function output = run_on_one(obj, input, output)
 
             % report on the existance of files
             input_status = obj.node.input_exist(input);
@@ -31,7 +30,7 @@ classdef dpm_report < dpm
                 str = sprintf('%s\t%s', str, 'N' + output_status(c) * ('Y' - 'N'));
             end
 
-            opt.log(str);
+            obj.node.log(str);
 
 
             % check if we are done (used below)
@@ -41,13 +40,13 @@ classdef dpm_report < dpm
             
         end
 
-        function process_outputs(obj, outputs, opt)
+        function process_outputs(obj, outputs)
 
             % Count number of done's
             f = @(x) isfield(x, 'status') && (strcmp(x.status, 'done'));
             n_done = sum(cellfun(f, outputs));
 
-            opt.log('\nStatus: %i done (all outputs is Y) out of %i possible', ...
+            obj.node.log('\nStatus: %i done (all outputs is Y) out of %i possible', ...
                 n_done, numel(outputs));
 
             if (numel(outputs) > 0) % xxx: show inner structs better
