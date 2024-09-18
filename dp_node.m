@@ -1,19 +1,7 @@
-classdef dp_node
+classdef dp_node < dp_node_base
 
     properties
-
-        previous_node = [];
-
-        name;
-        mode;
-
-        dpm_list;
-
-    end
-
-    methods (Abstract)
-        input_exist(obj, input);
-        output_exist(obj, input);
+        output_test = []; % field that will be tested by output_exists
     end
 
     methods
@@ -21,132 +9,172 @@ classdef dp_node
         function obj = dp_node()
             obj.dpm_list = {...
                 dpm_iter(obj), ...
+                dpm_report(obj), ...
                 dpm_execute(obj), ...
-                dpm_debug(obj)};
+                dpm_debug(obj), ...
+                dpm_mgui(obj), ...
+                dpm_visualize(obj)};
         end
 
-        % methods that we expected to be overloaded (this is where you
-        % implement the processing code)
-
-        function input = po2i(obj, previous_output) 
-            input = previous_output;
-        end
-
-        function outputs = i2o(obj, inputs)
-            outputs = inputs;
-        end
-
-        function output = execute(obj, input, output)
-            1;
-        end
 
         function output = run_clean(obj, output)
-            1;
-        end        
-       
-        % do not overload these
-        function previous_outputs = get_iterable(obj, opt)
 
-            if (isempty(obj.previous_node))
-                error('previous_node not defined, aborting');
+            % clean up temporary directory if asked to do so
+            if (~isstruct(output)), return; end
+            if (~isfield(output, 'tmp')), return; end
+
+            output.tmp = msf_ensure_field(output.tmp, 'do_delete', 0);
+            
+            if (output.tmp.do_delete)
+                msf_delete(output.tmp.bp);
             end
 
-            % Merging needed? (I do not want the code here, but rather in
-            % the main dp code, but let it be here for the moment)
-            if (iscell(obj.previous_node))
+        end
 
-                list_of_outputs = cell(size(obj.previous_node));
-                node_names = cell(size(list_of_outputs));
+        function [status, f, age] = input_exist(obj, input)
+            [status, f, age] = obj.io_exist(input);
+        end
 
-                for c = 1:numel(list_of_outputs)
-                    node_names{c} = class(obj.previous_node{c});
-                    list_of_outputs{c} = obj.previous_node{c}.run(opt.iter_mode, opt);
+        function [status, f, age] = output_exist(obj, output)
+
+            if (~isempty(obj.output_test))
+                % test only the fields asked for
+                f = obj.output_test;
+                for c = 1:numel(f)
+                    tmp.(f{c}) = output.(f{c});
+                end
+                do_pass_empty = 0;
+            else
+                tmp = output;
+                do_pass_empty = 1;
+            end
+
+            [status, f, age] = obj.io_exist(tmp, do_pass_empty);
+        end
+
+        function input = run_po2i(obj, pop)
+
+            input = run_po2i@dp_node_base(obj, pop);
+
+            [inputs_exist, f] = obj.io_exist(input);
+
+            if (~isempty(inputs_exist)) && (~all(inputs_exist))
+                f = f(~inputs_exist);
+                error('Missing input: %s', obj.join_cell_str(f') );
+            end
+        end
+
+
+        function output = visualize(obj, input, output)
+
+            for c = 1:numel(vis.field_names) % expect a cell array
+
+                field_name = vis.field_names{c};
+
+                % Determine output name
+                msf_mkdir(vis.bp);
+
+                name = output.id;
+                name = strrep(name, '/', '_');
+                name = strrep(name, '\', '_');
+
+                name = strcat(name);
+
+                output.img_fns{c} = fullfile(vis.bp, ...
+                    obj.node.name, field_name, [name '.png']);
+
+
+                % Find nii filename
+                nii_fn = output.(field_name);
+
+                if (~exist(nii_fn, 'file'))
+                    obj.node.log('%s: %s not found (%s)', outout.id, nii_fn, field_name);
+                    continue;
                 end
 
-                f4 = @(x,y) max([1 1 + find(x == y, 1, 'first')]);
-                f3 = @(x) x(f4(x,'_'):end);
-                f2 = @(x) f3(x(f4(x,'/'):end));
-                f1 = @(x) f2(char(x));
-                list_of_prefixes = cellfun(@(x) f1(x), node_names, 'UniformOutput',false);
-                previous_outputs = dp_item.merge_outputs(list_of_outputs, list_of_prefixes);
+                [I,h] = mdm_nii_read(nii_fn);
 
-                % report on outcome
-                opt.log('--> Merging outputs (%s) resulted in %i items', ...
-                    obj.join_cell_str(list_of_prefixes), ...
-                    numel(previous_outputs));
+                I = mgui_misc_flip_volume(I, mdm_nii_oricode(h), 'LAS');
 
-            else % assume it is a dp_node
+                nk = min(25, size(I,3));
+                kmod = round(size(I,3) / nk);
+                k = max(1, round( (size(I,3) - nk * kmod) / 2));
 
-                previous_outputs = obj.previous_node.run(opt.iter_mode, opt);
+
+                ni = 1 + floor(sqrt(nk));
+                nj = ceil(nk / ni);
+
+                B = [];
+                for i = 1:ni
+                    A = [];
+                    for j = 1:nj
+                        if (k > size(I,3))
+                            A = cat(1, A, zeros(size(I, [1 2])));
+                        else
+                            A = cat(1, A, I(:,:,k, 1));
+                        end
+                        k = k + kmod;
+                    end
+                    B = cat(2, B, A);
+                end
+
+                msf_clf;
+                msf_imagesc(B);
+                [~,name] = msf_fileparts(nii_fn);
+                title(strrep(name, '_', ' '));
+                colormap gray;
+                clim([0 quantile(B(:), 0.99)]);
+                pause(0.1);
+
+                msf_mkdir(fileparts(output.img_fns{c}));
+                print(output.img_fns{c}, '-dpng');
+                obj.node.log('%s: %s done', output.id, field_name);
 
             end
-
-        end
-
-        % run on all outputs from the previous node
-        function outputs = run(obj, mode, opt)
-            if (nargin < 2), mode = 'report'; end
-            if (nargin < 3), opt.present = 1; end
-            outputs = dp.run(obj, mode, opt);
-        end
-
-        function modes = get_supported_modes(obj)
-            modes = cellfun(@(x) x.get_mode_name(), obj.dpm_list, 'UniformOutput', false);
-        end
-
-        % run the data processing mode's function here
-        function output = run_on_one(obj, input, output, opt)
-            output = obj.get_dpm().run_on_one(input, output, opt);
-        end
-
-        % run the data processing mode's processing/reporting
-        function process_outputs(obj, outputs, opt)
-            obj.get_dpm().process_outputs(outputs, opt);
-        end
-       
-        function pop = manage_po(obj, pop, opt)
-
-            if (~msf_isfield(pop, 'id')), error('id field missing'); end
-
-            % add current options if options is missing
-            % (this is a critical information flow issue, where
-            % there will be bugs creeping up)
-            msf_ensure_field(pop, 'opt', opt);
-        end
-
-        % compute input to this node from previous output
-        function input = run_po2i(obj, pop)
-            input = obj.po2i(pop);
-            input = msf_ensure_field(input, 'id', pop.id);
-        end
-
-        % compile output
-        function output = run_i2o(obj, input)
-            output = obj.i2o(input);
-            output = msf_ensure_field(output, 'id', input.id);
         end
 
     end
 
-    methods (Hidden)
+    methods (Hidden, Static)
 
-        % dpm - data processing mode (e.g. report, iter, debug, execute...)
-        function dpm = get_dpm(obj)
-            
-            ind = cellfun(@(x) strcmp(obj.mode, x.get_mode_name()), obj.dpm_list);
+        % run a function on the input/output structures
+        % this should be moved elsewhere
+        function [status, f, age] = io_exist(io, do_pass_empty)
 
-            ind = find(ind);
-
-            if (numel(ind) == 0)
-                error('mode (%s) not supported', obj.mode);
+            if (nargin < 2)
+                do_pass_empty = 1;
             end
 
-            dpm = obj.dpm_list{ind};
+            % select fields with names ending with _fn
+            f = fieldnames(io);
+            f = f(cellfun(@(x) ~isempty(strfind(x(max(1,(end-2)):end), '_fn')), f));
+
+            % Report the presence of the files
+            status = zeros(size(f));
+            age = zeros(size(f));
+
+            for c = 1:numel(f)
+            
+                status(c) = exist(io.(f{c}), 'file') == 2;
+
+                if (status(c))
+                    d = dir(io.(f{c}));
+                    age(c) = d.datenum;
+                else
+                    age(c) = NaN;
+                end
+
+                % allow empties to pass
+                if (isempty(io.(f{c}))) && (do_pass_empty)
+                    status(c) = 1; 
+                end
+            end
+
+            status2 = cellfun( @(x) exist(io.(x), 'file') == 2, f);
+
+        end        
 
 
-        end
-
-        % now duplicated
         function str = join_cell_str(f)
 
             g = @(x) x(1:(end-3));
@@ -155,8 +183,8 @@ classdef dp_node
                 'UniformOutput', false)));
         end
         
+        
 
     end
-    
 
 end

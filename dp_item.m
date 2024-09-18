@@ -4,8 +4,9 @@ classdef dp_item
     methods(Static)
 
 
-        function [outputs, opt] = exclude(inputs, opt)
+        function outputs = exclude(inputs, opt)
 
+            % not sure this should be here, move to dp_opt
             opt = msf_ensure_field(opt, 'id_exclude', {});
             opt = msf_ensure_field(opt, 'log', @()1);
 
@@ -28,18 +29,17 @@ classdef dp_item
 
             outputs = inputs(ind_included);
 
-            % speed up this function by trimming this list
-            opt.id_exclude = opt.id_exclude(~ind_excluded);
-
             opt.log('Excluding %i items due to opt.id_exclude', ...
                 sum(ind_excluded));
 
         end
 
-        function [outputs, opt] = filter(inputs, opt)
+        function outputs = filter(inputs, opt)
 
+            % not sure this should be here, move to dp_opt
             opt = msf_ensure_field(opt, 'id_filter');
-
+            opt = msf_ensure_field(opt, 'log', @(varargin)1);
+            
             if (isempty(opt.id_filter))
                 outputs = inputs;
                 return;
