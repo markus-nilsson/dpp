@@ -100,6 +100,21 @@ All fields are optional, but some rules apply
   will allow the `execute` method to put data in a temporary path that will
   be deleted once the execution is done.
 
+## Tips and tricks
+
+When setting up a new node, start by defining the `po2i`, `i2o` and `execute` methods,
+as empty functions. Run the node in the `report` mode. Set a breakpoint within
+the empty functions, and start writing your code, and test it. Once you can run
+the report mode without errors, you're ready to start the execution mode (`execute`). 
+
+Running the node without catching errors may cause it to stop early, in a subject
+with input/output errors, that you may wish to ignore. To deal with this, run the 
+node for a subject where all preceeding nodes work correctly. For example
+
+`my_node().run('report', struct('do_try_catch', 0, 'id_filter', 'my_subject_id')`
+
+
+
 
 
 # Acknowledgements
