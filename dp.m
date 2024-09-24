@@ -114,7 +114,7 @@ classdef dp % data processor
             switch (error_source)
 
                 case 'manage_po'
-                    error('should not happen');
+                    error('should not happen (%s)', me.message);
                 case 'run_po2i'
                     n_errors.input = n_errors.input + 1;
                 case 'run_i2o'

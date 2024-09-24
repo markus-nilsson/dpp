@@ -25,22 +25,26 @@ classdef dpm_execute < dpm
             % end
             
             % also check for age of output relative to input!
-            [outputs_exist,~,output_age] = obj.node.output_exist(output);
-            [inputs_exist,~,input_age] = obj.node.input_exist(input);
+            [outputs_exist,f_output,output_age] = obj.node.output_exist(output);
+            [inputs_exist,f_input,input_age] = obj.node.input_exist(input);
 
             all_outputs_are_younger = 0;
             if (any(outputs_exist)) && (all(inputs_exist))
 
-                all_outputs_are_younger = nanmin(output_age) > nanmax(input_age);
+                [min_output_age, output_ind] = nanmin(output_age);
+                [max_input_age, input_ind] = nanmax(input_age);
+
+                all_outputs_are_younger = min_output_age > max_input_age;
 
                 if (~all_outputs_are_younger)
 
-                    if (obj.node.opt.verbose)
-                        obj.node.log('%s: %s vs %s', input.id, ...
-                            datestr(nanmin(output_age)), datestr(nanmax(input_age)));
-                    end
-
                     obj.node.log('%s: Old outputs detected, overwriting', input.id);
+
+                    if (obj.node.opt.verbose)
+                        obj.node.log('%s: %s (in: %s)', input.id, datestr(max_input_age), f_input{input_ind});
+                        obj.node.log('%s: %s (out: %s)', input.id, datestr(min_output_age), f_output{output_ind});
+                    end
+                    
                 end
             end
 

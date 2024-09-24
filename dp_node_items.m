@@ -85,7 +85,7 @@ classdef dp_node_items < dp_node_base
 
             switch (obj.mode)
 
-                case 'execute'
+                case {'execute', 'debug'}
 
                     f = @(x,y) obj.inner_node.get_dpm(obj.mode).run_on_one(x,y);
 
@@ -109,24 +109,26 @@ classdef dp_node_items < dp_node_base
 
         end
 
-        function [status, f] = input_exist(obj, input)
+        function [status, f, age] = input_exist(obj, input)
 
-            status = []; f = {};
+            status = []; f = {}; age = [];
             for c = 1:numel(input.items)
-                [tmp_status, tmp_f] = obj.inner_node.input_exist(input.items{c});
+                [tmp_status, tmp_f, tmp_age] = obj.inner_node.input_exist(input.items{c});
                 status = cat(1, status, tmp_status);
                 f = cat(1, f, tmp_f);
+                age = cat(1, age, tmp_age);
             end
 
         end
 
-        function [status, f] = output_exist(obj, output)
+        function [status, f, age] = output_exist(obj, output)
 
-            status = []; f = {};
+            status = []; f = {}; age = [];
             for c = 1:numel(output.items)
-                [tmp_status, tmp_f] = obj.inner_node.output_exist(output.items{c});
+                [tmp_status, tmp_f, tmp_age] = obj.inner_node.output_exist(output.items{c});
                 status = cat(1, status, tmp_status);
                 f = cat(1, f, tmp_f);
+                age = cat(1, age, tmp_age);
             end
 
         end
