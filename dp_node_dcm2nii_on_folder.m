@@ -7,12 +7,12 @@ classdef dp_node_dcm2nii_on_folder < dp_node_items
     methods
 
         function obj = dp_node_dcm2nii_on_folder()          
-            obj = obj@dp_node_items(dp_node_dcm2nii());
+            obj = obj@dp_node_items(dp_node_dcm2nii_and_xps());
         end
 
-        function yes_no = do_skip(obj, fn)
-            yes_no = 0;
-        end
+        % function yes_no = do_skip(obj, fn)
+        %     yes_no = 0;
+        % end
 
         function input = po2i(obj, po)
 
@@ -20,23 +20,32 @@ classdef dp_node_dcm2nii_on_folder < dp_node_items
             % po.ip (input folder with zips)
             % po.op (output folder with zips)
 
-            di = dir(fullfile(po.ip, '*.zip'));
+            di = dir(fullfile(po.ip));
 
             input.items = {};
             for c = 1:numel(di)
 
-                if (obj.do_skip(di(c).name))
-                    if (obj.do_print_skip)
-                        obj.log('Skipping: %s:%s\n', po.id, di(c).name);
-                    end
-                    continue;
-                end
+                if (~di(c).isdir), continue; end
+                if (di(c).name(1) == '.'), continue; end
 
-                tmp_input.dcm_zip_fn = fullfile(po.ip, di(c).name);
-                tmp_input.op = po.op;
+                % if (obj.do_skip(di(c).name))
+                %     if (obj.do_print_skip)
+                %         obj.log('Skipping: %s:%s\n', po.id, di(c).name);
+                %     end
+                %     continue;
+                % end
 
-                [~,name] = msf_fileparts(tmp_input.dcm_zip_fn);
-                tmp_input.id = name;
+                tmp_input.dcm_folder = fullfile(po.ip, di(c).name);
+                
+                tmp_input.bp = po.op;
+
+                x = tmp_input.dcm_folder;
+                if (x(end) == filesep), x = x(1:(end-1)); end
+                tmp_input.dcm_name = x((1+find(x == filesep, 1, 'last')):end);  
+                
+                tmp_input.id = po.id;
+
+                % we haven't really decided on naming here... 
                 
                 input.items{end+1} = tmp_input;
             end

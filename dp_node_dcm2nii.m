@@ -13,21 +13,23 @@ classdef dp_node_dcm2nii < dp_node
                     obj.dcm2niix_path);
             end
 
+            obj.output_test = {'nii_fn'};
+
         end
 
         % expecing this to be overloaded
         function input = po2i(obj, po)
             input.bp = po.bp;
-            input.op = fullfile(input.bp, 'nii');
-            input.dcm_zip_fn = po.dcm_zip_fn;
+            input.dcm_folder = po.dcm_folder;
+            input.dcm_name = po.dcm_name;
 
         end
 
         function output = i2o(obj, input)
 
-            output.bp = input.op;
+            output.bp = input.bp;
 
-            [~,x] = msf_fileparts(input.dcm_zip_fn);
+            x = input.dcm_name; 
 
             f = @(y) fullfile(output.bp, sprintf(['%s.' y], x));
             output.nii_fn  = f('nii.gz');
@@ -35,30 +37,20 @@ classdef dp_node_dcm2nii < dp_node
             output.bval_fn = f('bval');
             output.bvec_fn = f('bvec');
 
-            % unzip and convert in temporary folder
-            output.tmp = obj.make_tmp();
+            % convert in temporary folder
+            output.tmp.bp = msf_tmp_path();
+            output.tmp.do_delete = 1;
 
-        end
-
-        function [status, f] = output_exist(obj, output)
-
-            % just check the nifti file
-            status = exist(output.nii_fn, 'file') == 2;
-            f = 'nii_fn';
-
-        end
+        end        
 
         function output = execute(obj, input, output)
 
             % working path
             wp = output.tmp.bp; 
 
-            % unzip
-            cmd = sprintf('unzip -j %s -d %s', input.dcm_zip_fn, wp);
-            system(cmd);
-
             % dicom to nifti
-            cmd = sprintf('%s -z i -o %s %s', obj.dcm2niix_path, wp, wp);
+            cmd = sprintf('%s -z i -o ''%s'' ''%s''', obj.dcm2niix_path, ...
+                wp, input.dcm_folder);
             system(cmd);
 
             % copy output
@@ -96,8 +88,5 @@ classdef dp_node_dcm2nii < dp_node
                 copyfile(source_fn, target_fn);
             end
         end
-
-
     end
-
 end
