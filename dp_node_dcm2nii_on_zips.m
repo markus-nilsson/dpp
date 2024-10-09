@@ -32,11 +32,11 @@ classdef dp_node_dcm2nii_on_zips < dp_node_items
                     continue;
                 end
 
-                tmp_input.dcm_zip_fn = fullfile(po.ip, di(c).name);
+                tmp_input.zip_fn = fullfile(po.ip, di(c).name);
                 tmp_input.bp = po.op;
                 tmp_input.id = po.id;
 
-                [~,name] = msf_fileparts(tmp_input.dcm_zip_fn);
+                [~,name] = msf_fileparts(tmp_input.zip_fn);
                 tmp_input.dcm_name = name;
                 
                 input.items{end+1} = tmp_input;

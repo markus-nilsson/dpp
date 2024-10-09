@@ -5,10 +5,10 @@ classdef dp_node_denoise < dp_node
         function output = i2o(obj, input)
             output.bp = input.bp; % keep the same base path
 
-            op = fullfile(input.bp, input.id);
+            %op = fullfile(input.bp, input.id);
             [~, name, ext] = msf_fileparts(input.nii_fn);
 
-            output.nii_fn = fullfile(op, [name '_dn' ext]);
+            output.nii_fn = fullfile(output.bp, [name '_dn' ext]);
 
         end
 

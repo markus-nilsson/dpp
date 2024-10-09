@@ -24,7 +24,9 @@ classdef dpm_execute < dpm
             %     opt.do_overwrite = output.opt.do_overwrite;
             % end
             
-            % also check for age of output relative to input!
+            % also check for age of output relative to input! 
+            % xxx: this does not work very well for copied files, as this
+            %      preserves the creation date of the original file
             [outputs_exist,f_output,output_age] = obj.node.output_exist(output);
             [inputs_exist,f_input,input_age] = obj.node.input_exist(input);
 
