@@ -30,26 +30,28 @@ ones to help the execution of the data processing.
 
 ## Node types
 
-There are three types of nodes
+There are different types of nodes
 
 - `dp_node_primary`, which only generates output structures for later
   nodes
 - `dp_node`, which is intended to act on image data e.g. nifti-files
+- `dp_node_workflow`, which glues multiple nodes together into one
+- `dp_node_rename`, which only renames fields
 - `dp_node_items`, which acts on an unstructured set of items e.g. imaging
   data not yet identified
 
 Examples of nodes with more specific functions are
 
-- `dp_node_dcm2nii.m`, which converts a zipped folder of dicom files to a 
+- `dp_node_dcm2nii.m`, which converts a folder of dicom files to a 
   nifti file
 - `dp_node_denoise.m`, which applies denoising via mrtrix. 
 
 To use the more specific nodes in your project, create a class that 
 inherits from the specific node, and customize it by overloading the 
-`po2i` method. See examples.
+`po2i` and possibly the `i2o` methods. See examples.
 
 
-## Data processing modes
+## Data processing with different modes
 
 A node can support one or more data processing modes, which are accessed 
 via the run method. For example, `my_node().run(mode)` would start the 
@@ -88,7 +90,11 @@ See `dp.dp_opt` for a full list.
 Mandatory fields
 
 - `id`, which holds the identity of the data being processed
-- `bp`, which is the base-path from which paths are created
+
+Optional fields
+
+- `op`, is the output path (this is where e.g. dp_node_denoise puts its output)
+- `bp`, is the base-path from which paths are created (e.g. bp/id/nii/file.nii.gz)
 
 ## Output structure
 
@@ -114,8 +120,20 @@ node for a subject where all preceeding nodes work correctly. For example
 `my_node().run('report', struct('do_try_catch', 0, 'id_filter', 'my_subject_id')`
 
 
+## Stand alone use
 
+The nodes can also be used in a stand-alone fashion. Example for denoising
 
+`input.nii_fn = 'my_path/your_dwi_volume.nii.gz';
+input.bp = msf_fileparts(input.nii_fn);
+
+a = dp_node_denoise();
+a.execute(input, a.i2o(input));`
+
+# Dependencies
+
+- https://github.com/markus-nilsson/md-dmri
+- Depending on nodes used: MRTrix, FSL, and other tools
 
 # Acknowledgements
 
