@@ -49,38 +49,40 @@ classdef dp % data processor
             end
 
             n = struct('input', 0, 'output', 0, 'run', 0);
-            n.previous_outputs = numel(previous_outputs);
-            
+            n.previous_outputs = numel(previous_outputs);         
+
             % Loop over all previous outputs
-            outputs = {};            
+            outputs = {};
+
+            function output = inner_fun(po)
+                po     = node.manage_po(po);
+                input  = node.run_po2i(po);
+                output = node.run_i2o(input);
+                output = node.run_on_one(input, output);
+                output = node.run_clean(output);
+            end               
             for c = 1:numel(previous_outputs)
-                
+
                 po = previous_outputs{c};
 
-                try
+                if (node.opt.do_try_catch)
 
-                    po     = node.manage_po(po);
-                    input  = node.run_po2i(po);
-                    output = node.run_i2o(input);
-                    output = node.run_on_one(input, output);
-                    output = node.run_clean(output);
+                    try
 
-                    outputs{end+1} = output; %#ok<AGROW>
-                
-                catch me
+                        outputs{end+1} = inner_fun(po); %#ok<AGROW>
 
-                    if (~node.opt.do_try_catch)
-                        rethrow(me);
+                    catch me
+
+                        % Deal with error
+                        [error_source, n] = dp.deal_with_errors(me, n);
+
+                        if (node.opt.verbose) || (strcmp(node.mode, 'report'))
+                            fprintf('%s --> %s (%s)\n', previous_outputs{c}.id, ...
+                                me.message, error_source);
+                        end
                     end
-
-                    % Deal with error
-                    [error_source, n] = dp.deal_with_errors(me, n);
-
-                    if (node.opt.verbose) || (strcmp(node.mode, 'report'))
-                        fprintf('%s --> %s (%s)\n', previous_outputs{c}.id, ...
-                            me.message, error_source);
-                    end
-
+                else
+                    outputs{end+1} = inner_fun(po); %#ok<AGROW>
                 end
             end
 
