@@ -31,8 +31,10 @@ classdef dpm_execute < dpm
             [inputs_exist,f_input,input_age] = obj.node.input_exist(input);
 
             all_outputs_are_younger = 0;
-            if (any(outputs_exist)) && (all(inputs_exist))
-
+            if 1 && ...
+                    (~isempty(outputs_exist)) && (any(outputs_exist)) && ...
+                    (~isempty(inputs_exist)) && (all(inputs_exist))
+                    
                 [min_output_age, output_ind] = nanmin(output_age);
                 [max_input_age, input_ind] = nanmax(input_age);
 
