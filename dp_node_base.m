@@ -11,11 +11,13 @@ classdef dp_node_base < handle
 
         dpm_list;
 
+        output_test = []; % field that will be tested by output_exists
+
     end
 
     methods (Abstract)
         input_exist(obj, input);
-        output_exist(obj, input);
+        output_exist(obj, output);
     end
 
     methods
@@ -116,6 +118,7 @@ classdef dp_node_base < handle
 
         % run on all outputs from the previous node
         function outputs = run(obj, mode, opt)
+            
             if (nargin < 2), mode = 'report'; end
             if (nargin < 3), opt.present = 1; end
             if (ischar(opt) && strcmp(opt, 'debug'))
@@ -158,15 +161,31 @@ classdef dp_node_base < handle
         end
 
         % compute input to this node from previous output
-        function input = run_po2i(obj, pop)
+        function input = run_po2i(obj, pop, varargin)
+            
             input = obj.po2i(pop);
-            input = msf_ensure_field(input, 'id', pop.id);
+
+            % transfer id, output path, base path, if they exist
+            f = {'id', 'op', 'bp'};
+            for c = 1:numel(f)
+                if (isfield(pop, f{c}) && ~isfield(input, f{c}))
+                    input.(f{c}) = pop.(f{c});
+                end
+            end
+
         end
 
         % compile output
         function output = run_i2o(obj, input)
             output = obj.i2o(input);
-            output = msf_ensure_field(output, 'id', input.id);
+
+            f = {'id', 'op', 'bp'};
+            for c = 1:numel(f)
+                if (isfield(input, f{c}) && ~isfield(output, f{c}))
+                    output.(f{c}) = input.(f{c});
+                end
+            end
+            
         end
 
         % dpm - data processing mode (e.g. report, iter, debug, execute...)

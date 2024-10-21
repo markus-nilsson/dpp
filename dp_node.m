@@ -1,8 +1,5 @@
 classdef dp_node < dp_node_base
 
-    properties
-        output_test = []; % field that will be tested by output_exists
-    end
 
     methods
 
@@ -52,18 +49,24 @@ classdef dp_node < dp_node_base
             [status, f, age] = obj.io_exist(tmp, do_pass_empty);
         end
 
-        function input = run_po2i(obj, pop)
+        function input = run_po2i(obj, pop, do_input_check)
 
-            input = run_po2i@dp_node_base(obj, pop);
+            if (nargin < 3), do_input_check = 1; end
 
-            [inputs_exist, f] = obj.io_exist(input);
+            input = run_po2i@dp_node_base(obj, pop);           
 
-            if (~isempty(inputs_exist)) && (~all(inputs_exist))
-                f = f(~inputs_exist);
-                error('Missing input: %s', obj.join_cell_str(f') );
+            % This can be switched off e.g. in the workflow nodes
+            if (do_input_check)
+
+                [inputs_exist, f] = obj.io_exist(input);
+
+                if (~isempty(inputs_exist)) && (~all(inputs_exist))
+                    f = f(~inputs_exist);
+                    error('Missing input: %s', obj.join_cell_str(f') );
+                end
+
             end
         end
-
 
         function output = visualize(obj, input, output)
 
