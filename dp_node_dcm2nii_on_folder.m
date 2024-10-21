@@ -1,5 +1,7 @@
 classdef dp_node_dcm2nii_on_folder < dp_node_items
 
+    % this runs dcm2nii_and_xps on folders with dicoms
+
     properties
         do_print_skip = 0;
     end

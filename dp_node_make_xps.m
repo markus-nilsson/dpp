@@ -6,21 +6,18 @@ classdef dp_node_make_xps < dp_node
             obj.output_test = {'nii_fn', 'xps_fn'};
         end
 
-        function input = po2i(obj, po)
-            
-            if ~(isfield(po, 'bval_fn') && exist(po.bval_fn, 'file'))
-                error('no bval_fn from previous node');
-            end
-
-            input = po;
-        end
-
         function output = i2o(obj, input)
             output = input;
             output.xps_fn = mdm_xps_fn_from_nii_fn(input.nii_fn);
         end
 
         function output = execute(obj, input, output)
+
+            % Check that we have the necessary input
+            if ~(isfield(input, 'bval_fn') && exist(input.bval_fn, 'file'))
+                obj.log('%s: no bval_fn from previous node', input.id);
+                return;
+            end
 
             % figure out the value of b-delta
             % ideally, use the json instead of this hack
@@ -32,13 +29,14 @@ classdef dp_node_make_xps < dp_node
             is_ste = f('_STE');
             is_mdt = f('_MDT');
             is_dti = f('_DTI');
+            is_dki = f('_DKI');
             is_resex = f('_RESEX');
 
-            if (sum([is_lte is_pte is_ste is_mdt is_dti is_resex]) ~= 1)
+            if (sum([is_lte is_pte is_ste is_mdt is_dti is_dki is_resex]) ~= 1)
                 error('could not determine sequence type')
             end
 
-            if (is_lte) || (is_dti) || (is_resex)
+            if (is_lte) || (is_dti) || (is_resex) || (is_dki)
                 b_delta = 1;
             elseif (is_pte)
                 % validation required

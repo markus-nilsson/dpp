@@ -19,23 +19,35 @@ classdef dp_node_dcm2nii < dp_node
 
         % expecing this to be overloaded
         function input = po2i(obj, po)
-            input.bp = po.bp;
             input.dcm_folder = po.dcm_folder;
             input.dcm_name = po.dcm_name;
-
         end
 
         function output = i2o(obj, input)
 
-            output.bp = input.bp;
-
             x = input.dcm_name; 
 
-            f = @(y) fullfile(output.bp, sprintf(['%s.' y], x));
+            f = @(y) fullfile(input.op, sprintf(['%s.' y], x));
             output.nii_fn  = f('nii.gz');
             output.json_fn = f('json');
             output.bval_fn = f('bval');
             output.bvec_fn = f('bvec');
+
+            % this is quite akward, but I cannot see another
+            % way to make this work
+            if (exist(output.nii_fn, 'file') && exist(output.json_fn, 'file'))
+
+                % make this controllabe by options, if this causes problems
+
+                if (~exist(output.bvec_fn, 'file'))
+                    output.bvec_fn = '';
+                end
+
+                if (~exist(output.bval_fn, 'file'))
+                    output.bval_fn = '';
+                end
+
+            end
 
             % convert in temporary folder
             output.tmp.bp = msf_tmp_path();
@@ -56,6 +68,11 @@ classdef dp_node_dcm2nii < dp_node
             % copy output
             f = {'nii_fn', 'json_fn' , 'bval_fn', 'bvec_fn'};
             for c = 1:numel(f)
+
+                % skip if file not requested
+                if (isempty(output.(f{c})))
+                    continue;
+                end
 
                 % search for the output
                 [~,~,t_ext] = msf_fileparts(output.(f{c}));
@@ -86,7 +103,19 @@ classdef dp_node_dcm2nii < dp_node
                 target_fn = output.(f{c});
                 msf_mkdir(fileparts(target_fn));
                 copyfile(source_fn, target_fn);
+                
             end
+
+            % deal with bval bvec fn – assume they should not exist
+            % if they do not exist
+            if (~exist(output.bvec_fn, 'file'))
+                output.bvec_fn = '';
+            end
+
+            if (~exist(output.bval_fn, 'file'))
+                output.bval_fn = '';
+            end
+
         end
     end
 end

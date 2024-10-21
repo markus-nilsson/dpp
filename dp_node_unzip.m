@@ -1,13 +1,14 @@
 classdef dp_node_unzip < dp_node
 
+    % unzippes a file input.zip_fn to the input.op + [name _unzipped]
+    % folder
+
     methods
 
         function output = i2o(obj, input)
 
-            output.bp = input.bp;
-
             [~, name] = msf_fileparts(input.zip_fn);
-            output.unzipped_folder = fullfile(output.bp, [name '_unzipped']);
+            output.unzipped_folder = fullfile(input.op, [name '_unzipped']);
 
             output.zip_name = name;
 

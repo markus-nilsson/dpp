@@ -1,5 +1,7 @@
 classdef dp_node_items < dp_node_base
 
+    % iterate with nodes over items within a node
+
     properties
         inner_node;
     end
@@ -22,21 +24,23 @@ classdef dp_node_items < dp_node_base
             end
 
             for c = 1:numel(input_items)
-                
-                try
+
+                if (obj.opt.do_try_catch)
+
+                    try
+                        output_items{c} = g(input_items{c}, output_items{c}); %#ok<AGROW>
+                    catch me
+
+                        if (obj.opt.verbose) || (strcmp(obj.mode, 'report'))
+                            fprintf('%s --> %s\n', input_items{c}.id, ...
+                                me.message);
+                        end
+                    end
+
+                else
                     output_items{c} = g(input_items{c}, output_items{c}); %#ok<AGROW>
-                
-                catch me
-
-                    if (~obj.opt.do_try_catch)
-                        rethrow(me);
-                    end
-
-                    if (obj.opt.verbose) || (strcmp(obj.mode, 'report'))
-                        fprintf('%s --> %s\n', input_items{c}.id, ...
-                            me.message);
-                    end
                 end
+
             end            
         end
 
