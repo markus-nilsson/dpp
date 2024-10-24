@@ -60,7 +60,8 @@ classdef dp % data processor
                 output = node.run_i2o(input);
                 output = node.run_on_one(input, output);
                 output = node.run_clean(output);
-            end               
+            end  
+            
             for c = 1:numel(previous_outputs)
 
                 po = previous_outputs{c};
