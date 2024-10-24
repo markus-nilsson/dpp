@@ -2,6 +2,11 @@ classdef dpm_execute < dpm
 
     methods
 
+        function obj = dpm_execute(node)
+            obj = obj@dpm(node);
+            obj.do_run_on_all_in_workflow = 1;
+        end
+
         function mode_name = get_mode_name(obj)
             mode_name = 'execute';
         end
@@ -38,7 +43,7 @@ classdef dpm_execute < dpm
                 [min_output_age, output_ind] = nanmin(output_age);
                 [max_input_age, input_ind] = nanmax(input_age);
 
-                all_outputs_are_younger = min_output_age > max_input_age;
+                all_outputs_are_younger = min_output_age >= max_input_age;
 
                 if (~all_outputs_are_younger)
 

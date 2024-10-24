@@ -16,7 +16,6 @@ classdef dpm_report < dpm
             input_status = obj.node.input_exist(input);
             output_status = obj.node.output_exist(output);
 
-
             % build and print string
             str = input.id;
 

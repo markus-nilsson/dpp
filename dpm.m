@@ -4,7 +4,9 @@ classdef dpm < handle
 
     properties
         node;
+        do_run_on_all_in_workflow = 0;
     end
+
 
     methods
 
