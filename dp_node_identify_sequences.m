@@ -22,7 +22,8 @@ classdef dp_node_identify_sequences < dp_node
 
             f = obj.patterns;
             for c = 1:numel(f)
-                output.(f{c}{1}) = msf_find_fn(input.nii_path, f{c}{2}, 0);
+
+                output.(f{c}{1}) = msf_find_fn(input.nii_path, f{c}{2}, -1);
 
                 if (isempty(output.(f{c}{1})))
                     1;
