@@ -4,6 +4,8 @@ classdef dp_node_dmri_disco < dp_node_workflow
 
         function obj = dp_node_dmri_disco()
 
+            error('need better topup config options');
+
             if (0)
 
                 nodes = {...

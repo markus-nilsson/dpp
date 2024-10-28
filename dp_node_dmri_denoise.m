@@ -4,8 +4,13 @@ classdef dp_node_dmri_denoise < dp_node
 
     methods
 
+        function obj = dp_node_dmri_denoise()
+            obj.input_test = {'dmri_fn'};
+        end
+
         function output = i2o(obj, input)
-            output.dmri_fn = msf_fn_append(input.dmri_fn, '_dn');
+            output.dmri_fn = msf_fn_new_path(input.op, ...
+                msf_fn_append(input.dmri_fn, '_dn'));
         end
 
         function output = execute(obj, input, output)
