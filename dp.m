@@ -55,13 +55,31 @@ classdef dp % data processor
             outputs = {};
 
             function output = inner_fun(po)
+
+                node.log(2, '\nStarting %s', node.name);                
+
                 po     = node.manage_po(po);
+
+                node.log(2, '\nprevious_output:\n%s', ...
+                    formattedDisplayText(po));                
+
                 input  = node.run_po2i(po);
+
+                node.log(2, '\ninput:\n%s', formattedDisplayText(input));                
+                
                 output = node.run_i2o(input);
                 output = node.run_on_one(input, output);
                 output = node.run_clean(output);
-            end               
+
+                node.log(2, '\noutput:\n%s', formattedDisplayText(output));                
+                
+            end    
+            
             for c = 1:numel(previous_outputs)
+
+                node.log(2, '-------------------');
+                node.log(1, 'Running %s for %s', node.name, previous_outputs{c}.id)
+                node.log(2, '-------------------');
 
                 po = previous_outputs{c};
 
@@ -76,14 +94,16 @@ classdef dp % data processor
                         % Deal with error
                         [error_source, n] = dp.deal_with_errors(me, n);
 
-                        if (node.opt.verbose) || (strcmp(node.mode, 'report'))
-                            fprintf('%s --> %s (%s)\n', previous_outputs{c}.id, ...
+                        if (strcmp(node.mode, 'report'))
+                            node.log(1, '%s --> %s (%s)\n', previous_outputs{c}.id, ...
                                 me.message, error_source);
                         end
                     end
                 else
                     outputs{end+1} = inner_fun(po); %#ok<AGROW>
                 end
+                
+                node.log(1, ' ');
             end
 
             % Wrap up with some reporting

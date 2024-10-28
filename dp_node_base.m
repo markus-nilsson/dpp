@@ -7,12 +7,16 @@ classdef dp_node_base < handle
         name;
         mode;
         opt;
-        log;
 
         dpm_list;
 
+        input_test = [];  % field that will be tested by input_exists
         output_test = []; % field that will be tested by output_exists
 
+    end
+
+    properties (Hidden)
+        do_dpm_passthrough = 0;
     end
 
     methods (Abstract)
@@ -29,11 +33,6 @@ classdef dp_node_base < handle
                 dpm_execute(obj), ...
                 dpm_debug(obj)};
 
-            obj.log = @(varargin) fprintf(cat(2, '%s', varargin{1}, '\n'), ...
-                opt.indent, varargin{2:end});
-
-            obj.log = @(varargin) fprintf(cat(2, varargin{1}, '\n'), varargin{2:end});
-            
         end
 
         % methods that we expected to be overloaded (this is where you
@@ -128,16 +127,11 @@ classdef dp_node_base < handle
             obj.name = class(obj); % xxx
             obj.mode = mode;
 
-
             % deal with options
             obj.opt.present = 1;
             opt = dp.dp_opt(opt);
             opt = obj.get_dpm().dp_opt(opt);
             obj.opt = opt;          
-
-            obj.log = @(varargin) fprintf(cat(2, '%s', varargin{1}, '\n'), ...
-                obj.opt.indent, varargin{2:end});
-            
 
             outputs = dp.run(obj);
         end
@@ -191,20 +185,25 @@ classdef dp_node_base < handle
         % dpm - data processing mode (e.g. report, iter, debug, execute...)
         function dpm = get_dpm(obj, mode)
 
-            if (nargin < 2)
-                mode = obj.mode;
-            end
+            if (nargin < 2), mode = obj.mode; end
             
             ind = cellfun(@(x) strcmp(mode, x.get_mode_name()), obj.dpm_list);
 
             ind = find(ind);
 
-            if (numel(ind) == 0)
-                error('mode (%s) not supported', obj.mode);
+            if (numel(ind) > 0)
+            
+                dpm = obj.dpm_list{ind};
+            
+            else % dpm not supported, but allow passthrough for workflows
+                
+                if (obj.do_dpm_passthrough)
+                    dpm = dpm_passthrough(obj);
+                else
+                    error('mode (%s) not supported', obj.mode);
+                end
+
             end
-
-            dpm = obj.dpm_list{ind};
-
 
         end
 
@@ -216,6 +215,35 @@ classdef dp_node_base < handle
         function output_age(obj, output)
             ages = [];
         end
+
+        function log(obj, varargin)
+
+            % this function has evolved over time, so it is a little messy
+            %
+            % intended input format is this:
+            % log level
+            % string to fprintf
+            % arguments
+
+            % if first argument is string, then assume a log level
+            if (all(ischar(varargin{1})))
+                log_level = 1;
+                varargin = cat(2, log_level, varargin);
+            end
+
+            if (numel(varargin) < 2), varargin{2} = ''; end
+            if (numel(varargin) < 3), varargin{3} = ''; end
+
+            log_level = varargin{1};
+            log_str = varargin{2};
+            log_arg = varargin(3:end);
+
+            if (obj.opt.verbose >= log_level)
+                fprintf(cat(2, log_str, '\n'), log_arg{:});
+            end
+
+        end
+
 
 
     end
@@ -231,8 +259,9 @@ classdef dp_node_base < handle
                 'UniformOutput', false)));
         end
         
-
     end
+
+ 
     
 
 end

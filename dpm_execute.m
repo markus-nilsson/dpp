@@ -2,12 +2,18 @@ classdef dpm_execute < dpm
 
     methods
 
+        function obj = dpm_execute(node)
+            obj = obj@dpm(node);
+            obj.do_run_on_all_in_workflow = 1;
+        end
+
         function mode_name = get_mode_name(obj)
             mode_name = 'execute';
         end
 
         function opt = dp_opt(obj, opt)
-            opt.verbose = 1;
+            
+            opt = msf_ensure_field(opt, 'verbose', 1);
         end
 
         function output = run_on_one(obj, input, output)
@@ -38,16 +44,14 @@ classdef dpm_execute < dpm
                 [min_output_age, output_ind] = nanmin(output_age);
                 [max_input_age, input_ind] = nanmax(input_age);
 
-                all_outputs_are_younger = min_output_age > max_input_age;
+                all_outputs_are_younger = min_output_age >= max_input_age;
 
                 if (~all_outputs_are_younger)
 
-                    obj.node.log('%s: Old outputs detected, overwriting', input.id);
+                    obj.node.log(0, '%s: Old outputs detected, overwriting', input.id);
 
-                    if (obj.node.opt.verbose)
-                        obj.node.log('%s: %s (in: %s)', input.id, datestr(max_input_age), f_input{input_ind});
-                        obj.node.log('%s: %s (out: %s)', input.id, datestr(min_output_age), f_output{output_ind});
-                    end
+                    obj.node.log(1, '%s: %s (in: %s)', input.id, datestr(max_input_age), f_input{input_ind});
+                    obj.node.log(1, '%s: %s (out: %s)', input.id, datestr(min_output_age), f_output{output_ind});
                     
                 end
             end
@@ -57,15 +61,15 @@ classdef dpm_execute < dpm
                     (~obj.node.opt.do_overwrite) && ...
                     (all_outputs_are_younger)
                 
-                if (obj.node.opt.verbose)
-                    obj.node.log('%s: All outputs exist, skipping', input.id); 
-                end
+                obj.node.log(1, '%s: All outputs exist, skipping', input.id);
                 return;
             end
 
-            if (obj.node.opt.verbose)
-                obj.node.log('%s: Processing', input.id); 
+            if (isempty(obj.node.name))
+                obj.node.name = class(obj.node);
             end
+
+            obj.node.log(1, '%s: Executing %s', input.id, obj.node.name);
 
             output = obj.node.execute(input, output);            
                         

@@ -45,10 +45,9 @@ classdef dp_node_copy < dp_node
                     error('bad output structure');
                 end
 
-                obj.log(output.(tmp));
+                obj.log(3, 'Copying file %s', output.(tmp));
                 msf_mkdir(fileparts(output.(tmp)));
                 copyfile(input.(tmp), output.(tmp));
-
 
             end
 

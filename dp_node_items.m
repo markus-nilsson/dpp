@@ -25,14 +25,16 @@ classdef dp_node_items < dp_node_base
 
             for c = 1:numel(input_items)
 
+                obj.log(2, '%s: Item %i %s', input_items{c}.id, c, strtrim(formattedDisplayText(f)));
+
                 if (obj.opt.do_try_catch)
 
                     try
                         output_items{c} = g(input_items{c}, output_items{c}); %#ok<AGROW>
                     catch me
 
-                        if (obj.opt.verbose) || (strcmp(obj.mode, 'report'))
-                            fprintf('%s --> %s\n', input_items{c}.id, ...
+                        if (strcmp(obj.mode, 'report'))
+                            obj.log(1, '%s --> %s\n', input_items{c}.id, ...
                                 me.message);
                         end
                     end
