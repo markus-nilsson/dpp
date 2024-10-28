@@ -2,7 +2,9 @@ classdef dp_node_dmri_bet < dp_node_workflow
 
     methods
 
-        function obj = dp_node_dmri_bet()
+        function obj = dp_node_dmri_bet(opt_str)
+
+            if (nargin == 0), opt_str = ''; end
 
             nodes = {...
                 dp_node_append({...
@@ -12,7 +14,7 @@ classdef dp_node_dmri_bet < dp_node_workflow
                 dp_node_append({...
                     {'nii_fn', 'dmri_fn'}, ...
                     {'op', 'original_op'}}), ...
-                dp_node_fsl_bet()};
+                dp_node_fsl_bet(opt_str)};
 
             nodes{2}.do_i2o_pass = 1;
 
