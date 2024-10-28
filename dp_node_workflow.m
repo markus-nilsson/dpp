@@ -25,7 +25,6 @@ classdef dp_node_workflow < dp_node % assume this is for nifti files
             for c = 1:numel(obj.nodes)
 
                 log = @(varargin) obj.nodes.log(varargin{:});
-
                 % Transfer the options to the node
                 obj.nodes{c}.opt = obj.opt;
                 
@@ -86,8 +85,11 @@ classdef dp_node_workflow < dp_node % assume this is for nifti files
             output = this_output;
 
         end 
-
+        
+        % 
         % function output = execute(obj, input, output)
+        % 
+        %     warning('this should not be used')
         % 
         %     1;
         %     % input not used here, must use a well-formatted outtput

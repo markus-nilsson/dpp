@@ -73,7 +73,7 @@ classdef dp % data processor
 
                 node.log(2, '\noutput:\n%s', formattedDisplayText(output));                
                 
-            end    
+            end  
             
             for c = 1:numel(previous_outputs)
 

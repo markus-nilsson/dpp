@@ -85,28 +85,40 @@ classdef dp_node_items < dp_node_base
             
         end
 
-        function output = execute(obj, input, output)
+        function output = run_on_one(obj, input, output)
 
-            % experimental code here
-
-            switch (obj.mode)
-
-                case {'execute', 'debug'}
-
-                    f = @(x,y) obj.inner_node.get_dpm(obj.mode).run_on_one(x,y);
-
-                otherwise
-
-                    error('this function only supports mode execute for now')
-
-            end
+            f = @(x,y) obj.inner_node.run_on_one(x,y);
 
             % push options through to inner node
             obj.inner_node.opt = obj.opt; 
+            obj.inner_node.mode = obj.mode;
 
             output.items = obj.items_fun(f, input.items, output.items);
 
-        end
+        end        
+
+        % function output = execute(obj, input, output)
+        % 
+        %     % experimental code here
+        % 
+        %     switch (obj.mode)
+        % 
+        %         case {'execute', 'debug'}
+        % 
+        %             f = @(x,y) obj.inner_node.get_dpm(obj.mode).run_on_one(x,y);
+        % 
+        %         otherwise
+        % 
+        %             error('this function only supports mode execute for now')
+        % 
+        %     end
+        % 
+        %     % push options through to inner node
+        %     obj.inner_node.opt = obj.opt; 
+        % 
+        %     output.items = obj.items_fun(f, input.items, output.items);
+        % 
+        % end
 
         function output = run_clean(obj, output)
 
