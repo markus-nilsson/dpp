@@ -36,19 +36,31 @@ There are different types of nodes
   nodes
 - `dp_node`, which is intended to act on image data e.g. nifti-files
 - `dp_node_workflow`, which glues multiple nodes together into one
-- `dp_node_rename`, which only renames fields
 - `dp_node_items`, which acts on an unstructured set of items e.g. imaging
   data not yet identified
+
+In addition, there are nodes that only deal with inputs and outputs
+
+- `dp_node_rename`, which only renames fields
+- `dp_node_append`, which appends fields
 
 Examples of nodes with more specific functions are
 
 - `dp_node_dcm2nii.m`, which converts a folder of dicom files to a 
   nifti file
-- `dp_node_denoise.m`, which applies denoising via mrtrix. 
+- `dp_node_dmri_denoise.m`, which applies denoising via mrtrix. 
 
 To use the more specific nodes in your project, create a class that 
 inherits from the specific node, and customize it by overloading the 
 `po2i` and possibly the `i2o` methods. See examples.
+
+### Diffusion nodes
+
+Nodes for processing dMRI data are prefixed by `dp_node_dmri`. They
+assume the input structure has a field called `dmri_fn`. For nodes
+needing metadata, it assumed an xps-structure can be loaded form a 
+correspondingly named xps.mat file. See the mdm-framework for details. 
+
 
 
 ## Data processing with different modes
@@ -76,6 +88,7 @@ more of the following fields
 
 - `do_try_catch`, which is a `boolean` that determines whether errors in 
   the data processing is catched or rethrown
+- `verbose`, which tells the pipeline how much information to display (range 0-3)
 - `do_overwrite`, a boolean that determines whether existing files will be
   written over or not (note: output files  older than input files will always
   be written over) 
@@ -91,10 +104,12 @@ Mandatory fields
 
 - `id`, which holds the identity of the data being processed
 
-Optional fields
+Optional, but near mandatory fields
 
 - `op`, is the output path (this is where e.g. dp_node_denoise puts its output)
 - `bp`, is the base-path from which paths are created (e.g. bp/id/nii/file.nii.gz)
+
+These three fields will always be pushed from previous nodes. 
 
 ## Output structure
 
@@ -117,17 +132,17 @@ Running the node without catching errors may cause it to stop early, in a subjec
 with input/output errors, that you may wish to ignore. To deal with this, run the 
 node for a subject where all preceeding nodes work correctly. For example
 
-`my_node().run('report', struct('do_try_catch', 0, 'id_filter', 'my_subject_id')`
+`my_node().run('report', struct('do_try_catch', 0, 'id_filter', 'my_subject_id', 'verbose', 3)`
 
 
 ## Stand alone use
 
 The nodes can also be used in a stand-alone fashion. Example for denoising
 
-`input.nii_fn = 'my_path/your_dwi_volume.nii.gz';
-input.bp = msf_fileparts(input.nii_fn);
+`input.dmri_fn = 'my_path/your_dwi_volume.nii.gz';
+input.op = msf_fileparts(input.nii_fn);
 
-a = dp_node_denoise();
+a = dp_node_dmri_denoise();
 a.execute(input, a.i2o(input));`
 
 # Dependencies
