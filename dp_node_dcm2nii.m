@@ -8,11 +8,6 @@ classdef dp_node_dcm2nii < dp_node
 
         function obj = dp_node_dcm2nii()
 
-            if (~exist(obj.dcm2niix_path, 'file'))
-                error('dcm2niix not found at expected location (%s)', ...
-                    obj.dcm2niix_path);
-            end
-
             obj.output_test = {'nii_fn'};
 
             % Path to dcm2niix
@@ -23,6 +18,12 @@ classdef dp_node_dcm2nii < dp_node
             else
                 error('not implemented yet');
             end
+
+            if (~exist(obj.dcm2niix_path, 'file'))
+                error('dcm2niix not found at expected location (%s)', ...
+                    obj.dcm2niix_path);
+            end
+
 
         end
 
