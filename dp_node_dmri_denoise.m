@@ -5,12 +5,15 @@ classdef dp_node_dmri_denoise < dp_node
     methods
 
         function obj = dp_node_dmri_denoise()
-            obj.input_test = {'dmri_fn'};
+            obj.output_test = {'dmri_fn', 'xps_fn'};
         end
 
         function output = i2o(obj, input)
             output.dmri_fn = msf_fn_new_path(input.op, ...
                 msf_fn_append(input.dmri_fn, '_dn'));
+
+            output.xps_fn = mdm_xps_fn_from_nii_fn(output.dmri_fn);
+            
         end
 
         function output = execute(obj, input, output)
@@ -24,10 +27,8 @@ classdef dp_node_dmri_denoise < dp_node
             % xps's)
             xps_fn = mdm_xps_fn_from_nii_fn(input.dmri_fn);
 
-            if (exist(xps_fn, 'file'))
-                xps = mdm_xps_load(xps_fn);
-                mdm_xps_save(xps, mdm_xps_fn_from_nii_fn(output.dmri_fn));
-            end
+            xps = mdm_xps_load(xps_fn);
+            mdm_xps_save(xps, output.xps_fn);
 
         end
 
