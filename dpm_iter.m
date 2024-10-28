@@ -7,15 +7,19 @@ classdef dpm_iter < dpm
         end
         
         function opt = dp_opt(obj, opt)
-            opt.verbose = 0; % force it to be off here
+
+            opt = msf_ensure_field(opt, 'verbose', 0);
+
+            if (~isinf(opt.verbose))
+                opt.verbose = 0; % force it to be off here unless in super verbose
+            end
+
         end
 
         function output = run_on_one(obj, input, output)
 
             if (~all(obj.node.output_exist(output)))
-                if (obj.node.opt.verbose)
-                    obj.node.opt.log('Output not a valid iter item for next node');
-                end
+                obj.node.opt.log(1, 'Output not a valid iter item for next node');
             end
             
         end

@@ -8,7 +8,7 @@ classdef dpm_debug < dpm_execute
 
         function opt = dp_opt(obj, opt)
             opt.do_try_catch = 0;
-            opt.verbose = 1;
+            opt.verbose = 3;
         end
 
     end
