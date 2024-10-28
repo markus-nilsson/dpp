@@ -29,7 +29,7 @@ classdef dpm_report < dpm
                 str = sprintf('%s\t%s', str, 'N' + output_status(c) * ('Y' - 'N'));
             end
 
-            obj.node.log(str);
+            obj.node.log(0, str);
 
 
             % check if we are done (used below)
@@ -45,7 +45,7 @@ classdef dpm_report < dpm
             f = @(x) isfield(x, 'status') && (strcmp(x.status, 'done'));
             n_done = sum(cellfun(f, outputs));
 
-            obj.node.log('\nStatus: %i done (all outputs is Y) out of %i possible', ...
+            obj.node.log(0, '\nStatus: %i done (all outputs is Y) out of %i possible', ...
                 n_done, numel(outputs));
 
             if (numel(outputs) > 0) % xxx: show inner structs better

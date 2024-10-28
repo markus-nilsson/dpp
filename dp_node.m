@@ -33,7 +33,6 @@ classdef dp_node < dp_node_base
 
         function [status, f, age] = output_exist(obj, output)
             [status, f, age] = obj.io_exist2(output, obj.output_test);
-
         end
 
         function input = run_po2i(obj, pop, do_input_check)

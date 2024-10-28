@@ -24,7 +24,7 @@ classdef dp_node_workflow < dp_node % assume this is for nifti files
 
             log = @(varargin) obj.log(varargin{:});            
 
-            log(2, '\nRunning workflow input to output\n%s', formattedDisplayText(input));
+            log(2, '\nWorkflow input to output (i2o)\n');
             log(2, '\ninput (to workflow):\n%s', formattedDisplayText(input));
             
             for c = 1:numel(obj.nodes)
@@ -72,23 +72,35 @@ classdef dp_node_workflow < dp_node % assume this is for nifti files
             % some dpm's (like mgui start) should not be executed on 
             % all nodes in the workflow, just the last one
             if (~obj.get_dpm().do_run_on_all_in_workflow)
+
+                obj.nodes{end}.opt = obj.opt;
+                obj.nodes{end}.mode = obj.mode;
+                
                 output.wf_output{end} = obj.nodes{end}.get_dpm().run_on_one(...
                     output.wf_input{end}, output.wf_output{end});
+
                 return;
             end
 
             % input not used here, must use a well-formatted output
+            if (obj.get_dpm().do_run_node(input,output))
 
-            for c = 1:numel(obj.nodes)
+                obj.log(0, '%s: Running workflow (%s)', input.id, obj.name);
 
-                % Transfer the options to the node
-                obj.nodes{c}.opt = obj.opt;
-                obj.nodes{c}.mode = obj.mode;
+                for c = 1:numel(obj.nodes)
 
-                this_input  = output.wf_input{c};
-                this_output = output.wf_output{c};
+                    % Transfer the options to the node
+                    obj.nodes{c}.opt = obj.opt;
+                    obj.nodes{c}.mode = obj.mode;
 
-                this_output = obj.nodes{c}.run_on_one(this_input, this_output);
+                    this_input  = output.wf_input{c};
+                    this_output = output.wf_output{c};
+
+                    this_output = obj.nodes{c}.run_on_one(this_input, this_output);
+                end
+
+            else
+                obj.log(0, '%s: Skipping workflow, outputs done (%s)', input.id, obj.name);
             end
 
             % later steps need this
@@ -98,6 +110,15 @@ classdef dp_node_workflow < dp_node % assume this is for nifti files
             output = this_output;
 
         end 
+
+        function [status, f, age] = input_exist(obj, input)
+            [status, f, age] = obj.nodes{1}.input_exist(input);
+        end
+
+        function [status, f, age] = output_exist(obj, output)
+            [status, f, age] = obj.nodes{end}.output_exist(output);
+        end
+        
         
         % 
         % function output = execute(obj, input, output)

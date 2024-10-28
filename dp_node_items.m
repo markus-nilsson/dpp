@@ -30,7 +30,9 @@ classdef dp_node_items < dp_node_base
                 if (obj.opt.do_try_catch)
 
                     try
+                    
                         output_items{c} = g(input_items{c}, output_items{c}); %#ok<AGROW>
+                    
                     catch me
 
                         if (strcmp(obj.mode, 'report'))
@@ -98,7 +100,7 @@ classdef dp_node_items < dp_node_base
 
         function obj = update_node(obj, varargin) % set necessary properties
 
-            obj = update_node@dp_node(obj, varargin{:});
+            obj = update_node@dp_node_base(obj, varargin{:});
             
             obj.inner_node.update_node(varargin{:});
 
