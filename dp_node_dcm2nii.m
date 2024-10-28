@@ -1,7 +1,7 @@
 classdef dp_node_dcm2nii < dp_node
 
-    properties(Constant)
-        dcm2niix_path = '/Applications/dcm2niix';
+    properties (Hidden)
+        dcm2niix_path;
     end
 
     methods
@@ -14,6 +14,15 @@ classdef dp_node_dcm2nii < dp_node
             end
 
             obj.output_test = {'nii_fn'};
+
+            % Path to dcm2niix
+            if (ismac)
+                obj.dcm2niix_path = '/Applications/dcm2niix';
+            elseif (isunix)
+                obj.dcm2niix_path = '/usr/bin/dcm2niix';
+            else
+                error('not implemented yet');
+            end
 
         end
 

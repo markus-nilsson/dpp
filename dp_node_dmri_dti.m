@@ -2,15 +2,15 @@ classdef dp_node_dmri_dti < dp_node
 
     methods
 
+        function obj = dp_node_dmri_dti()
+            obj.input_test = {'nii_fn'};
+            obj.output_test = {'md_fn', 'fa_fn', 's0_fn'};
+        end
+
         function output = i2o(obj, input)
-
-            output.op = input.op; % output ends up here
-
-            output.md_fn = fullfile(output.op, 'dti_lls_MD.nii.gz');
-            output.fa_fn = fullfile(output.op, 'dti_lls_FA.nii.gz');
-            output.s0_fn = fullfile(output.op, 'dti_lls_s0.nii.gz');
-
-
+            output.md_fn = fullfile(input.op, 'dti_lls_md.nii.gz');
+            output.fa_fn = fullfile(input.op, 'dti_lls_fa.nii.gz');
+            output.s0_fn = fullfile(input.op, 'dti_lls_s0.nii.gz');
         end
 
         function output = execute(obj, input, output)
@@ -28,7 +28,8 @@ classdef dp_node_dmri_dti < dp_node
 
             opt = dti_lls_opt(input.opt);
 
-            dti_lls_pipe(s, output.op, opt);
+            msf_mkdir(input.op);
+            dti_lls_pipe(s, input.op, opt);
 
         end
 

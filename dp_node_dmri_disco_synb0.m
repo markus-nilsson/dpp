@@ -1,10 +1,14 @@
 classdef dp_node_dmri_disco_synb0 < dp_node
 
     properties
-        license_fn = '~/freesurfer_license.txt';
+        license_fn = '/home/fuji/Software/freeSurfer/freesurfer/license.txt';
     end
 
     methods
+
+        function obj = dp_node_dmri_disco_synb0()
+            obj.output_test = {'synb0_fn', 'topup_nii_fn'};
+        end
 
         % construct names of output files
         function output = i2o(obj, input)
@@ -56,17 +60,23 @@ classdef dp_node_dmri_disco_synb0 < dp_node
 
             [r, msg, cmd_full] = msf_system(cmd);
 
+            if (r ~= 0)
+                error('could not execute docker container')
+            end
+
             % save the synthetic b0
             msf_mkdir(input.op);
             copyfile(fullfile(op, 'b0_u.nii.gz'), output.synb0_fn);
+            synb0_xps = mdm_xps_from_bt(zeros(1,6));
+            mdm_xps_save(synb0_xps, ...
+                mdm_xps_fn_from_nii_fn(output.synb0_fn));
 
-
-            % Prepare for topup
+            % Prepare for topup - build ap/pa file
             J = mdm_nii_read(output.synb0_fn);
 
             mdm_nii_write(cat(4, I, J), output.topup_nii_fn, h);
 
-            xps2 = mdm_xps_from_bt(cat(1, xps.bt, [0 0 0 0 0 0]));
+            xps2 = mdm_xps_from_bt(cat(1, xps.bt, synb0_xps.bt));
 
             mdm_xps_save(xps2, output.topup_xps_fn);
            
