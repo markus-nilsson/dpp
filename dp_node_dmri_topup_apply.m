@@ -35,7 +35,7 @@ classdef dp_node_dmri_topup_apply < dp_node
                 assert(s_pa.xps.n < s_ap.xps.n, 'assumption invalid');
 
                 [I,h] = mdm_nii_read(s_ap.nii_fn);
-                tmp_nii_fn = fullfile(wp, 'DMRI_PA_zeros.nii.gz');
+                tmp_nii_fn = fullfile(output.tmp.bp, 'DMRI_PA_zeros.nii.gz');
                 mdm_nii_write(zeros(size(I)), tmp_nii_fn, h);
                 s_tmp_pa = s_ap;
                 s_tmp_pa.nii_fn = tmp_nii_fn;
