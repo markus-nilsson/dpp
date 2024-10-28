@@ -1,6 +1,5 @@
 classdef dp_node < dp_node_base
 
-
     methods
 
         function obj = dp_node()
@@ -29,24 +28,12 @@ classdef dp_node < dp_node_base
         end
 
         function [status, f, age] = input_exist(obj, input)
-            [status, f, age] = obj.io_exist(input);
+            [status, f, age] = obj.io_exist2(input, obj.input_test);
         end
 
         function [status, f, age] = output_exist(obj, output)
+            [status, f, age] = obj.io_exist2(output, obj.output_test);
 
-            if (~isempty(obj.output_test))
-                % test only the fields asked for
-                f = obj.output_test;
-                for c = 1:numel(f)
-                    tmp.(f{c}) = output.(f{c});
-                end
-                do_pass_empty = 0;
-            else
-                tmp = output;
-                do_pass_empty = 1;
-            end
-
-            [status, f, age] = obj.io_exist(tmp, do_pass_empty);
         end
 
         function input = run_po2i(obj, pop, do_input_check)
@@ -141,7 +128,26 @@ classdef dp_node < dp_node_base
     methods (Hidden, Static)
 
         % run a function on the input/output structures
-        % this should be moved elsewhere
+        % these should be moved elsewhere        
+        % sorry for the poor naming
+
+        function [status, f, age] = io_exist2(io, test_fields)
+
+            if (~isempty(test_fields)) % test only the fields asked for
+                
+                for c = 1:numel(test_fields)
+                    tmp.(test_fields{c}) = io.(test_fields{c});
+                end
+                do_pass_empty = 0;
+            else
+                tmp = io;
+                do_pass_empty = 1;
+            end
+
+            [status, f, age] = dp_node.io_exist(tmp, do_pass_empty);
+
+        end
+
         function [status, f, age] = io_exist(io, do_pass_empty)
 
             if (nargin < 2)

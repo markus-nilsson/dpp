@@ -11,8 +11,13 @@ classdef dp_node_base < handle
 
         dpm_list;
 
+        input_test = [];  % field that will be tested by input_exists
         output_test = []; % field that will be tested by output_exists
 
+    end
+
+    properties (Hidden)
+        do_dpm_passthrough = 0;
     end
 
     methods (Abstract)
@@ -191,20 +196,25 @@ classdef dp_node_base < handle
         % dpm - data processing mode (e.g. report, iter, debug, execute...)
         function dpm = get_dpm(obj, mode)
 
-            if (nargin < 2)
-                mode = obj.mode;
-            end
+            if (nargin < 2), mode = obj.mode; end
             
             ind = cellfun(@(x) strcmp(mode, x.get_mode_name()), obj.dpm_list);
 
             ind = find(ind);
 
-            if (numel(ind) == 0)
-                error('mode (%s) not supported', obj.mode);
+            if (numel(ind) > 0)
+            
+                dpm = obj.dpm_list{ind};
+            
+            else % dpm not supported, but allow passthrough for workflows
+                
+                if (obj.do_dpm_passthrough)
+                    dpm = dpm_passthrough(obj);
+                else
+                    error('mode (%s) not supported', obj.mode);
+                end
+
             end
-
-            dpm = obj.dpm_list{ind};
-
 
         end
 

@@ -53,6 +53,10 @@ classdef dp_node_files_to_items < dp_node_items
 
             input.items = {};
             for c = 1:numel(di)
+
+                if (di(c).name(1) == '.')
+                    continue;
+                end
                 
                 switch (obj.filter_mode)
 

@@ -1,5 +1,10 @@
 classdef dp_node_identify_sequences < dp_node
 
+    % searches for files according to pattern in input.nii_path
+    %
+    % pattern is given as { {field_name, this_pattern} } where
+    % this_pattern is a regular expression
+
     properties
         patterns;
     end
