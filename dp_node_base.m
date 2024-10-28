@@ -13,6 +13,8 @@ classdef dp_node_base < handle
         input_test = [];  % field that will be tested by input_exists
         output_test = []; % field that will be tested by output_exists
 
+        do_i2o_pass = 0;
+
     end
 
     properties (Hidden)
@@ -199,6 +201,11 @@ classdef dp_node_base < handle
             output = obj.i2o(input);
 
             f = {'id', 'op', 'bp'};
+
+            if (obj.do_i2o_pass) % pass all inputs to outputs
+                f = cat(2, fieldnames(input));
+            end
+
             for c = 1:numel(f)
                 if (isfield(input, f{c}) && ~isfield(output, f{c}))
                     output.(f{c}) = input.(f{c});

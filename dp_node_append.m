@@ -17,6 +17,7 @@ classdef dp_node_append < dp_node_rename
         end        
 
         function output = i2o(obj, input)
+
             output = i2o@dp_node_rename(obj, input);
 
             % do not write over fields, but apppend if they haven't been

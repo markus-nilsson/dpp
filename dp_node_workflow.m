@@ -8,8 +8,7 @@ classdef dp_node_workflow < dp_node % assume this is for nifti files
 
         function obj = dp_node_workflow(nodes)
             obj.nodes = nodes;
-            obj.output_test = nodes{end}.output_test;
-
+            
             % enable passthrough, so that nodes in the workflow can 
             % be used with any of the dpm's supported by the class
             for c = 1:numel(nodes)
