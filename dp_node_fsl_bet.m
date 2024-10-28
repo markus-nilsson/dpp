@@ -1,12 +1,15 @@
 classdef dp_node_fsl_bet < dp_node
 
-    % coregistration using flirt
-    %
-    % default use: template FA in a dMRI pipeline
+    % brain extraction tool from FSL
+    
+    properties
+        opt_str = []; % example -f 0.7 -g 0.4 (see bet documentation)
+    end
 
     methods
 
-        function obj = dp_node_fsl_bet()
+        function obj = dp_node_fsl_bet(opt_str)
+            obj.opt_str = opt_str;
             obj.output_test = {'nii_fn', 'mask_fn'};
         end
 
@@ -19,7 +22,7 @@ classdef dp_node_fsl_bet < dp_node
         function output = execute(obj, input, output)
 
             % Build the flirt command 
-            bet_cmd = sprintf('bet %s %s', input.nii_fn, output.nii_fn);
+            bet_cmd = sprintf('bet %s %s %s', input.nii_fn, output.nii_fn, obj.opt_str);
 
             system(bet_cmd); % Execute the command
 
