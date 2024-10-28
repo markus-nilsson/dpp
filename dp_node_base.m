@@ -91,7 +91,7 @@ classdef dp_node_base < handle
                 node_names = cell(size(list_of_outputs));
 
                 for c = 1:numel(list_of_outputs)
-                    node_names{c} = class(obj.previous_node{c});
+                    node_names{c} = obj.previous_node{c}.name;
                     list_of_outputs{c} = obj.previous_node{c}.run(obj.opt.iter_mode, obj.opt);
                 end
 
@@ -100,6 +100,11 @@ classdef dp_node_base < handle
                 f2 = @(x) f3(x(f4(x,'/'):end));
                 f1 = @(x) f2(char(x));
                 list_of_prefixes = cellfun(@(x) f1(x), node_names, 'UniformOutput',false);
+
+                if (numel(list_of_prefixes) ~= numel(unique(list_of_prefixes)))
+                    error('merging previous nodes requires unique node names');
+                end
+
                 previous_outputs = dp_item.merge_outputs(list_of_outputs, list_of_prefixes);
 
                 % report on outcome
@@ -120,20 +125,40 @@ classdef dp_node_base < handle
             
             if (nargin < 2), mode = 'report'; end
             if (nargin < 3), opt.present = 1; end
-            if (ischar(opt) && strcmp(opt, 'debug'))
-                opt = struct('do_try_catch', 0);
-            end
+            if (ischar(opt) && strcmp(opt, 'debug')), opt = struct('do_try_catch', 0); end
 
-            obj.name = class(obj); % xxx
+            % set mode
             obj.mode = mode;
 
             % deal with options
             obj.opt.present = 1;
             opt = dp.dp_opt(opt);
             opt = obj.get_dpm().dp_opt(opt);
-            obj.opt = opt;          
+
+            % make sure this and previous nodes have names
+            obj.update_node(opt);
+
+            if (iscell(obj.previous_node))
+                for c = 1:numel(obj.previous_node)
+                    obj.previous_node{c}.update_node();
+                end
+            elseif (~isempty(obj.previous_node))
+                obj.previous_node.update_node();
+            end       
+
 
             outputs = dp.run(obj);
+        end
+
+        function obj = update_node(obj, opt) % set necessary properties
+
+            if (isempty(obj.name))
+                obj.name = class(obj);
+            end
+
+            if (nargin > 1)
+                obj.opt = opt;
+            end
         end
 
         function modes = get_supported_modes(obj)

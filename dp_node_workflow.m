@@ -21,12 +21,13 @@ classdef dp_node_workflow < dp_node % assume this is for nifti files
 
             c_input = cell(size(obj.nodes));
             c_output = cell(size(obj.nodes));
+
+            log = @(varargin) obj.log(varargin{:});            
+
+            log(2, '\nRunning workflow input to output\n%s', formattedDisplayText(input));
+            log(2, '\ninput (to workflow):\n%s', formattedDisplayText(input));
             
             for c = 1:numel(obj.nodes)
-
-                log = @(varargin) obj.nodes.log(varargin{:});
-                % Transfer the options to the node
-                obj.nodes{c}.opt = obj.opt;
                 
                 % Get previous output
                 if (c == 1)
@@ -40,7 +41,8 @@ classdef dp_node_workflow < dp_node % assume this is for nifti files
                 this_input  = obj.nodes{c}.run_po2i(po, 0);                
                 this_output = obj.nodes{c}.run_i2o(this_input);
 
-                log(2, '\noutput (intermediate in workflow:\n%s', formattedDisplayText(this_output));                
+                log(2, '\noutput (from %s):\n%s', obj.nodes{c}.name, ...
+                    formattedDisplayText(this_output));                
                 
                 c_input{c} = this_input;
                 c_output{c} = this_output;
@@ -52,6 +54,17 @@ classdef dp_node_workflow < dp_node % assume this is for nifti files
             output.wf_output = c_output;
             output.wf_input  = c_input;
             
+        end
+
+        function obj = update_node(obj, varargin) % set necessary properties
+
+            obj = update_node@dp_node(obj, varargin{:});
+            
+            % make sure nodes involves have names, are updated
+            for c = 1:numel(obj.nodes)
+                obj.nodes{c}.update_node(varargin{:});
+            end
+
         end
 
         function output = run_on_one(obj, input, output)

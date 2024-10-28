@@ -89,11 +89,18 @@ classdef dp_node_items < dp_node_base
 
             f = @(x,y) obj.inner_node.run_on_one(x,y);
 
-            % push options through to inner node
-            obj.inner_node.opt = obj.opt; 
+            % push mod through to inner node
             obj.inner_node.mode = obj.mode;
 
             output.items = obj.items_fun(f, input.items, output.items);
+
+        end     
+
+        function obj = update_node(obj, varargin) % set necessary properties
+
+            obj = update_node@dp_node(obj, varargin{:});
+            
+            obj.inner_node.update_node(varargin{:});
 
         end        
 
