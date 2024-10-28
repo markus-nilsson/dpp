@@ -83,7 +83,11 @@ classdef dp % data processor
 
                 po = previous_outputs{c};
 
-                if (node.opt.do_try_catch)
+                % xxx: here we need some extra granularity: 
+                % for iter we normally want to do the try catch, even
+                % when we are in debug mode as errors are used when 
+                % files are not found... 
+                if (node.opt.do_try_catch) || (strcmp(node.mode, 'iter'))
 
                     try
 
