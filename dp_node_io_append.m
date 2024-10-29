@@ -1,4 +1,4 @@
-classdef dp_node_append < dp_node_rename
+classdef dp_node_io_append < dp_node_io_rename
 
     % Appends output with relabeld or computed fields
 
@@ -8,8 +8,8 @@ classdef dp_node_append < dp_node_rename
     
     methods
 
-        function obj = dp_node_append(translation_table, do_overwrite)
-            obj = obj@dp_node_rename(translation_table);
+        function obj = dp_node_io_append(translation_table, do_overwrite)
+            obj = obj@dp_node_io_rename(translation_table);
 
             if (nargin > 1)
                 obj.do_overwrite_fields = do_overwrite;
@@ -18,7 +18,7 @@ classdef dp_node_append < dp_node_rename
 
         function output = i2o(obj, input)
 
-            output = i2o@dp_node_rename(obj, input);
+            output = i2o@dp_node_io_rename(obj, input);
 
             % do not write over fields, but apppend if they haven't been
             % written already

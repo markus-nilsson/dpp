@@ -1,4 +1,4 @@
-classdef dp_node_rename < dp_node
+classdef dp_node_io_rename < dp_node
 
     % Relabels field, or allows computation of fields
 
@@ -10,7 +10,7 @@ classdef dp_node_rename < dp_node
     
     methods
 
-        function obj = dp_node_rename(translation_table)
+        function obj = dp_node_io_rename(translation_table)
             obj.translation_table = translation_table;
 
             % check input
@@ -32,21 +32,6 @@ classdef dp_node_rename < dp_node
 
         end
 
-        % 
-        % %  not implemented yet
-        % function [status, f, age] = input_exist(obj, input)
-        %     status = []; 
-        %     f = [];
-        %     age = [];
-        % end
-        % 
-        % function [status, f, age] = output_exist(obj, output)
-        %     status = [];
-        %     f = [];
-        %     age = [];
-        % end
-
     end
-
 
 end
