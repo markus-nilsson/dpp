@@ -56,17 +56,19 @@ classdef dp % data processor
 
             function output = inner_fun(po)
 
+                % Excessive logging with verbose level 2
                 node.log(2, '\nStarting %s', node.name);                
 
-                po     = node.manage_po(po);
-
+                % Manage previous output
+                po = node.manage_po(po);
                 node.log(2, '\nprevious_output:\n%s', ...
                     formattedDisplayText(po));                
 
+                % Previous output to a new input
                 input  = node.run_po2i(po);
-
                 node.log(2, '\ninput:\n%s', formattedDisplayText(input));                
                 
+                % Run the processing, and display output
                 output = node.run_i2o(input);
                 output = node.run_on_one(input, output);
                 output = node.run_clean(output);
