@@ -135,6 +135,11 @@ classdef dp_node < dp_node_base
             if (~isempty(test_fields)) % test only the fields asked for
                 
                 for c = 1:numel(test_fields)
+
+                    if (~isfield(io, test_fields{c}))
+                        disp(fieldnames(io)); % error will be thrown
+                    end
+
                     tmp.(test_fields{c}) = io.(test_fields{c});
                 end
                 do_pass_empty = 0;

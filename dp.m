@@ -88,7 +88,7 @@ classdef dp % data processor
                 % for iter we normally want to do the try catch, even
                 % when we are in debug mode as errors are used when 
                 % files are not found... 
-                if (node.opt.do_try_catch) || (strcmp(node.mode, 'iter'))
+                if (node.opt.do_try_catch)
 
                     try
 
@@ -183,6 +183,14 @@ classdef dp % data processor
             if (ischar(opt.id_filter))
                 opt.id_filder = {opt.id_filter};
             end
+        end
+
+
+        function node = setup_node(name, prev, node)
+
+            node.name = name;
+            node.previous_node = prev;
+
         end
 
     end

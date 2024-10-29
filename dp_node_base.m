@@ -123,19 +123,23 @@ classdef dp_node_base < handle
         end
 
         % run on all outputs from the previous node
-        function outputs = run(obj, mode, opt)
+        function outputs = run(obj, mode, opt_in)
             
             if (nargin < 2), mode = 'report'; end
-            if (nargin < 3), opt.present = 1; end
-            if (ischar(opt) && strcmp(opt, 'debug')), opt = struct('do_try_catch', 0); end
+            if (nargin < 3), opt_in.present = 1; end
 
             % set mode
             obj.mode = mode;
 
             % deal with options
             obj.opt.present = 1;
-            opt = dp.dp_opt(opt);
+            opt = dp.dp_opt(opt_in);
             opt = obj.get_dpm().dp_opt(opt);
+
+            % force outside do_try_catch
+            if (isfield(opt_in, 'do_try_catch'))
+                opt.do_try_catch = opt_in.do_try_catch;
+            end
 
             % make sure this and previous nodes have names
             obj.update_node(opt);
