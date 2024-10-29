@@ -13,8 +13,14 @@ classdef dp_node_dmri_flirt < dp_node_fsl_flirt
 
             input = po; 
             
-            fsl_data_dir = getenv('FSLDIR'); % Get FSL directory from environment
-            input.target_fn = fullfile(fsl_data_dir, 'data', 'standard', 'FMRIB58_FA_1mm.nii.gz');
+            % allow target fns from earlier steps, like in longitudinal
+            % pipes
+            if (~isfield(po, 'target_fn'))
+                fsl_data_dir = getenv('FSLDIR'); % Get FSL directory from environment
+                input.target_fn = fullfile(fsl_data_dir, 'data', 'standard', 'FMRIB58_FA_1mm.nii.gz');
+            end
+            
+            
             input.nii_fn = po.fa_fn;
         end
 
