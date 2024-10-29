@@ -11,6 +11,12 @@ classdef dp_node_dmri_dti < dp_node
             output.md_fn = fullfile(input.op, 'dti_lls_md.nii.gz');
             output.fa_fn = fullfile(input.op, 'dti_lls_fa.nii.gz');
             output.s0_fn = fullfile(input.op, 'dti_lls_s0.nii.gz');
+
+            % pass info about the dmri fn, and mask_fn if existent
+            output.dmri_fn = input.dmri_fn;
+
+            if (isfield(input, 'mask_fn')), output.mask_fn = input.mask_fn; end
+
         end
 
         function output = execute(obj, input, output)
