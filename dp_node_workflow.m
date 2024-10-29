@@ -8,6 +8,17 @@ classdef dp_node_workflow < dp_node % assume this is for nifti files
 
         function obj = dp_node_workflow(nodes)
             obj.nodes = nodes;
+
+            % Basic checking
+            if (numel(nodes) <= 1)
+                error('need at least two nodes for this to make sense');
+            end
+
+            % set previous nodes
+            for c = 2:numel(nodes)
+                obj.nodes{c}.previous_node = obj.nodes{c-1};
+            end
+            
             
             % enable passthrough, so that nodes in the workflow can 
             % be used with any of the dpm's supported by the class
@@ -74,7 +85,8 @@ classdef dp_node_workflow < dp_node % assume this is for nifti files
 
                 obj.nodes{end}.opt = obj.opt;
                 obj.nodes{end}.mode = obj.mode;
-                
+
+                % warning('does input check on wrong thing');
                 output.wf_output{end} = obj.nodes{end}.get_dpm().run_on_one(...
                     output.wf_input{end}, output.wf_output{end});
 

@@ -13,8 +13,8 @@ classdef dpm_report < dpm
         function output = run_on_one(obj, input, output)
 
             % report on the existance of files
-            input_status = obj.node.input_exist(input);
-            output_status = obj.node.output_exist(output);
+            [input_status, input_f] = obj.node.input_exist(input);
+            [output_status, output_f] = obj.node.output_exist(output);
 
             % build and print string
             str = input.id;
@@ -30,6 +30,12 @@ classdef dpm_report < dpm
             end
 
             obj.node.log(0, str);
+
+            obj.node.log(2, '\ninput fields:\n');
+            obj.node.log(2, '%s', formattedDisplayText(input_f));
+            obj.node.log(2, '\noutput fields:\n');
+            obj.node.log(2, '%s', formattedDisplayText(output_f));
+            
 
 
             % check if we are done (used below)

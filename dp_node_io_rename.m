@@ -32,6 +32,10 @@ classdef dp_node_io_rename < dp_node
 
         end
 
+        function obj = update_node(obj, varargin)
+            obj = update_node@dp_node(obj, varargin{:});
+        end        
+
     end
 
 end

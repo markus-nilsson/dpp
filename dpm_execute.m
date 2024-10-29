@@ -83,19 +83,17 @@ classdef dpm_execute < dpm
                 end
             end
             
+            % Found no reason to run
             do_run = 0; 
-            
-
-
         end
 
         function output = run_on_one(obj, input, output)
 
             obj.node.log(0, '%s: Starting mode ''execute'' on node %s', input.id, obj.node.name);
-            obj.node.log(0, '%s:   Testing execute conditions', input.id);
+            obj.node.log(1, '%s:   Testing execute conditions', input.id);
 
             if (obj.do_run_node(input, output))                
-                obj.node.log(0, '%s:   Starting execution...', input.id);
+                obj.node.log(1, '%s:   Starting execution...', input.id);
                 output = obj.node.execute(input, output);            
                 obj.node.log(0, '%s:   Done executing %s', input.id, obj.node.name);
             else
