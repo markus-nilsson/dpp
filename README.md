@@ -41,8 +41,8 @@ There are different types of nodes
 
 In addition, there are nodes that only deal with inputs and outputs
 
-- `dp_node_rename`, which only renames fields
-- `dp_node_append`, which appends fields
+- `dp_node_io_rename`, which only renames fields
+- `dp_node_io_append`, which appends fields
 
 Examples of nodes with more specific functions are
 
@@ -139,11 +139,11 @@ node for a subject where all preceeding nodes work correctly. For example
 
 The nodes can also be used in a stand-alone fashion. Example for denoising
 
-`input.dmri_fn = 'my_path/your_dwi_volume.nii.gz';
-input.op = msf_fileparts(input.nii_fn);
+`input.dmri_fn = 'my_path/your_dwi_volume.nii.gz';`
+`input.op = msf_fileparts(input.nii_fn);`
 
-a = dp_node_dmri_denoise();
-a.execute(input, a.i2o(input));`
+`a = dp_node_dmri_denoise();`
+`a.execute(input, a.i2o(input));`
 
 # Dependencies
 
