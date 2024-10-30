@@ -64,16 +64,18 @@ classdef dp_node_dmri_disco_synb0 < dp_node
                 error('could not execute docker container')
             end
 
-            % save the synthetic b0
+            % save the synthetic b0 (virtual pa)
             msf_mkdir(input.op);
             copyfile(fullfile(op, 'b0_u.nii.gz'), output.synb0_fn);
             synb0_xps = mdm_xps_from_bt(zeros(1,6));
             mdm_xps_save(synb0_xps, ...
                 mdm_xps_fn_from_nii_fn(output.synb0_fn));
 
-            % Prepare for topup - build ap/pa file
+            % Prepare for topup
             J = mdm_nii_read(output.synb0_fn);
 
+            % this has to align with apply topup, which assumes
+            % data comes as pa, ap
             mdm_nii_write(cat(4, I, J), output.topup_nii_fn, h);
 
             xps2 = mdm_xps_from_bt(cat(1, xps.bt, synb0_xps.bt));

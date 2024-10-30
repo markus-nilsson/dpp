@@ -1,5 +1,7 @@
 classdef dp_node_dmri_topup_prep < dp_node
 
+    % pulls out data and saves it in ap pa order
+
     methods
         
         function output = i2o(obj, input)
@@ -45,16 +47,13 @@ classdef dp_node_dmri_topup_prep < dp_node
             % Powder average and merge
             s_pa_b0 = mdm_s_powder_average(s_pa_b0, wp, opt);
             s_ap_b0 = mdm_s_powder_average(s_ap_b0, wp, opt);
-            s = mdm_s_merge({s_pa_b0, s_ap_b0}, wp, 'topup', opt);
+            s = mdm_s_merge({s_ap_b0, s_pa_b0}, wp, 'topup', opt);
 
             % Copy file
             copyfile(s.nii_fn, output.topup_nii_fn);
             mdm_xps_save(s.xps, output.topup_xps_fn);
 
             % Write topup specification file
-            % File is OK with both pa/ap and ap/pa order
-            % and define topup data path
-            %
             % xxx: this should find correct information from a json file
             mdm_txt_write({'0 1 0 0.1', '0 -1 0 0.1'}, ...
                 output.topup_spec_fn, opt);

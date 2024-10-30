@@ -39,11 +39,14 @@ classdef dp_node_dmri_topup_apply < dp_node
                 mdm_nii_write(zeros(size(I)), tmp_nii_fn, h);
                 s_tmp_pa = s_ap;
                 s_tmp_pa.nii_fn = tmp_nii_fn;
+
             else
-                s_tmp_pa = s_ap;
+                s_tmp_pa = s_pa;
             end
 
             % Define command
+            msf_mkdir(fileparts(output.nii_fn));
+
             cmd = sprintf(['bash --login -c ''applytopup ' ...
                 '--imain="%s","%s" ' ...
                 '--inindex=1,2 ' ...
@@ -51,8 +54,8 @@ classdef dp_node_dmri_topup_apply < dp_node
                 '--datain="%s" ' ...
                 '--out="%s"', ...
                 ''''], ...
-                s_tmp_pa.nii_fn, ...    % imain_1
-                s_ap.nii_fn, ...        % imain_2
+                s_ap.nii_fn, ...        % imain_1 (acquired data first)
+                s_tmp_pa.nii_fn, ...    % imain_2
                 input.topup_data_path, ...    % topup
                 input.topup_spec_fn, ...      % spec
                 output.nii_fn);         % output_fn
