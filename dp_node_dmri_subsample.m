@@ -28,10 +28,12 @@ classdef dp_node_dmri_subsample < dp_node
 
             I = I(:,:,:,ind);
 
+            xps = mdm_xps_subsample(xps, ind);
+
             mdm_nii_write(I, output.dmri_fn, h);
 
+            mdm_xps_save(xps, mdm_xps_fn_from_nii_fn(output.dmri_fn));
 
         end
-
     end
 end

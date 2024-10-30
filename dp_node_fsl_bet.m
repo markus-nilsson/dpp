@@ -9,10 +9,11 @@ classdef dp_node_fsl_bet < dp_node
     methods
 
         function obj = dp_node_fsl_bet(opt_str)
+            if (nargin == 0), opt_str = ''; end
             obj.opt_str = opt_str;
             obj.output_test = {'nii_fn', 'mask_fn'};
-        end
 
+        end
     
         function output = i2o(obj, input)
             output.mask_fn = msf_fn_new_path(input.op, msf_fn_append(input.nii_fn, '_mask'));

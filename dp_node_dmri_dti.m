@@ -8,6 +8,7 @@ classdef dp_node_dmri_dti < dp_node
         end
 
         function output = i2o(obj, input)
+            
             output.md_fn = fullfile(input.op, 'dti_lls_md.nii.gz');
             output.fa_fn = fullfile(input.op, 'dti_lls_fa.nii.gz');
             output.s0_fn = fullfile(input.op, 'dti_lls_s0.nii.gz');

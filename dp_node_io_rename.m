@@ -25,8 +25,10 @@ classdef dp_node_io_rename < dp_node
             for c = 1:numel(f)
                 if (isa(f{c}{2}, 'function_handle'))
                     output.(f{c}{1}) = f{c}{2}(input);
-                else
+                elseif (all(ischar(f{c}{2}))) % assume field name
                     output.(f{c}{1}) = input.(f{c}{2});
+                else % just set the contents of the field
+                    output.(f{c}{1}) = f{c}{2};
                 end
             end
 

@@ -26,7 +26,11 @@ classdef dp_node_identify_sequences < dp_node
                 output.(f{c}{1}) = msf_find_fn(input.nii_path, f{c}{2}, -1);
 
                 if (isempty(output.(f{c}{1})))
-                    1;
+                    obj.log(0, 'File not found for field %s pattern %s', f{c}{1}, f{c}{2});
+                    
+                    % allow some granularity here, sometimes ok not to
+                    % find data
+                    error('file not found');
                 end
 
             end
