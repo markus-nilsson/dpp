@@ -43,6 +43,17 @@ In addition, there are nodes that only deal with inputs and outputs
 
 - `dp_node_io_rename`, which only renames fields
 - `dp_node_io_append`, which appends fields
+- `dp_node_io`, which appends a single fields
+
+These nodes takes as input a translation table on the form 
+`{ {'field_1'}, {value} }`, where value can be a function
+handle `@(x) x.field`, which will get the input structure sent to 
+it. Here, output.field_1 would have been set to input.field. 
+Finally, dp_node_io takes only a single pair as input, e.g. 
+`dp_node_io('field_1', value)` would achieve the same thing as above. 
+The rename node will have only `field_1` as output (on top of
+standard fields, whereas the other two will append the input
+structure.
 
 Examples of nodes with more specific functions are
 
@@ -50,9 +61,11 @@ Examples of nodes with more specific functions are
   nifti file
 - `dp_node_dmri_denoise.m`, which applies denoising via mrtrix. 
 
-To use the more specific nodes in your project, create a class that 
-inherits from the specific node, and customize it by overloading the 
-`po2i` and possibly the `i2o` methods. See examples.
+To use the more specific nodes in your project, you have two options.
+First, start from scratch, and inherit from `dp_node` and implement
+at minimum `i2o` and `execute`. Second, you can 
+inherit from an existing more functional node, and customize it by 
+overloading the `po2i` and possibly the `i2o` methods. See examples.
 
 ### Diffusion nodes
 
@@ -79,6 +92,7 @@ data processing in the given `mode`. Examples of modes are
 - `visualize`, which saves visualizations of the data managed by the node
 - `mgui`, which opens the output of the node in a graphical user interface
 
+Normally, you would use `iter` and `report` to troubleshoot a developing pipeline.
 
 ## Options
 
@@ -109,7 +123,9 @@ Optional, but near mandatory fields
 - `op`, is the output path (this is where e.g. dp_node_denoise puts its output)
 - `bp`, is the base-path from which paths are created (e.g. bp/id/nii/file.nii.gz)
 
-These three fields will always be pushed from previous nodes. 
+These three fields will always be set in the output node from the input node, 
+even if they are not mentioned in your code. However, the framework will not
+override changes done in a node.
 
 ## Output structure
 
