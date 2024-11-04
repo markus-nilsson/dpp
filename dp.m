@@ -33,8 +33,8 @@ classdef dp % data processor
             node.log(0, 'Found %i candidate items', numel(previous_outputs));
 
             % Filter and exclude items
-            previous_outputs = dp_item.exclude(previous_outputs, node.opt);
-            previous_outputs = dp_item.filter(previous_outputs, node.opt);
+            previous_outputs = dp_item.exclude(previous_outputs, node);
+            previous_outputs = dp_item.filter(previous_outputs, node);
 
             % Check before we move on
             if (numel(previous_outputs) == 0)
@@ -101,10 +101,12 @@ classdef dp % data processor
                         % Deal with error
                         [error_source, n] = dp.deal_with_errors(me, n);
 
-                        if (strcmp(node.mode, 'report'))
-                            node.log(1, '%s --> %s (%s)\n', previous_outputs{c}.id, ...
-                                me.message, error_source);
-                        end
+                        node.log(2, '%s: Error in node %s (mode: %s, source: %s)', ...
+                            previous_outputs{c}.id, ...
+                            node.name, node.mode, error_source);
+                        node.log(2, '%s:   %s', ...
+                            previous_outputs{c}.id, ...
+                            me.message);
                     end
                 else
                     outputs{end+1} = inner_fun(po); %#ok<AGROW>
@@ -192,6 +194,12 @@ classdef dp % data processor
 
             node.name = name;
             node.previous_node = prev;
+
+        end
+
+        function fn = new_fn(op, fn, suffix)
+
+            fn = msf_fn_new_path(op, msf_fn_append(fn, suffix));
 
         end
 

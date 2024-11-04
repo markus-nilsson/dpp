@@ -1,6 +1,10 @@
 classdef dp_node_dcm2nii_on_folder < dp_node_items
 
     % this runs dcm2nii_and_xps on folders with dicoms
+    %
+    % expects the following of the outputs of the previous node
+    % ip - input path to dcms
+    % op - output path to dcs
 
     properties
         do_print_skip = 0;
@@ -22,6 +26,10 @@ classdef dp_node_dcm2nii_on_folder < dp_node_items
             % po.ip (input folder with zips)
             % po.op (output folder with zips)
 
+            if (~exist(po.ip, 'dir'))
+                error('could not find input path (ip)');
+            end
+
             di = dir(fullfile(po.ip));
 
             input.items = {};
@@ -39,7 +47,8 @@ classdef dp_node_dcm2nii_on_folder < dp_node_items
 
                 tmp_input.dcm_folder = fullfile(po.ip, di(c).name);
                 
-                tmp_input.bp = po.op;
+                tmp_input.bp = po.bp;
+                tmp_input.op = po.op;
 
                 x = tmp_input.dcm_folder;
                 if (x(end) == filesep), x = x(1:(end-1)); end
@@ -54,4 +63,5 @@ classdef dp_node_dcm2nii_on_folder < dp_node_items
         end
         
     end
+
 end

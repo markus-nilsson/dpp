@@ -167,6 +167,13 @@ classdef dp_node_base < handle
             end
         end
 
+        function obj = setup(obj, previous_node, name)
+            obj.previous_node = previous_node;
+
+            if (nargin > 2), obj.name = name; end
+        end
+        
+
         function modes = get_supported_modes(obj)
             modes = cellfun(@(x) x.get_mode_name(), obj.dpm_list, 'UniformOutput', false);
         end
@@ -202,9 +209,18 @@ classdef dp_node_base < handle
 
         % compile output
         function output = run_i2o(obj, input)
+
+            % check quality of input
+            f = {'id', 'op', 'bp'};
+
+            for c = 1:numel(f)
+                if (~isfield(input, f{c}))
+                    error('mandatory input field missing (%s)', f{c});
+                end
+            end
+
             output = obj.i2o(input);
 
-            f = {'id', 'op', 'bp'};
 
             if (obj.do_i2o_pass) % pass all inputs to outputs
                 f = cat(2, fieldnames(input));

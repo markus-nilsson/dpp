@@ -124,7 +124,7 @@ classdef dp_node < dp_node_base
 
         function obj = update_node(obj, varargin)
             obj = update_node@dp_node_base(obj, varargin{:});
-        end        
+        end      
 
     end
 

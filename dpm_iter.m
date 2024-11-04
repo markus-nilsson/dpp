@@ -19,7 +19,7 @@ classdef dpm_iter < dpm
         function output = run_on_one(obj, input, output)
 
             if (~all(obj.node.output_exist(output)))
-                obj.node.opt.log(1, 'Output not a valid iter item for next node');
+                obj.node.log(1, 'Output not a valid iter item for next node');
             end
             
         end

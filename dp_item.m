@@ -4,11 +4,11 @@ classdef dp_item
     methods(Static)
 
 
-        function outputs = exclude(inputs, opt)
+        function outputs = exclude(inputs, node)
 
             % not sure this should be here, move to dp_opt
+            opt = node.opt;
             opt = msf_ensure_field(opt, 'id_exclude', {});
-            opt = msf_ensure_field(opt, 'log', @()1);
 
             if (isempty(opt.id_exclude))
                 outputs = inputs;
@@ -29,16 +29,16 @@ classdef dp_item
 
             outputs = inputs(ind_included);
 
-            opt.log('Excluding %i items due to opt.id_exclude', ...
+            node.log(0, 'Excluding %i items due to opt.id_exclude', ...
                 sum(ind_excluded));
 
         end
 
-        function outputs = filter(inputs, opt)
+        function outputs = filter(inputs, node)
 
             % not sure this should be here, move to dp_opt
+            opt = node.opt;
             opt = msf_ensure_field(opt, 'id_filter');
-            opt = msf_ensure_field(opt, 'log', @(varargin)1);
             
             if (isempty(opt.id_filter))
                 outputs = inputs;
@@ -62,7 +62,7 @@ classdef dp_item
 
             % Avoid repeated displays
             if (numel(inputs) > 1)
-                opt.log('--> Input filter active: %i out of %i ids passed', ...
+                node.log(0, '--> Input filter active: %i out of %i ids passed', ...
                     sum(status), numel(inputs));
             end
 

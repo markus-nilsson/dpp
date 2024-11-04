@@ -39,6 +39,16 @@ classdef dp_node_items < dp_node_base
                             obj.log(1, '%s --> %s\n', input_items{c}.id, ...
                                 me.message);
                         end
+
+
+                        obj.log(2, '%s: Error in dp_node_items (%s)', ...
+                            input_items{c}.id, ...
+                            obj.name);
+                        obj.log(2, '%s:   %s', ...
+                            input_items{c}.id, ...
+                            me.message);
+
+
                     end
 
                 else

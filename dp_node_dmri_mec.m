@@ -4,7 +4,9 @@ classdef dp_node_dmri_mec < dp_node
 
         function input = po2i(obj, po)
             input = po;
-            input.elastix_p = elastix_p_affine(100);
+            if (~isfield(input, 'elastix_p'))
+                input.elastix_p = elastix_p_affine(100);
+            end
             input.opt = mdm_opt();
         end
         

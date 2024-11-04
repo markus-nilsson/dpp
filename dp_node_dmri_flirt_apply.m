@@ -1,12 +1,22 @@
 classdef dp_node_dmri_flirt_apply < dp_node_fsl_flirt_apply
 
     % coregistration of fa using flirt
+    %
+    % expected outputs from previous node
+    % - dmri_fn 
+    % - matrix_fn - from a previous flirt registration
+    % - xps_fn (optional, will create if needed)
+    % - mask_fn (optional)
 
     methods
 
         function input = po2i(obj, po)
             input = po;
             input.nii_fn = po.dmri_fn;
+
+            if (~isfield(input, 'xps_fn'))
+                input.xps_fn = mdm_xps_fn_from_nii_fn(po.dmri_fn);
+            end
         end
 
         function output = i2o(obj, input)
@@ -46,13 +56,15 @@ classdef dp_node_dmri_flirt_apply < dp_node_fsl_flirt_apply
 
             R = tmp;
 
-            xps = mdm_xps_load(mdm_xps_fn_from_nii_fn(input.dmri_fn));
+            xps = mdm_xps_load(input.xps_fn);
 
             for c = 1:xps.n
                 xps.bt(c,:) = tm_3x3_to_1x6(R * tm_1x6_to_3x3(xps.bt(c,:)) * R');
             end
 
-            xps = msf_rmfield(xps, 'u');
+            if (isfield(xps, 'u'))
+                xps.u = xps.u * R';
+            end
 
             mdm_xps_save(xps, mdm_xps_fn_from_nii_fn(output.dmri_fn));
 

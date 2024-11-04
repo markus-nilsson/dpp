@@ -19,7 +19,6 @@ classdef dp_node_workflow < dp_node % assume this is for nifti files
                 obj.nodes{c}.previous_node = obj.nodes{c-1};
             end
             
-            
             % enable passthrough, so that nodes in the workflow can 
             % be used with any of the dpm's supported by the class
             for c = 1:numel(nodes)
