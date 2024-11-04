@@ -25,12 +25,12 @@ classdef dp % data processor
         function outputs = run(node)
             
             % Report on status
-            node.log(0, 'Running %s with mode ''%s''', node.name, node.mode);
+            node.log(0, '%tRunning %s with mode ''%s''', node.name, node.mode);
 
             % Run previous steps first to get items to iterate over
             previous_outputs = node.get_iterable();
 
-            node.log(0, 'Found %i candidate items', numel(previous_outputs));
+            node.log(0, '%tFound %i candidate items', numel(previous_outputs));
 
             % Filter and exclude items
             previous_outputs = dp_item.exclude(previous_outputs, node);
@@ -38,7 +38,7 @@ classdef dp % data processor
 
             % Check before we move on
             if (numel(previous_outputs) == 0)
-                node.log(0, 'Iteration list empty - no actions will be taken!');
+                node.log(0, '%tIteration list empty - no actions will be taken!');
                 outputs = {};
                 return;
             end

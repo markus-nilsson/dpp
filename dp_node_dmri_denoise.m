@@ -10,9 +10,7 @@ classdef dp_node_dmri_denoise < dp_node
 
         function output = i2o(obj, input) %#ok<INUSD>
             
-            output.dmri_fn = msf_fn_new_path(input.op, ...
-                msf_fn_append(input.dmri_fn, '_dn'));
-
+            output.dmri_fn = dp.new_fn(input.op, input.dmri_fn, '_dn');
             output.xps_fn = mdm_xps_fn_from_nii_fn(output.dmri_fn);
             
         end
@@ -22,6 +20,7 @@ classdef dp_node_dmri_denoise < dp_node
             % execute mrtrix denoising (linux version here, remove &> .. to debug
             cmd = sprintf('dwidenoise %s %s &> /dev/null', input.dmri_fn, output.dmri_fn);
             msf_delete(output.dmri_fn);
+            msf_mkdir(fileparts(output.dmri_fn));
             msf_system(cmd);
 
             % copy the xps from the original data (if this dataset has

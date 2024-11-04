@@ -12,7 +12,7 @@ classdef dpm_report < dpm
 
         function output = run_on_one(obj, input, output)
 
-            % report on the existance of files
+            % report on the existence of files
             [input_status, input_f] = obj.node.input_exist(input);
             [output_status, output_f] = obj.node.output_exist(output);
 

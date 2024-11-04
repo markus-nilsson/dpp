@@ -211,16 +211,20 @@ classdef dp_node_base < handle
         function output = run_i2o(obj, input)
 
             % check quality of input
-            f = {'id', 'op', 'bp'};
+            f = {'id', 'bp'}; % op not needed at all times
 
             for c = 1:numel(f)
                 if (~isfield(input, f{c}))
-                    error('mandatory input field missing (%s)', f{c});
+                    % xxx: better solution needed
+                    obj.log(0, 'Mandatory input field missing (%s)', f{c});
+                    error('Mandatory input field missing (%s)', f{c});
                 end
             end
 
             output = obj.i2o(input);
 
+            % check quality of input
+            f = {'id', 'op', 'bp'};            
 
             if (obj.do_i2o_pass) % pass all inputs to outputs
                 f = cat(2, fieldnames(input));
@@ -290,7 +294,10 @@ classdef dp_node_base < handle
             log_str = varargin{2};
             log_arg = varargin(3:end);
 
+
             if (obj.opt.verbose >= log_level)
+                log_str = strrep(log_str, '%t', ...
+                    char(zeros(1, max(0, 2*(obj.opt.c_level-1))) + ' '));
                 fprintf(cat(2, log_str, '\n'), log_arg{:});
             end
 

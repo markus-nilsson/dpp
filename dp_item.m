@@ -4,22 +4,29 @@ classdef dp_item
     methods(Static)
 
 
-        function outputs = exclude(inputs, node)
+        function outputs = exclude(inputs, node, id_exclude)
 
-            % not sure this should be here, move to dp_opt
-            opt = node.opt;
-            opt = msf_ensure_field(opt, 'id_exclude', {});
+            % Prefer to use input, but for legacy reasons, use opt
+            if (nargin < 3)
+                if (isfield(opt, 'id_exclude'))
+                    id_exclude = opt.id_exclude; 
+                else
+                    id_exclude = {};
+                end
+            end
 
-            if (isempty(opt.id_exclude))
+            % Return if there is nothing to exclude
+            if (isempty(id_exclude))
                 outputs = inputs;
                 return;
             end
 
+            % Go through and exclude subjects based on their id's
             ind_included = ones(size(inputs)) == 1;
-            ind_excluded = ones(size(opt.id_exclude)) == 0;
-            for c_exclude = 1:numel(opt.id_exclude)
+            ind_excluded = ones(size(id_exclude)) == 0;
+            for c_exclude = 1:numel(id_exclude)
                 for c = 1:numel(inputs)
-                    if (strcmp(inputs{c}.id, opt.id_exclude{c_exclude}))
+                    if (strcmp(inputs{c}.id, id_exclude{c_exclude}))
                         ind_included(c) = 0;
                         ind_excluded(c_exclude) = 1;
                         break;
@@ -29,12 +36,14 @@ classdef dp_item
 
             outputs = inputs(ind_included);
 
-            node.log(0, 'Excluding %i items due to opt.id_exclude', ...
+            node.log(0, '%tExcluding %i items due to id_exclude', ...
                 sum(ind_excluded));
 
         end
 
         function outputs = filter(inputs, node)
+
+            % move to the same structure as exclude, eventually
 
             % not sure this should be here, move to dp_opt
             opt = node.opt;
@@ -62,7 +71,7 @@ classdef dp_item
 
             % Avoid repeated displays
             if (numel(inputs) > 1)
-                node.log(0, '--> Input filter active: %i out of %i ids passed', ...
+                node.log(0, '%i--> Input filter active: %i out of %i ids passed', ...
                     sum(status), numel(inputs));
             end
 

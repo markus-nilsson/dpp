@@ -86,14 +86,23 @@ classdef dp_node_workflow < dp_node % assume this is for nifti files
                 obj.nodes{end}.mode = obj.mode;
 
                 % warning('does input check on wrong thing');
+                %
+                % this is a broken part of the machinery - here we
+                % do not get the expected behaviour of e.g. report
+                %
                 output.wf_output{end} = obj.nodes{end}.get_dpm().run_on_one(...
                     output.wf_input{end}, output.wf_output{end});
+
+                % hack to get reporting to work
+                if (isfield(output.wf_output{end}, 'status'))
+                    output.status = output.wf_output{end}.status;
+                end
 
                 return;
             end
 
             % input not used here, must use a well-formatted output
-            if (obj.get_dpm().do_run_node(input,output))
+            if (obj.get_dpm().do_run_node(input, output))
 
                 obj.log(0, '%s: Running workflow (%s)', input.id, obj.name);
 
