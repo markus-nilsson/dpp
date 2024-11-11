@@ -30,6 +30,8 @@ classdef dp % data processor
             % Run previous steps first to get items to iterate over
             previous_outputs = node.get_iterable();
 
+            previous_outputs = node.clean_iterable(previous_outputs); 
+
             node.log(0, '%tFound %i candidate items', numel(previous_outputs));
 
             % Filter and exclude items
@@ -54,6 +56,10 @@ classdef dp % data processor
             % Loop over all previous outputs
             outputs = {};
 
+            % This should be put elsewhere later
+            do_input_check = ~strcmp(node.mode, 'report');
+            1;
+
             function output = inner_fun(po)
 
                 % Excessive logging with verbose level 2
@@ -65,7 +71,7 @@ classdef dp % data processor
                     formattedDisplayText(po));                
 
                 % Previous output to a new input
-                input  = node.run_po2i(po);
+                input  = node.run_po2i(po, do_input_check);
                 node.log(2, '\ninput:\n%s', formattedDisplayText(input));                
                 
                 % Run the processing, and display output
@@ -76,7 +82,9 @@ classdef dp % data processor
                 node.log(2, '\noutput:\n%s', formattedDisplayText(output));                
                 
             end  
-            
+
+
+            last_error = [];
             for c = 1:numel(previous_outputs)
 
                 % Display subject name
@@ -98,6 +106,8 @@ classdef dp % data processor
 
                     catch me
 
+                        last_error = me;
+
                         % Deal with error
                         [error_source, n] = dp.deal_with_errors(me, n);
 
@@ -113,6 +123,28 @@ classdef dp % data processor
                 end
                 
                 node.log(1, ' ');
+            end
+
+            % Check if we're missing outputs because of an error (generous
+            % logging)
+            if (numel(outputs) == 0) && (numel(previous_outputs) > 0)
+                    
+                node.log(0, '');
+                node.log(0, 'This node (%s) produced no outputs', node.name);
+                node.log(0, '  despite having outputs to process from the previous node');
+
+                if (isempty(last_error))
+                    node.log(0, '  and no errors occurred during processing - unexpected!');
+                else
+                    node.log(0, '  probably beacuse an errors occurred, last error:');
+                    node.log(0, ' ');
+                    node.log(0, '%s', last_error.message);
+                    node.log(0, ' ');
+                    node.log(0, '%s', formattedDisplayText(last_error.stack(1)));
+                    node.log(0, ' ');
+                end
+
+
             end
 
             % Wrap up with some reporting
@@ -197,9 +229,19 @@ classdef dp % data processor
 
         end
 
-        function fn = new_fn(op, fn, suffix)
+        function fn = new_fn(op, fn, suffix, ext_in)
+            
+            if (nargin < 3), suffix = ''; end
+            if (nargin < 4), ext_in = ''; end
 
-            fn = msf_fn_new_path(op, msf_fn_append(fn, suffix));
+            [~, name, ext] = msf_fileparts(fn);
+
+            if (~isempty(ext_in))
+                ext = ext_in; 
+            end
+
+
+            fn = fullfile(op, cat(2, name, suffix, ext));
 
         end
 

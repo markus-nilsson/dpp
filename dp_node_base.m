@@ -82,7 +82,7 @@ classdef dp_node_base < handle
         function previous_outputs = get_iterable(obj)
 
             if (isempty(obj.previous_node))
-                error('previous_node not defined, aborting');
+                error('%s: previous_node not defined, aborting', obj.name);
             end
 
             % Merging needed? (I do not want the code here, but rather in
@@ -122,6 +122,23 @@ classdef dp_node_base < handle
 
         end
 
+        function outputs = clean_iterable(obj, outputs)
+
+            % one of these functions that are here to make life easier
+            % but that should not have to be here if things were 
+            % done correctly from the start
+            if (isa(obj.previous_node, 'dp_node_primary'))
+                ind = ones(size(outputs));
+                for c = 1:numel(ind)
+                    if (outputs{c}.id(1) == '.')
+                        ind(c) = 0;
+                    end
+                end
+                outputs = outputs(ind == 1);
+            end
+
+        end
+
         % run on all outputs from the previous node
         function outputs = run(obj, mode, opt_in)
             
@@ -151,7 +168,6 @@ classdef dp_node_base < handle
             elseif (~isempty(obj.previous_node))
                 obj.previous_node.update_node();
             end       
-
 
             outputs = dp.run(obj);
         end
@@ -185,7 +201,7 @@ classdef dp_node_base < handle
 
         % run the data processing mode's processing/reporting
         function outputs = process_outputs(obj, outputs)
-            obj.get_dpm().process_outputs(outputs);
+            outputs = obj.get_dpm().process_outputs(outputs);
         end
        
         function pop = manage_po(obj, pop)

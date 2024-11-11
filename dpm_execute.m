@@ -103,7 +103,7 @@ classdef dpm_execute < dpm
                         
         end
 
-        function process_outputs(obj, outputs)
+        function outputs = process_outputs(obj, outputs)
             1;
         end
 

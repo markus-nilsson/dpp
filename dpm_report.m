@@ -11,7 +11,7 @@ classdef dpm_report < dpm
         end
 
         function output = run_on_one(obj, input, output)
-
+                       
             % report on the existence of files
             [input_status, input_f] = obj.node.input_exist(input);
             [output_status, output_f] = obj.node.output_exist(output);
@@ -45,7 +45,7 @@ classdef dpm_report < dpm
             
         end
 
-        function process_outputs(obj, outputs)
+        function outputs = process_outputs(obj, outputs)
 
             % Count number of done's
             f = @(x) isfield(x, 'status') && (strcmp(x.status, 'done'));

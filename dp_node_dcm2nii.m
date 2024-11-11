@@ -1,6 +1,6 @@
 classdef dp_node_dcm2nii < dp_node
 
-    properties (Hidden)
+    properties 
         dcm2niix_path;
     end
 
@@ -74,6 +74,10 @@ classdef dp_node_dcm2nii < dp_node
             cmd = sprintf('%s -z i -o ''%s'' ''%s''', obj.dcm2niix_path, ...
                 wp, input.dcm_folder);
             system(cmd);
+
+            % Alternative options structure, consider changing
+            % '-z i -f Serie%%s_%%p -o %s %s'
+            
 
             % copy output
             f = {'nii_fn', 'json_fn' , 'bval_fn', 'bvec_fn'};

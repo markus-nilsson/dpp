@@ -17,17 +17,23 @@ classdef dpm_iter < dpm
         end
 
         function output = run_on_one(obj, input, output)
-
-            if (~all(obj.node.output_exist(output)))
-                obj.node.log(1, 'Output not a valid iter item for next node');
-            end
             
+            output.iter.output_exist = all(obj.node.output_exist(output));
+
+            if (~output.iter.output_exist)
+                obj.node.log(1, 'Output not a valid iter item for next node');
+            end            
         end
 
-        function process_outputs(obj, outputs)
+        function outputs = process_outputs(obj, outputs)
 
             % Consider re/implementing some reporting here
-            1;
+            ind = zeros(size(outputs));
+            for c = 1:numel(outputs)
+                ind(c) = outputs{c}.iter.output_exist;
+            end
+
+            outputs = outputs(ind == 1);
 
         end
 

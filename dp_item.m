@@ -8,8 +8,8 @@ classdef dp_item
 
             % Prefer to use input, but for legacy reasons, use opt
             if (nargin < 3)
-                if (isfield(opt, 'id_exclude'))
-                    id_exclude = opt.id_exclude; 
+                if (isfield(node.opt, 'id_exclude'))
+                    id_exclude = node.opt.id_exclude; 
                 else
                     id_exclude = {};
                 end
