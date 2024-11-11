@@ -110,7 +110,7 @@ more of the following fields
   force the data processing to only execute on items in the cell array
   of previous outputs where the `id` field matches one in this list
 
-See `dp.dp_opt` for a full list. 
+See `dp_nose_base.m` for a full list (static method: `default_opt`). 
 
 ## Input structure
 
@@ -148,7 +148,7 @@ Running the node without catching errors may cause it to stop early, in a subjec
 with input/output errors, that you may wish to ignore. To deal with this, run the 
 node for a subject where all preceeding nodes work correctly. For example
 
-`my_node().run('report', struct('do_try_catch', 0, 'id_filter', 'my_subject_id', 'verbose', 3)`
+`my_node().run('report', struct('do_try_catch', 0, 'id_filter', 'my_subject_id', 'verbose', 3))`
 
 
 ## Stand alone use

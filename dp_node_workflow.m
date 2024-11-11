@@ -7,6 +7,7 @@ classdef dp_node_workflow < dp_node % assume this is for nifti files
     methods
 
         function obj = dp_node_workflow(nodes)
+            
             obj.nodes = nodes;
 
             % Basic checking
@@ -176,6 +177,10 @@ classdef dp_node_workflow < dp_node % assume this is for nifti files
         end
 
         function modes = get_supported_modes(obj)
+            % xxx: this should probably just report the modes of the 
+            %      last node, perhaps this is what makes a pipeline
+            %      and a workflow different - a pipeline should have 
+            %      steps that are all "important" for output
             modes = {};
             for c = 1:numel(obj.nodes)
                 modes = cat(2, modes, ...

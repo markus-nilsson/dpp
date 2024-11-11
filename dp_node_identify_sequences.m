@@ -18,7 +18,11 @@ classdef dp_node_identify_sequences < dp_node
         function output = i2o(obj, input)
 
             % make a pass-through to keep all info
-            output = input; 
+            output = input;
+
+            if (~exist(input.nii_path, 'dir'))
+                error('nii path does not exist');
+            end
 
             f = obj.patterns;
             for c = 1:numel(f)
