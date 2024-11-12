@@ -40,7 +40,6 @@ classdef dp_node_base_support < dp_node_core
                 obj.previous_node.update(obj.opt, mode);
             end
 
-
         end  
 
         function previous_outputs = filter_iterable(obj, previous_outputs)
@@ -70,7 +69,7 @@ classdef dp_node_base_support < dp_node_core
         function [output, err] = run_fun(obj, fun, err_log_fun)
 
             if (~obj.opt.do_try_catch) % normal run
-               
+
                 output = fun();
                 err = [];
                 return;
@@ -78,7 +77,7 @@ classdef dp_node_base_support < dp_node_core
             else % catch errors
 
                 try
-                    
+
                     output = fun();
                     err = [];
                     return;
@@ -116,7 +115,6 @@ classdef dp_node_base_support < dp_node_core
                     obj.log(0, ' ');
                     obj.log(0, '%s', formattedDisplayText(errors{1}.stack(1)));
                     obj.log(0, ' ');
-
                 end
  
             elseif (numel(errors) > 0)

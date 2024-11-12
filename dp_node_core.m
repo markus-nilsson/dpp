@@ -35,7 +35,6 @@ classdef dp_node_core < ...
             obj.setup(previous_node, name);
         end
         
-
     end   
 
 end
