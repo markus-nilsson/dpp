@@ -38,7 +38,7 @@ classdef dp_node_identify_sequences < dp_node
 
                     if (numel(tmp) == 0)
                         error('No file found');
-                    elseif (numel(tmp) == 1)
+                    elseif (numel(tmp) == 1) %#ok<ISCL>
                         tmp = tmp{1};
                     else
 
@@ -65,7 +65,7 @@ classdef dp_node_identify_sequences < dp_node
                 output.(f{c}{1}) = tmp;
 
                 if (isempty(output.(f{c}{1})))
-                    obj.log(0, '%s: File not found for field %s pattern %s', ...
+                    obj.log(1, '%s: File not found for field %s pattern %s', ...
                         input.id, ...
                         f{c}{1}, formattedDisplayText(f{c}{2}));
 

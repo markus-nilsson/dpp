@@ -5,6 +5,12 @@ classdef dpm < handle
     properties
         node;
         do_run_on_all_in_workflow = 0;
+        do_input_check = 1;
+    end
+
+    properties (Access=protected)
+        mode_name;
+        log;
     end
 
     methods
@@ -12,6 +18,8 @@ classdef dpm < handle
         % Connect the data processing mode to a node
         function obj = dpm(node)
             obj.node = node;
+            obj.log = @(varargin) node.log(varargin{:});
+            obj.mode_name = obj.get_mode_name();
         end
 
         % Allow overloadig e.g. in dpm_execute
@@ -27,7 +35,6 @@ classdef dpm < handle
         opt = dp_opt(obj, opt)
         output = run_on_one(obj, input, output)
         process_outputs(obj, outputs)
-
 
     end
 end

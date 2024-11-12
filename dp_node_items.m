@@ -23,37 +23,26 @@ classdef dp_node_items < dp_node_base
                 output_items = cell(size(input_items));
             end
 
+            % insert custom error logging here
+            function err_log(me)
+
+                if (strcmp(obj.mode, 'report'))
+                    obj.log(1, '%s --> %s\n', id, me.message);
+                end
+
+                obj.log(2, '%s: Error in dp_node_items (%s)', id, obj.name);
+                obj.log(2, '%s:   %s', id, me.message);
+
+            end
+
             for c = 1:numel(input_items)
 
                 obj.log(2, '%s: Item %i %s', input_items{c}.id, c, strtrim(formattedDisplayText(f)));
 
-                if (obj.opt.do_try_catch)
-
-                    try
-                    
-                        output_items{c} = g(input_items{c}, output_items{c}); %#ok<AGROW>
-                    
-                    catch me
-
-                        if (strcmp(obj.mode, 'report'))
-                            obj.log(1, '%s --> %s\n', input_items{c}.id, ...
-                                me.message);
-                        end
-
-
-                        obj.log(2, '%s: Error in dp_node_items (%s)', ...
-                            input_items{c}.id, ...
-                            obj.name);
-                        obj.log(2, '%s:   %s', ...
-                            input_items{c}.id, ...
-                            me.message);
-
-
-                    end
-
-                else
-                    output_items{c} = g(input_items{c}, output_items{c}); %#ok<AGROW>
-                end
+                % Potential try-catch solution here
+                output_items{c} = obj.run_fun(...
+                    @() g(input_items{c}, output_items{c}),...
+                    @(me, id) err_log(me, input_items{c}.id));
 
             end            
         end
@@ -76,32 +65,31 @@ classdef dp_node_items < dp_node_base
         function input = po2i(obj, po)
 
             if (~isfield(po, 'items'))
-                disp(po);
                 error('Output of previous node did not have an items field');
             end
             
-            input.items = obj.items_fun(@(x) obj.inner_node.po2i(x), po.items);
+            f = @(po) obj.inner_node.po2i(po);
+            input.items = obj.items_fun(f, po.items);
             
         end
 
         function output = i2o(obj, input)
 
-            % not great, we're replicating functionality from 
-            % main dp exeuction
-            function y = i2o_inner(x)
-                y = obj.inner_node.i2o(x);
-                y = msf_ensure_field(y, 'id', x.id);
-            end
+            f = @(input) obj.inner_node.i2o(input);
+            output.items = obj.items_fun(f, input.items);
 
-            output.items = obj.items_fun(@i2o_inner, input.items);
+            % transfer id to inner nodes
+            for c = 1:numel(output.items)
+                output.items{c} = msf_ensure_field(output.items{c}, 'id', input.id);
+            end
             
         end
 
         function output = run_on_one(obj, input, output)
 
-            f = @(x,y) obj.inner_node.run_on_one(x,y);
+            f = @(input, output) obj.inner_node.run_on_one(input, output);
 
-            % push mod through to inner node
+            % push mode through to inner node
             obj.inner_node.mode = obj.mode;
 
             output.items = obj.items_fun(f, input.items, output.items);
@@ -116,32 +104,9 @@ classdef dp_node_items < dp_node_base
 
         end        
 
-        % function output = execute(obj, input, output)
-        % 
-        %     % experimental code here
-        % 
-        %     switch (obj.mode)
-        % 
-        %         case {'execute', 'debug'}
-        % 
-        %             f = @(x,y) obj.inner_node.get_dpm(obj.mode).run_on_one(x,y);
-        % 
-        %         otherwise
-        % 
-        %             error('this function only supports mode execute for now')
-        % 
-        %     end
-        % 
-        %     % push options through to inner node
-        %     obj.inner_node.opt = obj.opt; 
-        % 
-        %     output.items = obj.items_fun(f, input.items, output.items);
-        % 
-        % end
-
         function output = run_clean(obj, output)
 
-            f = @(x) obj.inner_node.run_clean(x);
+            f = @(output) obj.inner_node.run_clean(output);
             output.items = obj.items_fun(f, output.items);
 
         end
