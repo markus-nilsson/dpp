@@ -1,209 +1,109 @@
-classdef dp_node_base < handle
+classdef dp_node_base < dp_node_base_support
+
+    % this should really be named "run manager", as this
+    % class implements functions related to running nodes
+    %
+    % this should include all logic, while the helper functions are in 
+    % the support class
 
     properties
-
-        previous_node = [];
-
-        name;
-        mode;
         opt;
-
-        dpm_list;
-
-        input_test = [];  % field that will be tested by input_exists
-        output_test = []; % field that will be tested by output_exists
-
         do_i2o_pass = 0;
-
-    end
-
-    properties (Hidden)
-        do_dpm_passthrough = 0;
-    end
-
-    methods (Abstract)
-        input_exist(obj, input);
-        output_exist(obj, output);
     end
 
     methods
 
-        function obj = dp_node_base()
-
-            obj.dpm_list = {...
-                dpm_iter(obj), ...
-                dpm_execute(obj), ...
-                dpm_debug(obj)};
-
-        end
-
-        % methods that we expected to be overloaded (this is where you
-        % implement the processing code)
-
-        function input = po2i(obj, previous_output) 
-            input = previous_output;
-        end
-
-        function outputs = i2o(obj, inputs)
-            outputs = inputs;
-        end
-
-        function output = execute(obj, input, output)
-            1;
-        end
-        
-        function output = visualize(obj, input, output)
-            1;
-        end
-
-        function tmp = make_tmp(obj)
-
-            tmp.bp = msf_tmp_path(1);
-            tmp.do_delete = 1;
-
-        end
-
-        function output = run_clean(obj, output)
-
-            % clean up temporary directory if asked to do so
-            if (~isstruct(output)), return; end
+        % run on all outputs from the previous node
+        function outputs = run(obj, mode, opt)
             
-            if (isfield(output, 'tmp')) && ...
-                    (isfield(output.tmp, 'do_delete')) && ...
-                    (output.tmp.do_delete)
+            if (nargin < 2), mode = 'report'; end
+            if (nargin < 3), opt.present = 1; end
 
-                msf_delete(output.tmp.bp);
+            % update options and mode of this node
+            obj.update(opt, mode);
 
+            % Report on status and init
+            obj.log(0, '%tRunning %s with mode ''%s''', obj.name, obj.mode);
+
+            % Retreive previous outputs
+            previous_outputs = obj.filter_iterable(obj.get_iterable());
+            
+            if (isempty(previous_outputs))
+                obj.log(0, '%tNo output from previous node - no actions will be taken!');
+                return;
+            elseif (strcmp(obj.mode, 'iter_deep'))
+                outputs = previous_outputs;
+                return;
+            end
+
+            % Loop over all previous outputs
+            if (obj.opt.c_level == 1)
+                obj.log(0, '\nStarting iterations for mode: %s\n', obj.mode);
+            end
+
+            outputs = cell(size(previous_outputs));
+            err_list = cell(size(previous_outputs));
+
+            function err_log_fun(me, id)
+                obj.log(2, '%s: Error in node %s (mode: %s)', id, obj.name, obj.mode);
+                obj.log(2, '%s:   %s', id, me.message);
             end
             
-        end        
-       
-        % do not overload these
+            for c = 1:numel(previous_outputs)
+
+                obj.log(2, '-------------------');
+                obj.log(1, 'Running %s for %s', obj.name, previous_outputs{c}.id)
+                obj.log(2, '-------------------');
+
+                % Run in a try-catch environment, if asked for
+                [outputs{c}, err_list{c}] = obj.run_fun(...
+                    @() obj.run_inner(previous_outputs{c}), ...
+                    @(me) err_log_fun(me, previous_outputs{c}.id));
+
+                obj.log(1, ' ');
+            end
+
+            % Trim
+            f = @(x) x(cellfun(@(y) ~isempty(y), x));
+            outputs = f(outputs);
+            err_list = f(err_list);
+
+            % Wrap up with some reporting
+            obj.analyze_output(previous_outputs, outputs, err_list);
+            outputs = obj.process_outputs(outputs);             
+        end
+
         function previous_outputs = get_iterable(obj)
 
             if (isempty(obj.previous_node))
                 error('%s: previous_node not defined, aborting', obj.name);
             end
 
-            % Merging needed? (I do not want the code here, but rather in
-            % the main dp code, but let it be here for the moment)
-            if (iscell(obj.previous_node))
-
-                list_of_outputs = cell(size(obj.previous_node));
-                node_names = cell(size(list_of_outputs));
-
-                for c = 1:numel(list_of_outputs)
-                    node_names{c} = obj.previous_node{c}.name;
-                    list_of_outputs{c} = obj.previous_node{c}.run(obj.opt.iter_mode, obj.opt);
-                end
-
-                f4 = @(x,y) max([1 1 + find(x == y, 1, 'first')]);
-                f3 = @(x) x(f4(x,'_'):end);
-                f2 = @(x) f3(x(f4(x,'/'):end));
-                f1 = @(x) f2(char(x));
-                list_of_prefixes = cellfun(@(x) f1(x), node_names, 'UniformOutput',false);
-
-                if (numel(list_of_prefixes) ~= numel(unique(list_of_prefixes)))
-                    error('merging previous nodes requires unique node names');
-                end
-
-                previous_outputs = dp_item.merge_outputs(list_of_outputs, list_of_prefixes);
-
-                % report on outcome
-                obj.log('--> Merging outputs (%s) resulted in %i items', ...
-                    obj.join_cell_str(list_of_prefixes), ...
-                    numel(previous_outputs));
-
-            else % assume it is a dp_node
-
-                previous_outputs = obj.previous_node.run(obj.opt.iter_mode, obj.opt);
-
-            end
+            previous_outputs = obj.previous_node.run(obj.opt.iter_mode, obj.opt);
 
         end
 
-        function outputs = clean_iterable(obj, outputs)
+        function output = run_inner(obj, po)
 
-            % one of these functions that are here to make life easier
-            % but that should not have to be here if things were 
-            % done correctly from the start
-            if (isa(obj.previous_node, 'dp_node_primary'))
-                ind = ones(size(outputs));
-                for c = 1:numel(ind)
-                    if (outputs{c}.id(1) == '.')
-                        ind(c) = 0;
-                    end
-                end
-                outputs = outputs(ind == 1);
-            end
+            % Excessive logging with verbose level 2
+            obj.log(2, '\nStarting %s', obj.name);
+
+            % Manage previous output
+            po = obj.manage_po(po);
+            obj.log(3, '\nprevious_output:\n%s', formattedDisplayText(po));
+
+            % Previous output to a new input
+            input  = obj.run_po2i(po, obj.get_dpm().do_input_check);
+            obj.log(3, '\ninput:\n%s', formattedDisplayText(input));
+
+            % Run the processing, and display output
+            output = obj.run_i2o(input);
+            output = obj.run_on_one(input, output);
+            output = obj.run_clean(output);
+            obj.log(2, '\noutput:\n%s', formattedDisplayText(output));
 
         end
 
-        % run on all outputs from the previous node
-        function outputs = run(obj, mode, opt_in)
-            
-            if (nargin < 2), mode = 'report'; end
-            if (nargin < 3), opt_in.present = 1; end
-
-            % set mode
-            obj.mode = mode;
-
-            % deal with options
-            obj.opt.present = 1;
-            opt = dp.dp_opt(opt_in);
-            opt = obj.get_dpm().dp_opt(opt);
-
-            % force outside do_try_catch
-            if (isfield(opt_in, 'do_try_catch'))
-                opt.do_try_catch = opt_in.do_try_catch;
-            end
-
-            % make sure this and previous nodes have names
-            obj.update_node(opt);
-
-            if (iscell(obj.previous_node))
-                for c = 1:numel(obj.previous_node)
-                    obj.previous_node{c}.update_node();
-                end
-            elseif (~isempty(obj.previous_node))
-                obj.previous_node.update_node();
-            end       
-
-            outputs = dp.run(obj);
-        end
-
-        function obj = update_node(obj, opt) % set necessary properties
-
-            if (isempty(obj.name))
-                obj.name = class(obj);
-            end
-
-            if (nargin > 1)
-                obj.opt = opt;
-            end
-        end
-
-        function obj = setup(obj, previous_node, name)
-            obj.previous_node = previous_node;
-
-            if (nargin > 2), obj.name = name; end
-        end
-        
-
-        function modes = get_supported_modes(obj)
-            modes = cellfun(@(x) x.get_mode_name(), obj.dpm_list, 'UniformOutput', false);
-        end
-
-        % run the data processing mode's function here
-        function output = run_on_one(obj, input, output)
-            output = obj.get_dpm().run_on_one(input, output);
-        end
-
-        % run the data processing mode's processing/reporting
-        function outputs = process_outputs(obj, outputs)
-            outputs = obj.get_dpm().process_outputs(outputs);
-        end
-       
         function pop = manage_po(obj, pop)
             if (~msf_isfield(pop, 'id')), error('id field missing'); end
         end
@@ -254,89 +154,57 @@ classdef dp_node_base < handle
             
         end
 
-        % dpm - data processing mode (e.g. report, iter, debug, execute...)
-        function dpm = get_dpm(obj, mode)
+        % run the data processing mode's function here
+        function output = run_on_one(obj, input, output)
+            output = obj.get_dpm().run_on_one(input, output);
+        end
 
-            if (nargin < 2), mode = obj.mode; end
-            
-            ind = cellfun(@(x) strcmp(mode, x.get_mode_name()), obj.dpm_list);
+        function output = run_clean(obj, output)
 
-            ind = find(ind);
+            % clean up temporary directory if asked to do so
+            if (~isstruct(output)), return; end
+            
+            if (isfield(output, 'tmp')) && ...
+                    (isfield(output.tmp, 'do_delete')) && ...
+                    (output.tmp.do_delete)
 
-            if (numel(ind) > 0)
-            
-                dpm = obj.dpm_list{ind};
-            
-            else % dpm not supported, but allow passthrough for workflows
-                
-                if (obj.do_dpm_passthrough)
-                    dpm = dpm_passthrough(obj);
-                else
-                    error('mode (%s) not supported', obj.mode);
-                end
+                msf_delete(output.tmp.bp);
 
             end
-
-        end
-
-
-        function ages = input_age(obj, input)
-            ages = [];
-        end
-
-        function output_age(obj, output)
-            ages = [];
-        end
-
-        function log(obj, varargin)
-
-            % this function has evolved over time, so it is a little messy
-            %
-            % intended input format is this:
-            % log level
-            % string to fprintf
-            % arguments
-
-            % if first argument is string, then assume a log level
-            if (all(ischar(varargin{1})))
-                log_level = 1;
-                varargin = cat(2, log_level, varargin);
-            end
-
-            if (numel(varargin) < 2), varargin{2} = ''; end
-            if (numel(varargin) < 3), varargin{3} = ''; end
-
-            log_level = varargin{1};
-            log_str = varargin{2};
-            log_arg = varargin(3:end);
-
-
-            if (obj.opt.verbose >= log_level)
-                log_str = strrep(log_str, '%t', ...
-                    char(zeros(1, max(0, 2*(obj.opt.c_level-1))) + ' '));
-                fprintf(cat(2, log_str, '\n'), log_arg{:});
-            end
-
-        end
-
-
-
-    end
-
-    methods (Hidden)
-
-        % now duplicated
-        function str = join_cell_str(f)
-
-            g = @(x) x(1:(end-3));
             
-            str = g(cell2mat(cellfun(@(x) cat(2, x, ' / '), f, ...
-                'UniformOutput', false)));
         end
         
-    end
+        % run the data processing mode's processing/reporting
+        function outputs = process_outputs(obj, outputs)
+            outputs = obj.get_dpm().process_outputs(outputs);
+        end
+       
+    end        
 
- 
-    
+    methods (Static)
+
+        function opt = default_opt(opt)
+            
+            opt = msf_ensure_field(opt, 'verbose', 0);
+            opt = msf_ensure_field(opt, 'do_try_catch', 1);
+            opt = msf_ensure_field(opt, 'id_filter', {});
+            opt = msf_ensure_field(opt, 'iter_mode', 'iter');
+
+            % do not write over existing data as per default
+            opt = msf_ensure_field(opt, 'do_overwrite', 0);
+            
+            opt = msf_ensure_field(opt, 'c_level', 0);
+            opt.c_level = opt.c_level + 1;
+
+            opt.indent = zeros(1, 2*(opt.c_level - 1)) + ' ';
+
+            opt = msf_ensure_field(opt, 'id_filter', {});
+
+            if (ischar(opt.id_filter))
+                opt.id_filder = {opt.id_filter};
+            end
+        end
+
+    end
 
 end

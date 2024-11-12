@@ -1,12 +1,16 @@
 classdef dp_node < dp_node_base
 
+    % intention of this node is to implement methods dealing with file io 
+
     methods
 
         function obj = dp_node()
             obj.dpm_list = {...
                 dpm_iter(obj), ...
+                dpm_iter_deep(obj), ...
                 dpm_report(obj), ...
                 dpm_execute(obj), ...
+                dpm_execute_deep(obj), ...
                 dpm_debug(obj), ...
                 dpm_mgui(obj), ...
                 dpm_visualize(obj)};
@@ -121,10 +125,6 @@ classdef dp_node < dp_node_base
 
             end
         end
-
-        function obj = update_node(obj, varargin)
-            obj = update_node@dp_node_base(obj, varargin{:});
-        end      
 
     end
 
