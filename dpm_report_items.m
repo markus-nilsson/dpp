@@ -64,7 +64,7 @@ classdef dpm_report_items < dpm
             
         end
 
-        function process_outputs(obj, outputs)
+        function outputs = process_outputs(obj, outputs)
 
             % % Count number of done's
             % f = @(x) isfield(x, 'status') && (strcmp(x.status, 'done'));
