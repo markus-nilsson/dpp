@@ -95,12 +95,15 @@ classdef dp_node_base_support < dp_node_core
                 if (numel(errors) == 0)
                     obj.log(0, '  and no errors occurred during processing - unexpected!');
                 else
-                    obj.log(0, '  probably beacuse an errors occurred, first error:');
+                    obj.log(0, '  probably beacuse one or more errors occurred.');
                     obj.log(0, ' ');
-                    obj.log(0, '%s', errors{1}.message);
+                    obj.log(0, '  First error:');
+                    obj.log(0, ' ');
+                    obj.log(0, '<a href="matlab: opentoline(''%s'', %d)">%s</a>', errors{1}.stack(1).file, errors{1}.stack(1).line, errors{1}.message);
                     obj.log(0, ' ');
                     obj.log(0, '%s', formattedDisplayText(errors{1}.stack(1)));
                     obj.log(0, ' ');
+
                 end
  
             elseif (numel(errors) > 0)

@@ -96,11 +96,11 @@ classdef dp_node_items < dp_node_base
 
         end     
 
-        function obj = update_node(obj, varargin) % set necessary properties
+        function obj = update(obj, varargin) % set necessary properties
 
-            obj = update_node@dp_node_base(obj, varargin{:});
+            obj = update@dp_node_base(obj, varargin{:});
             
-            obj.inner_node.update_node(varargin{:});
+            obj.inner_node.update(varargin{:});
 
         end        
 

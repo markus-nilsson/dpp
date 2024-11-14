@@ -71,7 +71,7 @@ classdef dp_item
 
             % Avoid repeated displays
             if (numel(inputs) > 1)
-                node.log(0, '%i--> Input filter active: %i out of %i ids passed', ...
+                node.log(0, '%t--> Input filter active: %i out of %i ids passed', ...
                     sum(status), numel(inputs));
             end
 

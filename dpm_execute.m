@@ -1,5 +1,9 @@
 classdef dpm_execute < dpm
 
+    properties
+        do_run_execute = 1;
+    end
+
     methods
 
         function obj = dpm_execute(node)
@@ -11,8 +15,7 @@ classdef dpm_execute < dpm
             mode_name = 'execute';
         end
 
-        function opt = dp_opt(obj, opt)
-            
+        function opt = dp_opt(obj, opt)            
             opt = msf_ensure_field(opt, 'verbose', 1);
         end
 
@@ -37,24 +40,25 @@ classdef dpm_execute < dpm
                 obj.node.log(1, '%s:   opt.do_overwrite is true', input.id);
                 return;
             end
-            
-
+                        
             % also check for age of output relative to input!
             % xxx: this does not work very well for copied files, as this
             %      preserves the creation date of the original file
             [outputs_exist,f_output,output_age] = obj.node.output_exist(output);
             [inputs_exist,f_input,input_age] = obj.node.input_exist(input);
 
+            % input missing?
+            if (~isempty(inputs_exist)) && (~all(inputs_exist))
+                f_input = f_input(~inputs_exist);
+                error('Input files missing: %s (in node %s)', ...
+                    strjoin(f_input, ', '), obj.node.name);
+            end
+            
 
             % output missing?
             if (~isempty(outputs_exist)) && ~(all(outputs_exist))
                 obj.node.log(1, '%s:   Outputs missing', input.id);                
                 return;
-            end
-
-            % inputs missing? throw error
-            if (~isempty(inputs_exist)) && ~(all(inputs_exist))
-                error('inputs missing, should not happen');
             end
 
             % input and outputs missing (non-file node assumed)
@@ -90,6 +94,12 @@ classdef dpm_execute < dpm
         function output = run_on_one(obj, input, output)
 
             obj.node.log(0, '%s: Starting mode ''execute'' on node %s', input.id, obj.node.name);
+
+            if (~obj.do_run_execute)
+                obj.node.log(1, '%s:   No action needed', input.id); 
+                return;
+            end
+
             obj.node.log(1, '%s:   Testing execute conditions', input.id);
 
             if (obj.do_run_node(input, output))                
@@ -99,6 +109,8 @@ classdef dpm_execute < dpm
             else
                 obj.node.log(0, '%s:   Found no reason to execute', input.id);
             end
+
+
             
                         
         end
