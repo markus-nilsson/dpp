@@ -27,15 +27,15 @@ classdef dp % data processor
 
         end
 
-        function fn = new_fn(op, fn, suffix, ext_in)
+        function fn = new_fn(op, fn, suffix, ext)
             
             if (nargin < 3), suffix = ''; end
-            if (nargin < 4), ext_in = ''; end
+            if (nargin < 4), ext = ''; end
 
-            [~, name, ext] = msf_fileparts(fn);
+            [~, name, ext_this] = msf_fileparts(fn);
 
-            if (~isempty(ext_in))
-                ext = ext_in; 
+            if (isempty(ext))
+                ext = ext_this; 
             end
 
             fn = fullfile(op, cat(2, name, suffix, ext));

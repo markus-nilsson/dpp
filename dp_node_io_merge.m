@@ -1,4 +1,4 @@
-classdef dp_node_io_merge < dp_node_base
+classdef dp_node_io_merge < dp_node
 
     % merges previous nodes
     %
@@ -150,63 +150,6 @@ classdef dp_node_io_merge < dp_node_base
 
         end
 
-        % merge output streams
-        function outputs = merge_outputs(list_of_outputs, list_of_prefixes)
-
-            % list_of_outputs - a cell list of outputs
-            %
-            % can be merged if they have the same id
-            error('deprecated');
-
-            outputs = {};
-            for c = 1:numel(list_of_outputs)
-
-                for c3 = 1:numel(list_of_outputs{c})
-
-                    % current output
-                    co = list_of_outputs{c}{c3};
-
-                    % search for id's in existing list of outputs
-                    c_match = -1;
-                    for c2 = 1:numel(outputs)
-                        if (strcmp(co.id, outputs{c2}.id))
-                            c_match = c2;
-                            break;
-                        end
-                    end
-
-                    % take action
-                    if (c_match == -1) % no match found
-                        outputs{end+1}.id = co.id;
-                        c_match = numel(outputs);
-                    end
-
-                    % add fields to existing
-                    f = fieldnames(co);
-                    outputs{c_match}.(list_of_prefixes{c}) = 1;
-                    for c2 = 1:numel(f)
-                        outputs{c_match}.([list_of_prefixes{c} '_' f{c2}]) = co.(f{c2});
-                    end
-
-                end
-            end
-
-            % only keep those with all prefixes present
-            status = zeros(size(outputs)) == 1;
-            for c = 1:numel(outputs)
-                status(c) = all(cellfun(@(x) isfield(outputs{c}, x), list_of_prefixes));
-            end
-
-            outputs = outputs(status);
-
-            % delete the prefixes
-            for c = 1:numel(outputs)
-                for c2 = 1:numel(list_of_prefixes)
-                    outputs{c} = rmfield(outputs{c}, list_of_prefixes{c2});
-                end
-            end
-
-        end
     end
 
 end
