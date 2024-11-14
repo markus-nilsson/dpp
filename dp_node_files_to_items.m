@@ -22,8 +22,6 @@ classdef dp_node_files_to_items < dp_node_items
             if (nargin >= 3), obj.filter_list = filter_list; end
             if (nargin >= 4), obj.filter_mode = filter_mode; end
 
-            1;
-
         end
 
         function yes_no = do_filter(obj, fn)
@@ -44,6 +42,13 @@ classdef dp_node_files_to_items < dp_node_items
         end
 
         function input = po2i(obj, po)
+
+            % xxx: split this class into more and glue with workflow
+            %      we should not use po2i this way!
+            %      as this does not allow proper error handling
+            if (~isfield(po, 'ip'))
+                error('missing field ip');
+            end
 
             % expect:
             % po.ip (input folder with files of type ext)
@@ -83,6 +88,7 @@ classdef dp_node_files_to_items < dp_node_items
                 tmp_input.zip_fn = fullfile(po.ip, di(c).name);
                 tmp_input.op = po.op;
                 tmp_input.id = po.id;
+                tmp_input.bp = po.bp;
 
                 [~,name] = msf_fileparts(tmp_input.zip_fn);
                 tmp_input.dcm_name = name;

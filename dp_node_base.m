@@ -136,12 +136,13 @@ classdef dp_node_base < dp_node_core & dp_node_base_support
         % are in place -- to make debugging easier
         function test_input(obj, input)
 
+            f = unique(cat(2, obj.input_test, obj.input_fields));
             tmp = {};
             
             % test for missing fields
-            for c = 1:numel(obj.input_test)
-                if (~isfield(input, obj.input_test{c}))
-                    tmp{end+1} = obj.input_test{c};
+            for c = 1:numel(f)
+                if (~isfield(input, f{c}))
+                    tmp{end+1} = f{c}; %#ok<AGROW>
                 end
             end
 
@@ -162,7 +163,7 @@ classdef dp_node_base < dp_node_core & dp_node_base_support
             for c = 1:numel(f)
                 if (~isfield(input, f{c}))
                     % xxx: better solution needed
-                    obj.log(0, 'Mandatory input field missing (%s)', f{c});
+                    obj.log(0, 'Mandatory input field missing (%s) in node %s', f{c}, obj.name);
                     error('Mandatory input field missing (%s)', f{c});
                 end
             end

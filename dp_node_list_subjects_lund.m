@@ -20,8 +20,13 @@ classdef dp_node_list_subjects_lund < dp_node_primary
         function outputs = get_iterable(obj)
 
             tmp = fullfile(obj.bp, sprintf('%s_*', obj.project_prefix));
-
+            
+            obj.log(1, 'Searching for subjects: %s', tmp);
             d = dir(tmp);
+
+            if (numel(d) == 0)
+                obj.log(1, '  Found nothing');
+            end
 
             outputs = {};
 
