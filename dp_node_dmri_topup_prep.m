@@ -3,15 +3,31 @@ classdef dp_node_dmri_topup_prep < dp_node
     % pulls out data and saves it in ap pa order
 
     methods
-        
+
+        function obj = dp_node_dmri_topup_prep()
+
+            obj.input_test = {...
+                'nii_ap_fn', 'nii_pa_fn', ...
+                'xps_ap_fn', 'xps_pa_fn'};
+
+        end
+
+        % dp_node_dmri_topup_io has been executed before this
+        % ensuring the presence of nii_ap_fn and nii_pa_fn
+        function input = po2i(~, po)
+            input = po;
+            input = msf_ensure_field(input, 'xps_ap_fn', mdm_xps_fn_from_nii_fn(po.nii_ap_fn));
+            input = msf_ensure_field(input, 'xps_pa_fn', mdm_xps_fn_from_nii_fn(po.nii_pa_fn));
+        end
+
         function output = i2o(obj, input)
 
             % Pass on input to next node
             output = input;
 
-            output.topup_nii_fn = fullfile(output, 'topupinput.nii.gz');
+            output.topup_nii_fn = fullfile(output.op, 'topupinput.nii.gz');
             output.topup_spec_fn = fullfile(output.op, 'topup.txt');
-            output.topup_xps_fn = mdm_xps_fn_from_nii_fn(output.nii_fn);
+            output.topup_xps_fn = mdm_xps_fn_from_nii_fn(output.topup_nii_fn);
 
             % add a temporary path
             output.tmp.bp = msf_tmp_path();
@@ -57,8 +73,6 @@ classdef dp_node_dmri_topup_prep < dp_node
             % xxx: this should find correct information from a json file
             mdm_txt_write({'0 1 0 0.1', '0 -1 0 0.1'}, ...
                 output.topup_spec_fn, opt);
-
-
 
         end
     end
