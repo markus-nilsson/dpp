@@ -25,11 +25,12 @@ classdef dp_node_fsl_bet < dp_node
             % Build the flirt command 
             bet_cmd = sprintf('bet %s %s %s', input.nii_fn, output.nii_fn, obj.opt_str);
 
-            system(bet_cmd); % Execute the command
+            msf_system(bet_cmd); % Execute the command
 
             % also output the mask
             [I,h] = mdm_nii_read(output.nii_fn);
             mdm_nii_write(double(I > 0), output.mask_fn, h);
+            
         end
     end
 end
