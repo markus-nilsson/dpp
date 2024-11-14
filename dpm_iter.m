@@ -31,6 +31,7 @@ classdef dpm_iter < dpm
             ind = zeros(size(outputs));
             for c = 1:numel(outputs)
                 ind(c) = outputs{c}.iter.output_exist;
+                outputs{c} = msf_rmfield(outputs{c}, 'iter');
             end
 
             outputs = outputs(ind == 1);
