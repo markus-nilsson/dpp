@@ -28,7 +28,7 @@ classdef dp_node_dmri_xps_make < dp_node_dmri_xps
                 error('could not determine sequence type')
             end
 
-            if (is_lte) || (is_dti) || (is_resex) || (is_dki) || (is_hardi)
+            if (is_lte) || (is_dti) || (is_resex) || (is_dki)
                 b_delta = 1;
             elseif (is_pte)
                 % validation required
