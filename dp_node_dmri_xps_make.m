@@ -1,20 +1,6 @@
-classdef dp_node_make_xps < dp_node
-
-    properties
-        xps = [];
-    end
+classdef dp_node_dmri_xps_make < dp_node_dmri_xps
 
     methods
-
-        function obj = dp_node_make_xps()
-            error('move into dcm2nii structure, and workflow with dmri nodes');
-            obj.output_test = {'nii_fn', 'xps_fn'};
-        end
-
-        function output = i2o(obj, input)
-            output = input;
-            output.xps_fn = mdm_xps_fn_from_nii_fn(input.nii_fn);
-        end
 
         function output = execute(obj, input, output)
 
