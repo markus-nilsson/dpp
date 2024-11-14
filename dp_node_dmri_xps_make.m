@@ -21,13 +21,14 @@ classdef dp_node_dmri_xps_make < dp_node_dmri_xps
             is_mdt = f('_MDT');
             is_dti = f('_DTI');
             is_dki = f('_DKI');
+            is_hardi = f('_hardi');
             is_resex = f('_RESEX');
 
-            if (sum([is_lte is_pte is_ste is_mdt is_dti is_dki is_resex]) ~= 1)
+            if (sum([is_lte is_pte is_ste is_mdt is_dti is_dki is_resex is_hardi]) ~= 1)
                 error('could not determine sequence type')
             end
 
-            if (is_lte) || (is_dti) || (is_resex) || (is_dki)
+            if (is_lte) || (is_dti) || (is_resex) || (is_dki) || (is_hardi)
                 b_delta = 1;
             elseif (is_pte)
                 % validation required

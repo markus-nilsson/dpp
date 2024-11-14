@@ -6,6 +6,8 @@ classdef dp_node_dcm2nii_and_xps < dp_node_workflow
         function obj = dp_node_dcm2nii_and_xps()
 
             a = dp_node_dcm2nii();
+
+            % need a better solution here, to deal with information better
             b = dp_node_make_xps();
 
             obj = obj@dp_node_workflow({a,b});
