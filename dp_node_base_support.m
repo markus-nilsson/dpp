@@ -115,6 +115,7 @@ classdef dp_node_base_support < dp_node_core
                     obj.log(0, ' ');
                     obj.log(0, '%s', formattedDisplayText(errors{1}.stack(1)));
                     obj.log(0, ' ');
+
                 end
  
             elseif (numel(errors) > 0)
