@@ -8,7 +8,6 @@ classdef dp_node_core_dpm < handle
 
         % not sure this is on the right level
         input_fields = {}; % part of testing to make life easier
-
         input_test = [];  % field that will be tested by input_exists
         output_test = []; % field that will be tested by output_exists
         
