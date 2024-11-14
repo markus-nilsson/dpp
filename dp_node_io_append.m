@@ -33,9 +33,9 @@ classdef dp_node_io_append < dp_node_io_rename
 
         end
 
-        function obj = update_node(obj, varargin)
+        function obj = update(obj, varargin)
 
-            obj = update_node@dp_node_io_rename(obj, varargin{:});
+            obj = update@dp_node_io_rename(obj, varargin{:});
 
             % by now, there should be a previous node set - copy its 
             % output check

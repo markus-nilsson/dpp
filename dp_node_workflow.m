@@ -46,17 +46,9 @@ classdef dp_node_workflow < dp_node % assume this is for nifti files
                     po = c_output{c-1};
                 end
                 
-                % replicate the structure in dp.m                
-                po          = obj.nodes{c}.manage_po(po);
-                this_input  = obj.nodes{c}.run_po2i(po, 0);                
-                this_output = obj.nodes{c}.run_i2o(this_input);
-
-                log(2, '\noutput (from %s):\n%s', obj.nodes{c}.name, ...
-                    formattedDisplayText(this_output));                
+                % Compute input and output
+                [c_input{c}, c_output{c}] = obj.nodes{c}.run_po2io(po);
                 
-                c_input{c} = this_input;
-                c_output{c} = this_output;
-
             end
 
             output = c_output{end};
@@ -66,13 +58,13 @@ classdef dp_node_workflow < dp_node % assume this is for nifti files
             
         end
 
-        function obj = update_node(obj, varargin) % set necessary properties
+        function obj = update(obj, varargin) % set necessary properties
 
-            obj = update_node@dp_node(obj, varargin{:});
+            obj = update@dp_node(obj, varargin{:});
             
             % make sure nodes involves have names, are updated
             for c = 1:numel(obj.nodes)
-                obj.nodes{c}.update_node(varargin{:});
+                obj.nodes{c}.update(varargin{:});
             end
 
         end

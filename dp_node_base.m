@@ -1,4 +1,4 @@
-classdef dp_node_base < dp_node_base_support
+classdef dp_node_base < dp_node_core & dp_node_base_support
 
     % this should really be named "run manager", as this
     % class implements functions related to running nodes
@@ -30,9 +30,7 @@ classdef dp_node_base < dp_node_base_support
             
             if (isempty(previous_outputs))
                 obj.log(0, '%tNo output from previous node - no actions will be taken!');
-                return;
-            elseif (strcmp(obj.mode, 'iter_deep'))
-                outputs = previous_outputs;
+                outputs = {};
                 return;
             end
 
@@ -88,28 +86,38 @@ classdef dp_node_base < dp_node_base_support
             % Excessive logging with verbose level 2
             obj.log(2, '\nStarting %s', obj.name);
 
-            % Manage previous output
-            po = obj.manage_po(po);
-            obj.log(3, '\nprevious_output:\n%s', formattedDisplayText(po));
+            % Build input and output
+            [input, output] = obj.run_po2io(po);
 
-            % Previous output to a new input
-            input  = obj.run_po2i(po, obj.get_dpm().do_input_check);
-            obj.log(3, '\ninput:\n%s', formattedDisplayText(input));
-
-            % Run the processing, and display output
-            output = obj.run_i2o(input);
+            % Run and clean
+            obj.log(4, '\noutput (declared):\n%s', formattedDisplayText(input));            
+            
             output = obj.run_on_one(input, output);
             output = obj.run_clean(output);
-            obj.log(2, '\noutput:\n%s', formattedDisplayText(output));
+            
+            obj.log(2, '\noutput (after clean):\n%s', formattedDisplayText(output));
 
         end
 
-        function pop = manage_po(obj, pop)
-            if (~msf_isfield(pop, 'id')), error('id field missing'); end
+        % previous output to output (of the present node)
+        function [input, output] = run_po2io(obj, po) 
+
+            obj.log(3, '\nprevious_output:\n%s', formattedDisplayText(po));
+
+            % Previous output to a new input
+            input = obj.run_po2i(po);
+            obj.test_input(input);
+
+            % Build output
+            obj.log(3, '\ninput:\n%s', formattedDisplayText(input));
+            output = obj.run_i2o(input);
+
         end
 
         % compute input to this node from previous output
         function input = run_po2i(obj, pop, varargin)
+
+            if (~isfield(pop, 'id')), error('id field missing'); end
             
             input = obj.po2i(pop);
 
@@ -121,6 +129,28 @@ classdef dp_node_base < dp_node_base_support
                 end
             end
 
+        end
+
+        % tests for required input fields (helps debugging)
+        % here we do not test whether files exist, only if the fields
+        % are in place -- to make debugging easier
+        function test_input(obj, input)
+
+            tmp = {};
+            
+            % test for missing fields
+            for c = 1:numel(obj.input_test)
+                if (~isfield(input, obj.input_test{c}))
+                    tmp{end+1} = obj.input_test{c};
+                end
+            end
+
+            if (~isempty(tmp))
+
+                error('input fields missing (%s) for node %s', ...
+                    strjoin(tmp, ', '), obj.name)
+                
+            end
         end
 
         % compile output
@@ -180,31 +210,5 @@ classdef dp_node_base < dp_node_base_support
         end
        
     end        
-
-    methods (Static)
-
-        function opt = default_opt(opt)
-            
-            opt = msf_ensure_field(opt, 'verbose', 0);
-            opt = msf_ensure_field(opt, 'do_try_catch', 1);
-            opt = msf_ensure_field(opt, 'id_filter', {});
-            opt = msf_ensure_field(opt, 'iter_mode', 'iter');
-
-            % do not write over existing data as per default
-            opt = msf_ensure_field(opt, 'do_overwrite', 0);
-            
-            opt = msf_ensure_field(opt, 'c_level', 0);
-            opt.c_level = opt.c_level + 1;
-
-            opt.indent = zeros(1, 2*(opt.c_level - 1)) + ' ';
-
-            opt = msf_ensure_field(opt, 'id_filter', {});
-
-            if (ischar(opt.id_filter))
-                opt.id_filder = {opt.id_filter};
-            end
-        end
-
-    end
 
 end

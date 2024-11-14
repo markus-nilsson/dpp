@@ -7,10 +7,8 @@ classdef dp_node < dp_node_base
         function obj = dp_node()
             obj.dpm_list = {...
                 dpm_iter(obj), ...
-                dpm_iter_deep(obj), ...
                 dpm_report(obj), ...
                 dpm_execute(obj), ...
-                dpm_execute_deep(obj), ...
                 dpm_debug(obj), ...
                 dpm_mgui(obj), ...
                 dpm_visualize(obj)};
@@ -37,25 +35,6 @@ classdef dp_node < dp_node_base
 
         function [status, f, age] = output_exist(obj, output)
             [status, f, age] = obj.io_exist2(output, obj.output_test);
-        end
-
-        function input = run_po2i(obj, pop, do_input_check)
-
-            if (nargin < 3), do_input_check = 1; end
-
-            input = run_po2i@dp_node_base(obj, pop);           
-
-            % This can be switched off e.g. in the workflow nodes
-            if (do_input_check)
-
-                [inputs_exist, f] = obj.io_exist(input);
-
-                if (~isempty(inputs_exist)) && (~all(inputs_exist))
-                    f = f(~inputs_exist);
-                    error('Missing input: %s', obj.join_cell_str(f') );
-                end
-
-            end
         end
 
         function output = visualize(obj, input, output)

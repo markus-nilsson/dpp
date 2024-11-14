@@ -13,6 +13,9 @@ classdef dp_node_io_rename < dp_node
         function obj = dp_node_io_rename(translation_table)
             obj.translation_table = translation_table;
 
+            % We do not need to run the execute method of these io objects
+            obj.get_dpm('execute').do_run_execute = 0;
+
             % check input
             x = translation_table;
             if (~iscell(x)), error('Translation table must be a cell struct'); end
@@ -34,8 +37,8 @@ classdef dp_node_io_rename < dp_node
 
         end
 
-        function obj = update_node(obj, varargin)
-            obj = update_node@dp_node(obj, varargin{:});
+        function obj = update(obj, varargin)
+            obj = update@dp_node(obj, varargin{:});
         end        
 
     end
