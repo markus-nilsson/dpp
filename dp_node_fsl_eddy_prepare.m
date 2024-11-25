@@ -57,8 +57,6 @@ classdef dp_node_fsl_eddy_prepare < dp_node
 
             tmp = str2num(txt);
 
-            % modify bval fn if needed
-
 
             mdm_txt_write({num2str(tmp)}, output.bval_fn);
 

@@ -6,49 +6,6 @@ classdef dp_node_items < dp_node_base
         inner_node;
     end
 
-    methods (Hidden)
-
-        function output_items = items_fun(obj, f, varargin)
-
-            % deal with input
-            input_items = varargin{1};
-
-            if (numel(varargin) == 2) 
-                % 1-2 mapping (1 output, 2 inputs)
-                g = f;
-                output_items = varargin{2};
-            else 
-                % 1-1 mapping
-                g = @(x,y) f(x);
-                output_items = cell(size(input_items));
-            end
-
-            % insert custom error logging here
-            function err_log(me)
-
-                if (strcmp(obj.mode, 'report'))
-                    obj.log(1, '%s --> %s\n', id, me.message);
-                end
-
-                obj.log(2, '%s: Error in dp_node_items (%s)', id, obj.name);
-                obj.log(2, '%s:   %s', id, me.message);
-
-            end
-
-            for c = 1:numel(input_items)
-
-                obj.log(2, '%s: Item %i %s', input_items{c}.id, c, strtrim(formattedDisplayText(f)));
-
-                % Potential try-catch solution here
-                output_items{c} = obj.run_fun(...
-                    @() g(input_items{c}, output_items{c}),...
-                    @(me, id) err_log(me, input_items{c}.id));
-
-            end            
-        end
-
-    end
-
     methods
 
         function obj = dp_node_items(inner_node)
@@ -60,7 +17,6 @@ classdef dp_node_items < dp_node_base
 
             obj.inner_node = inner_node;
         end
-
 
         function input = po2i(obj, po)
 
@@ -136,4 +92,47 @@ classdef dp_node_items < dp_node_base
         end
 
     end
+
+    methods (Hidden)
+
+        function output_items = items_fun(obj, f, varargin)
+
+            % deal with input
+            input_items = varargin{1};
+
+            if (numel(varargin) == 2) 
+                % 1-2 mapping (1 output, 2 inputs)
+                g = f;
+                output_items = varargin{2};
+            else 
+                % 1-1 mapping
+                g = @(x,y) f(x);
+                output_items = cell(size(input_items));
+            end
+
+            % insert custom error logging here
+            function err_log(me, id)
+
+                if (strcmp(obj.mode, 'report'))
+                    obj.log(1, '%s --> %s\n', id, me.message);
+                end
+
+                obj.log(2, '%s: Error in dp_node_items (%s)', id, obj.name);
+                obj.log(2, '%s:   %s', id, me.message);
+
+            end
+
+            for c = 1:numel(input_items)
+
+                obj.log(2, '%s: Item %i %s', input_items{c}.id, c, strtrim(formattedDisplayText(f)));
+
+                % Potential try-catch solution here
+                output_items{c} = obj.run_fun(...
+                    @() g(input_items{c}, output_items{c}),...
+                    @(me, id) err_log(me, input_items{c}.id));
+
+            end            
+        end
+
+    end    
 end
