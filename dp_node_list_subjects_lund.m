@@ -43,7 +43,6 @@ classdef dp_node_list_subjects_lund < dp_node_primary
                     outputs{end+1} = output;
                 end
             end
-
         end
     end
 end

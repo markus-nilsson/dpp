@@ -17,6 +17,11 @@ classdef dp_node_identify_sequences < dp_node
     methods 
 
         function obj = dp_node_identify_sequences(patterns)
+
+            if (~iscell(patterns)) || (~iscell(patterns{1}))
+                error('expected input: {{field_name, pattern}_i}'); 
+            end
+
             obj.patterns = patterns;
         end
 

@@ -4,13 +4,14 @@ classdef dp_node_dmri_dti < dp_node
 
         function obj = dp_node_dmri_dti()
             obj.input_test = {'dmri_fn'};
-            obj.output_test = {'md_fn', 'fa_fn', 's0_fn'};
+            obj.output_test = {'md_fn', 'fa_fn', 's0_fn', 'fa_col_fn'};
         end
 
         function output = i2o(obj, input)
             
             output.md_fn = fullfile(input.op, 'dti_lls_md.nii.gz');
             output.fa_fn = fullfile(input.op, 'dti_lls_fa.nii.gz');
+            output.fa_col_fn = fullfile(input.op, 'dti_lls_fa_u_rgb.nii.gz');
             output.s0_fn = fullfile(input.op, 'dti_lls_s0.nii.gz');
 
             % pass info about the dmri fn, and mask_fn if existent

@@ -1,8 +1,23 @@
 classdef dp_node_fsl_flirt < dp_node
 
     % coregistration using flirt
+    %
+    % expecting
+    % 
+    % input.nii_fn
+    % input.target_fn
+    %
+    % yields
+    %
+    % output.nii_fn
+    % output.matrix_fn
+    % output.target_fn
 
     methods
+
+        function obj = dp_node_fsl_flirt()
+            obj.output_test = {'nii_fn', 'matrix_fn'};
+        end
 
         function output = i2o(obj, input)
             output.nii_fn = fullfile(input.op, 'fa_registered.nii.gz');
@@ -10,6 +25,7 @@ classdef dp_node_fsl_flirt < dp_node
 
             % Pass info about the target
             output.target_fn = input.target_fn;
+            output.original_nii_fn = input.nii_fn;
             
         end
 

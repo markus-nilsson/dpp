@@ -15,6 +15,11 @@ classdef dp_node_fsl_eddy_prepare < dp_node
                 [input.bval_fn, input.bvec_fn] = ...
                     mdm_fn_nii2bvalbvec(po.dmri_fn);
             end
+
+            if (~isfield(po, 'xps_fn'))
+                input.xps_fn = mdm_xps_fn_from_nii_fn(po.dmri_fn);
+            end
+            
             
         end
 
@@ -22,6 +27,8 @@ classdef dp_node_fsl_eddy_prepare < dp_node
         
             output.dmri_fn = input.dmri_fn;
             output.mask_fn = input.mask_fn;
+
+            output.xps_fn = input.xps_fn;
 
             output.acqp_fn = dp.new_fn(input.op, input.dmri_fn, '_acqp', '.txt');
             output.index_fn = dp.new_fn(input.op, input.dmri_fn, '_index', '.txt');
@@ -51,7 +58,9 @@ classdef dp_node_fsl_eddy_prepare < dp_node
             tmp = str2num(txt);
 
             % implement clever edits here later
-            tmp(tmp < 400) = 0;
+            if (1) % not needed with relevant edit
+                tmp( (tmp < 400) & (tmp > 0) ) = 400;
+            end
 
             mdm_txt_write({num2str(tmp)}, output.bval_fn);
 

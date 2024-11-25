@@ -5,6 +5,7 @@ classdef dp_node_dmri_denoise < dp_node
     methods
 
         function obj = dp_node_dmri_denoise()
+            obj.input_test = {'dmri_fn', 'xps_fn'};
             obj.output_test = {'dmri_fn', 'xps_fn'};
         end
 
