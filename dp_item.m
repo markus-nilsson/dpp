@@ -3,7 +3,6 @@ classdef dp_item
     % status methods
     methods(Static)
 
-
         function outputs = exclude(inputs, node, id_exclude)
 
             % Prefer to use input, but for legacy reasons, use opt
@@ -47,7 +46,7 @@ classdef dp_item
 
             % not sure this should be here, move to dp_opt
             opt = node.opt;
-            opt = msf_ensure_field(opt, 'id_filter');
+            opt = msf_ensure_field(opt, 'id_filter', {});
             
             if (isempty(opt.id_filter))
                 outputs = inputs;

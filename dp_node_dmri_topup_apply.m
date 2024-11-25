@@ -11,9 +11,9 @@ classdef dp_node_dmri_topup_apply < dp_node
 
             output.op = input.op;
 
-            output.nii_fn = dp.new_fn(output.op, input.nii_ap_fn, '_topup');
+            output.dmri_fn = dp.new_fn(output.op, input.nii_ap_fn, '_topup');
             
-            output.xps_fn = mdm_xps_fn_from_nii_fn(output.nii_fn);
+            output.xps_fn = mdm_xps_fn_from_nii_fn(output.dmri_fn);
 
             % add a temporary path
             output.tmp.bp = msf_tmp_path();
@@ -44,7 +44,7 @@ classdef dp_node_dmri_topup_apply < dp_node
             end
 
             % Define command
-            msf_mkdir(fileparts(output.nii_fn));
+            msf_mkdir(fileparts(output.dmri_fn));
 
             cmd = sprintf(['bash --login -c ''applytopup ' ...
                 '--imain="%s","%s" ' ...
@@ -57,7 +57,7 @@ classdef dp_node_dmri_topup_apply < dp_node
                 s_tmp_pa.nii_fn, ...    % imain_2
                 input.topup_data_path, ...    % topup
                 input.topup_spec_fn, ...      % spec
-                output.nii_fn);         % output_fn
+                output.dmri_fn);         % output_fn
             
             system(cmd);
 

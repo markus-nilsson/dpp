@@ -137,6 +137,8 @@ classdef dp_node_workflow < dp_node % assume this is for nifti files
         end
 
         function [status, f, age] = output_exist(obj, output)
+            % transfer output test restrictions from workflow to this node
+            obj.nodes{end}.output_test = obj.output_test;
             [status, f, age] = obj.nodes{end}.output_exist(output);
         end
         

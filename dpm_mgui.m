@@ -63,6 +63,10 @@ classdef dpm_mgui < dpm_iter
                 end
 
             end
+
+            if (c_item == 1)
+                error('no valid output ready for display');
+            end
             
             % add ROI lists later
             EG.data.roi_list = {'tmp'};

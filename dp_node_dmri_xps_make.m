@@ -12,7 +12,7 @@ classdef dp_node_dmri_xps_make < dp_node_dmri_xps
 
             % figure out the value of b-delta
             % ideally, use the json instead of this hack
-            [~,name] = msf_fileparts(input.nii_fn);
+            [~,name] = msf_fileparts(input.dmri_fn);
 
             f = @(x) ~isempty(strfind(name, x)); %#ok<STREMP>
             is_lte = f('_LTE');

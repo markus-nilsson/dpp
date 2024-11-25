@@ -10,7 +10,7 @@ classdef dp_node_primary < dp_node_base
             obj.dpm_list = {...
                 dpm_iter(obj), ...
                 dpm_report(obj)};
-        end        
+        end     
 
         %  not implemented yet
         function [status, f, age] = input_exist(obj, input)
@@ -26,6 +26,5 @@ classdef dp_node_primary < dp_node_base
         end
 
     end
-
 
 end
