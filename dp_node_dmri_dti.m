@@ -1,16 +1,25 @@
 classdef dp_node_dmri_dti < dp_node
 
+    properties
+        filter_sigma = 0;
+    end
+
     methods
 
-        function obj = dp_node_dmri_dti()
+        function obj = dp_node_dmri_dti(filter_sigma)
             obj.input_test = {'dmri_fn'};
-            obj.output_test = {'md_fn', 'fa_fn', 's0_fn'};
+            obj.output_test = {'md_fn', 'fa_fn', 's0_fn', 'fa_col_fn'};
+            
+            if (nargin > 0)
+                obj.filter_sigma = filter_sigma;
+            end
         end
 
         function output = i2o(obj, input)
             
             output.md_fn = fullfile(input.op, 'dti_lls_md.nii.gz');
             output.fa_fn = fullfile(input.op, 'dti_lls_fa.nii.gz');
+            output.fa_col_fn = fullfile(input.op, 'dti_lls_fa_u_rgb.nii.gz');
             output.s0_fn = fullfile(input.op, 'dti_lls_s0.nii.gz');
 
             % pass info about the dmri fn, and mask_fn if existent
@@ -29,11 +38,14 @@ classdef dp_node_dmri_dti < dp_node
                 s.mask_fn = input.mask_fn;
             end
 
+            % this is not beautiful management of options
             if (~isfield(input, 'opt'))
                 input.opt.present = 1;
             end
 
             opt = dti_lls_opt(input.opt);
+            opt.filter_sigma = obj.filter_sigma;
+            
 
             msf_mkdir(input.op);
             dti_lls_pipe(s, input.op, opt);
