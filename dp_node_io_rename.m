@@ -29,6 +29,13 @@ classdef dp_node_io_rename < dp_node
                 if (isa(f{c}{2}, 'function_handle'))
                     output.(f{c}{1}) = f{c}{2}(input);
                 elseif (all(ischar(f{c}{2}))) % assume field name
+
+                    if (~isfield(input, f{c}{2}))
+                        obj.log(0, '%s: Error', input.id);
+                        obj.log(0, '%s:   %s field missing (fields present: %s', ...
+                            input.id, f{c}{2}, strjoin(fieldnames(input)));
+                    end
+
                     output.(f{c}{1}) = input.(f{c}{2});
                 else % just set the contents of the field
                     output.(f{c}{1}) = f{c}{2};

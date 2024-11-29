@@ -5,20 +5,30 @@ classdef dp_node_io_merge < dp_node
     % will be called by a dpm iter block
     %
     % consider using items
+    properties
+        previous_nodes = {};
+    end
 
     methods
 
         function obj = dp_node_io_merge(nodes)
-            obj.previous_node = nodes;
+            obj.previous_nodes = nodes;
         end
 
         function previous_outputs = get_iterable(obj)
 
+            % in deep mode, return leftmost arm always
+            %  (xxx: subject to change)
+            if (obj.opt.deep_mode)
+                previous_outputs = obj.previous_nodes{1}.get_iterable();
+                return;
+            end
+
             % grab previous output from each previous node
-            list_of_outputs = cell(size(obj.previous_node));
-            for c = 1:numel(obj.previous_node)
-                list_of_outputs{c} = obj.previous_node{c}.run(...
-                    obj.opt.iter_mode, obj.opt);
+            list_of_outputs = cell(size(obj.previous_nodes));
+            for c = 1:numel(obj.previous_nodes)
+                tmp = obj.previous_nodes{c}.run(obj.opt.iter_mode, obj.opt);              
+                list_of_outputs{c} = tmp;
             end
 
             % keep only those outputs where the ids intersect
@@ -26,20 +36,46 @@ classdef dp_node_io_merge < dp_node
 
             % rename (legacy)
             previous_outputs = dp_node_io_merge.rename_outputs(previous_outputs, ...
-                obj.previous_node);
+                obj.previous_nodes);
 
             % report on outcome
             obj.log(0, '--> Merging outputs resulted in %i items', ...
                 numel(previous_outputs));
         end
 
+        function output = run_inner(obj, po)
 
-        function obj = update_node(obj, varargin) % update involved nodes
+            % assume we are in deep mode, otherwise do usual one
+            if (~obj.opt.deep_mode)
+                output = run_inner@dp_node(obj, po);
+                return;
+            end
 
-            obj = update_node@dp_node_base(obj, varargin{:});
+            % grab previous output from each previous node
+            pos = cell(size(obj.previous_nodes));
+            for c = 1:numel(obj.previous_nodes)
+                pos{c} = {obj.previous_nodes{c}.run_inner(po)};              
+            end
 
-            for c = 1:numel(obj.previous_node)
-                obj.previous_node{c}.update_node(varargin{:});
+            % keep only those outputs where the ids intersect
+            pos = dp_node_io_merge.intersect_outputs(pos);
+
+            % rename (legacy)
+            pos = dp_node_io_merge.rename_outputs(pos, obj.previous_nodes);
+
+            output = pos{1};
+
+            %output = run_inner@dp_node(obj, po);
+
+
+        end
+
+        function obj = update(obj, varargin) % update involved nodes
+
+            obj = update@dp_node_base(obj, varargin{:});
+
+            for c = 1:numel(obj.previous_nodes)
+                obj.previous_nodes{c}.update(varargin{:});
             end
 
         end

@@ -109,17 +109,13 @@ classdef dpm_execute < dpm
             else
                 obj.node.log(0, '%s:   Found no reason to execute', input.id);
             end
-
-
-            
                         
         end
 
         function outputs = process_outputs(obj, outputs)
-            1;
+            outputs = obj.node.execute_on_outputs(outputs);
         end
 
     end
-
 
 end

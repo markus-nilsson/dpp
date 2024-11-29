@@ -13,6 +13,12 @@ classdef dp_node_base < dp_node_core & dp_node_base_support
 
     methods
 
+        % run deep, experiment
+        function outputs = run_deep(obj, mode, opt)
+            opt.deep_mode = 1;
+            outputs = obj.run(mode, opt);
+        end
+
         % run on all outputs from the previous node
         function outputs = run(obj, mode, opt)
             
@@ -37,14 +43,22 @@ classdef dp_node_base < dp_node_core & dp_node_base_support
             % Loop over all previous outputs
             if (obj.opt.c_level == 1)
                 obj.log(0, '\nStarting iterations for mode: %s\n', obj.mode);
+                tic;
             end
 
             outputs = cell(size(previous_outputs));
             err_list = cell(size(previous_outputs));
 
+            % Display error messages more often in deep mode
+            if (obj.opt.deep_mode)
+                log_level = 0;
+            else
+                log_level = 2;
+            end
+
             function err_log_fun(me, id)
-                obj.log(2, '%s: Error in node %s (mode: %s)', id, obj.name, obj.mode);
-                obj.log(2, '%s:   %s', id, me.message);
+                obj.log(log_level, '%s: Error in node %s (mode: %s)', id, obj.name, obj.mode);
+                obj.log(log_level, '%s:   %s', id, me.message);
             end
             
             for c = 1:numel(previous_outputs)
@@ -68,7 +82,12 @@ classdef dp_node_base < dp_node_core & dp_node_base_support
 
             % Wrap up with some reporting
             obj.analyze_output(previous_outputs, outputs, err_list);
-            outputs = obj.process_outputs(outputs);             
+            outputs = obj.get_dpm().process_outputs(outputs);
+
+            if (obj.opt.c_level == 1)
+                obj.log(0, '\nOperation took %1.1f seconds\n', toc);
+            end
+            
         end
 
         function previous_outputs = get_iterable(obj)
@@ -77,11 +96,20 @@ classdef dp_node_base < dp_node_core & dp_node_base_support
                 error('%s: previous_node not defined, aborting', obj.name);
             end
 
-            previous_outputs = obj.previous_node.run(obj.opt.iter_mode, obj.opt);
+            if (obj.opt.deep_mode)
+                previous_outputs = obj.previous_node.get_iterable();
+            else
+                previous_outputs = obj.previous_node.run(obj.opt.iter_mode, obj.opt);
+            end
 
         end
 
         function output = run_inner(obj, po)
+
+            % In deep mode, we get the po by recursively running deeper
+            if (obj.opt.deep_mode) && (~isempty(obj.previous_node))
+                po = obj.previous_node.run_inner(po);
+            end
 
             % Excessive logging with verbose level 2
             obj.log(2, '\nStarting %s', obj.name);
@@ -205,9 +233,9 @@ classdef dp_node_base < dp_node_core & dp_node_base_support
             
         end
         
-        % run the data processing mode's processing/reporting
-        function outputs = process_outputs(obj, outputs)
-            outputs = obj.get_dpm().process_outputs(outputs);
+        % allow this to be called by e.g. the execute method
+        function outputs = execute_on_outputs(obj, outputs)
+            1;
         end
        
     end        

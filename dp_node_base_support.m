@@ -17,7 +17,10 @@ classdef dp_node_base_support < dp_node_core
             obj.mode = mode;            
            
             obj.opt = dp_node_base.default_opt(opt);
-            obj.opt = obj.get_dpm().dp_opt(obj.opt);
+
+            if (~isempty(obj.mode))
+                obj.opt = obj.get_dpm().dp_opt(obj.opt);
+            end
 
             % force outside do_try_catch
             if (isfield(opt, 'do_try_catch'))
@@ -30,6 +33,12 @@ classdef dp_node_base_support < dp_node_core
             % set log options
             obj.log_opt.verbose = obj.opt.verbose;
             obj.log_opt.c_level = obj.opt.c_level;
+
+            % not sure if this is always a good idea, but let us try it
+            if (~isempty(obj.previous_node)) && (obj.opt.deep_mode)
+                obj.previous_node.do_dpm_passthrough = 1;                
+                obj.previous_node.update(obj.opt, mode);
+            end
 
 
         end  
@@ -61,6 +70,7 @@ classdef dp_node_base_support < dp_node_core
         function [output, err] = run_fun(obj, fun, err_log_fun)
 
             if (~obj.opt.do_try_catch) % normal run
+               
                 output = fun();
                 err = [];
                 return;
@@ -68,14 +78,17 @@ classdef dp_node_base_support < dp_node_core
             else % catch errors
 
                 try
+                    
                     output = fun();
                     err = [];
                     return;
 
                 catch me
+
                     err_log_fun(me);
                     output = [];
                     err = me;
+
                 end
             end
 
@@ -202,6 +215,8 @@ classdef dp_node_base_support < dp_node_core
             opt = msf_ensure_field(opt, 'id_filter', {});
             opt = msf_ensure_field(opt, 'iter_mode', 'iter');
 
+            opt = msf_ensure_field(opt, 'deep_mode', 0);
+            
             % do not write over existing data as per default
             opt = msf_ensure_field(opt, 'do_overwrite', 0);
             
