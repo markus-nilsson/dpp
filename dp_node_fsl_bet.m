@@ -25,6 +25,7 @@ classdef dp_node_fsl_bet < dp_node
             % Build the flirt command 
             bet_cmd = sprintf('bet %s %s %s', input.nii_fn, output.nii_fn, obj.opt_str);
 
+            msf_mkdir(fileparts(output.nii_fn));
             msf_system(bet_cmd); % Execute the command
 
             % also output the mask
