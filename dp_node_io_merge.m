@@ -39,7 +39,7 @@ classdef dp_node_io_merge < dp_node
                 obj.previous_nodes);
 
             % report on outcome
-            obj.log(0, '--> Merging outputs resulted in %i items', ...
+            obj.log(0, '%t--> Merging outputs resulted in %i items', ...
                 numel(previous_outputs));
         end
 

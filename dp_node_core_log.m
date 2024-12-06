@@ -34,10 +34,19 @@ classdef dp_node_core_log < handle
             log_str = varargin{2};
             log_arg = varargin(3:end);
 
+            % the first log_arg is usually the subject id, which we may
+            % need to sanitize from \ on windows... but let's sanitize all
+            % log arguments
+            for c = 1:numel(log_arg)
+                if (all(ischar(log_arg{c})))
+                    log_arg{c} = strrep(log_arg{c}, '\', '/');
+                end
+            end
 
             if (obj.log_opt.verbose >= log_level)
                 log_str = strrep(log_str, '%t', ...
                     char(zeros(1, max(0, 2*(obj.log_opt.c_level-1))) + ' '));
+
                 fprintf(cat(2, log_str, '\n'), log_arg{:});
             end
 
