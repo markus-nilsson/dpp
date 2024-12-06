@@ -27,6 +27,14 @@ classdef dpm_iter < dpm
 
         function outputs = process_outputs(obj, outputs)
 
+            if (numel(outputs) == 0), return; end
+
+            % Does not work for items, fix implementatin
+            if (isfield(outputs{1}, 'items'))
+                warning('not implemented');
+                return;
+            end
+
             % Consider re/implementing some reporting here
             ind = zeros(size(outputs));
             for c = 1:numel(outputs)

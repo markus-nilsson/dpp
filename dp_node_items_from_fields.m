@@ -1,6 +1,16 @@
 classdef dp_node_items_from_fields < dp_node
 
-    % generate output with items
+    % generate output with items, where each item has the following fields
+    %
+    % bp
+    % op
+    % id
+    %
+    % nii_fn from field_names{c} (item c gets field name c from input)
+    %
+    % (general fields)
+
+
     properties
         field_names;
         general_fields;

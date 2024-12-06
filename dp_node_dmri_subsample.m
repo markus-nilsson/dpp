@@ -17,6 +17,8 @@ classdef dp_node_dmri_subsample < dp_node
         function output = i2o(obj, input)
             output.dmri_fn = msf_fn_new_path(input.op, ...
                 msf_fn_append(input.dmri_fn, obj.suffix));
+
+            output.xps_fn = mdm_xps_fn_from_nii_fn(output.dmri_fn);
         end
 
         function output = execute(obj, input, output)
@@ -32,7 +34,7 @@ classdef dp_node_dmri_subsample < dp_node
 
             mdm_nii_write(I, output.dmri_fn, h);
 
-            mdm_xps_save(xps, mdm_xps_fn_from_nii_fn(output.dmri_fn));
+            mdm_xps_save(xps, output.xps_fn);
 
         end
     end
