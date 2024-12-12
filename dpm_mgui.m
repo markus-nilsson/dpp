@@ -1,15 +1,15 @@
 classdef dpm_mgui < dpm_iter
 
+    % this implementation is somewhat of a hack – but it works...
+
     methods
-
-        function outputs = process_outputs(obj, outputs)
-
-            dpm_mgui.open_mgui(outputs, obj.node, obj.node.opt);
-
-        end
 
         function mode_name = get_mode_name(obj)
             mode_name = 'mgui';
+        end
+
+        function outputs = process_outputs(obj, outputs)
+            dpm_mgui.open_mgui(outputs, obj.node, obj.node.opt);
         end
 
         function opt = dp_opt(obj, opt)
@@ -17,7 +17,10 @@ classdef dpm_mgui < dpm_iter
         end
 
         function output = run_on_one(obj, input, output)
-            1;
+
+            % transfer input to outputs, for later use with dp_node_roi
+            % xxx: not really happy with this setup
+            output.input = input; 
         end
         
     end
@@ -27,10 +30,17 @@ classdef dpm_mgui < dpm_iter
         function open_mgui(outputs, node, opt)
 
             % Build the EG.data.ref structure
-            c_item = 1;
+            c_item = 0;
+            
             for c = 1:numel(outputs)
 
                 output = outputs{c};
+
+                % For dp_node_roi, use inputs for drawing ROI's on
+                % but for all other types of nodes, use their outputs
+                if (isa(node, 'dp_node_roi'))
+                    output = output.input;
+                end
 
                 f = fieldnames(output);
 
@@ -47,33 +57,50 @@ classdef dpm_mgui < dpm_iter
                         continue;
                     end
 
-                    id = strrep(output.id, '/', ' ');
+                    % Take the ROI list from the node
+                    EG.data.roi_list = node.roi_names;
+                    
+                    % Build a displayable id
+                    id = output.id;
+                    id = strrep(id, '/', ' ');
+                    id = strrep(id, '\', ' ');
 
+                    % This structure will be accessed by mgui, specifically
+                    % ref.name will be displayed in the item list
                     ref.name = sprintf('%s: %s', id, f{c2});
                     ref.id = output.id;
                     ref.fn = output.(f{c2});
                     ref.f  = f{c2};
+                    ref.output = output;
 
-                    ref.roi_bp = fullfile(output.bp, '..', 'roi_dp', output.id, class(node));
-                    msf_mkdir(ref.roi_bp);
-
-                    EG.data.ref(c_item) = ref;
+                    % Store the reference
                     c_item = c_item + 1;
+                    EG.data.ref(c_item) = ref;
 
                 end
 
             end
 
-            if (c_item == 1)
-                error('no valid output ready for display');
+            if (c_item == 0)
+                error('No valid output ready for display');
             end
             
-            % add ROI lists later
-            EG.data.roi_list = {'tmp'};
+            % Provide mgui with a way to find the roi file
+            function roi_fn = make_roi_fn(c_subject, c_roi)
 
-            EG.data.nii_fn_to_roi_fn = @(c_subject, c_roi) ...
-                dpm_mgui.make_roi_fn(c_subject, c_roi, EG);
+                % Pass the request over to the node
+                ref = EG.data.ref(c_subject);
+                f = ref.f;
+                output = ref.output;
+
+                roi_fn = node.roi_get_fn(output, f, c_roi);
+
+            end
+
+            EG.data.nii_fn_to_roi_fn = @(a, b) make_roi_fn(a, b);
             
+            
+            % Is there already an mgui open? If so, close it. 
             h_fig = mgui_misc_get_mgui_fig();
 
             if (~isempty(h_fig)), close(h_fig); end
@@ -90,21 +117,11 @@ classdef dpm_mgui < dpm_iter
             EG.roi.roi_filename = [];
             set(h_fig,'userdata', EG);
 
+            % xxx: possibly add a clean up by setting windows close fn
+           
+
 
         end
-
-        function roi_fn = make_roi_fn(c_subject, c_roi, EG)
-
-            ref = EG.data.ref(c_subject); 
-
-            roi_name = [EG.data.roi_list{c_roi} '_' ref.f];
-            roi_name = lower(strrep(roi_name, ' ', '_'));
-
-            ext = '.nii.gz';
-
-            roi_fn = fullfile(ref.roi_bp, [roi_name ext]);
-
-        end        
 
     end
 

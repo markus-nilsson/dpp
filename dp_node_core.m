@@ -3,6 +3,7 @@ classdef dp_node_core < ...
         dp_node_core_dpm & ...
         dp_node_core_log & ...
         dp_node_core_central & ...
+        dp_node_core_roi & ...
         handle
 
     properties
@@ -31,8 +32,11 @@ classdef dp_node_core < ...
 
         % same as above, better name?
         function obj = connect(obj, previous_node, name)
-            if (nargin < 3), name = class(obj); end
-            obj.setup(previous_node, name);
+            obj.previous_node = previous_node;
+
+            if (nargin > 2), obj.name = name; end
+
+            if (isempty(obj.name)), obj.name = class(obj); end
         end
         
     end   
