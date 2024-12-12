@@ -16,6 +16,9 @@ classdef dp_node < dp_node_base
 
 
         function output = run_clean(obj, output)
+            
+            % xxx: move this, make it private, and then 
+            %      have it run function handles instead
 
             % clean up temporary directory if asked to do so
             if (~isstruct(output)), return; end
