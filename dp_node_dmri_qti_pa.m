@@ -1,4 +1,4 @@
-classdef dp_node_dmri_qti < dp_node
+classdef dp_node_dmri_qti_pa < dp_node
 
     methods
 
@@ -12,14 +12,12 @@ classdef dp_node_dmri_qti < dp_node
             output.dmri_fn = input.dmri_fn;
             output.xps_fn = input.xps_fn;
 
-            output.mki_fn = fullfile(input.op, 'dtd_covariance_MKi.nii.gz');
-            output.mka_fn = fullfile(input.op, 'dtd_covariance_MKa.nii.gz');
-            output.fa_fn = fullfile(input.op, 'dtd_covariance_FA.nii.gz');
-            output.md_fn = fullfile(input.op, 'dtd_covariance_MD.nii.gz');
-            output.s0_fn = fullfile(input.op, 'dtd_covariance_s0.nii.gz');
+            output.mki_fn = fullfile(input.op, 'dtd_covariance_pa_MKi.nii.gz');
+            output.mka_fn = fullfile(input.op, 'dtd_covariance_pa_MKa.nii.gz');
+            output.md_fn = fullfile(input.op, 'dtd_covariance_pa_MD.nii.gz');
+            output.s0_fn = fullfile(input.op, 'dtd_covariance_pa_s0.nii.gz');
 
         end
-        
 
         function output = execute(obj, input, output)
 
@@ -31,7 +29,7 @@ classdef dp_node_dmri_qti < dp_node
             end
 
             opt = mdm_opt;
-            dtd_covariance_pipe(s, output.op, opt);
+            dtd_covariance_pa_pipe(s, output.op, opt);
 
         end
 

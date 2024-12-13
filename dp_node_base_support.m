@@ -66,9 +66,11 @@ classdef dp_node_base_support < dp_node_core
 
         end
      
-        function [output, err] = run_fun(obj, fun, err_log_fun)
+        function [output, err] = run_fun(obj, fun, err_log_fun, do_try_catch)
 
-            if (~obj.opt.do_try_catch) % normal run
+            if (nargin < 4), do_try_catch = obj.opt.do_try_catch; end
+
+            if (~do_try_catch) % normal run
 
                 output = fun();
                 err = [];

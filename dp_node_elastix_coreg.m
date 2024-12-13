@@ -1,6 +1,19 @@
 classdef dp_node_elastix_coreg < dp_node
 
     % coregistration using elastix
+    % 
+    % input fields
+    % 
+    % nii_fn
+    % target_fn
+    %
+    % output fields
+    %
+    % nii_fn (registered file)
+    % elastix_f_fn (registration parameters)
+    % target_fn (same as input)
+    %
+
     properties
         p = elastix_p_6dof(100);
         mio_opt = mio_opt();

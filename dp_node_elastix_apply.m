@@ -34,7 +34,6 @@ classdef dp_node_elastix_apply < dp_node
             t = elastix_p_read(input.elastix_t_fn);
 
             [I_out, h_out] = mio_transform(I_in, t, h, obj.opt);
-
             mdm_nii_write(I_out, output.nii_fn, h_out);
 
         end

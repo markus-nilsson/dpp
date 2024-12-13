@@ -14,7 +14,9 @@ classdef dp_node_core_roi < handle
 
         roi_bp; % base path for the roi's
 
-        roi_names;
+        roi_names; % cell array
+
+        roi_ids; % array of ids, usually just 1's for separate ROIs, but different for labels
 
         roi_can_be_modified = true; % False not yet implemented (!)
 

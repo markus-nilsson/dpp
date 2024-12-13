@@ -15,8 +15,7 @@ classdef dp_node_dmri_subsample < dp_node
         end
 
         function output = i2o(obj, input)
-            output.dmri_fn = msf_fn_new_path(input.op, ...
-                msf_fn_append(input.dmri_fn, obj.suffix));
+            output.dmri_fn = dp.new_fn(input.op, input.dmri_fn, obj.suffix);
 
             output.xps_fn = mdm_xps_fn_from_nii_fn(output.dmri_fn);
         end
@@ -27,6 +26,10 @@ classdef dp_node_dmri_subsample < dp_node
             xps = mdm_xps_load(mdm_xps_fn_from_nii_fn(input.dmri_fn));
 
             ind = obj.xps_fun(xps);
+
+            if (isempty(ind) || (sum(ind) == 0))
+                error('no data fulfils filter');
+            end
 
             I = I(:,:,:,ind);
 

@@ -31,7 +31,7 @@ classdef dp_node_identify_sequences < dp_node
             output = input;
 
             if (~exist(input.nii_path, 'dir'))
-                error('nii path does not exist');
+                error('nii path does not exist (%s) in node %s', input.nii_path, obj.name);
             end
 
             f = obj.patterns;
@@ -40,6 +40,15 @@ classdef dp_node_identify_sequences < dp_node
                 me = [];
                 try 
                     tmp = msf_find_fns(input.nii_path, f{c}{2}, 1);
+
+                    % Eliminate files starting with '.'
+                    ind = zeros(size(tmp));
+                    for c2 = 1:numel(tmp)
+                        [~,fn] = fileparts(tmp{c2});
+                        if (numel(fn) == 0), continue; end
+                        ind(c2) = fn(1) ~= '.';
+                    end
+                    tmp = tmp(ind == 1);
 
                     if (numel(tmp) == 0)
                         error('No file found');

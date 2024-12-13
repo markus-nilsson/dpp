@@ -9,7 +9,10 @@ classdef dp_node_roi < dp_node
             obj.name = name;
             obj.roi_bp = bp;
             obj.roi_names = roi_names;
+            obj.roi_ids = ones(size(roi_names)); 
             % field names too
+
+            obj.output_test = {'roi_stats_fn'};
         end
 
         function output = i2o(obj, input)
@@ -28,8 +31,12 @@ classdef dp_node_roi < dp_node
             f = fieldnames(input);
 
             for c = 1:numel(f)
-                ind(c) = strcmp(f{c}(max(1, end-2):end), '_fn');  
+                ind(c) = ...
+                    strcmp(f{c}(max(1, end-2):end), '_fn') & ...
+                    ~strcmp(f{c}, 'label_fn');
             end
+
+
 
             f = f(ind);
 
@@ -45,8 +52,9 @@ classdef dp_node_roi < dp_node
                 % For each ROI
                 for c_roi = 1:numel(obj.roi_names)
 
-                    roi_fn = obj.roi_get_fn(input, f{c}, c_roi);
-                    [R,h_R] = mdm_nii_read(roi_fn);
+                    % not we use input not output here... which is 
+                    % a bit nasty...
+                    [R, h_R] = obj.roi_get_volume(input, f{c}, c_roi);
 
                     % check that h_I and h_R are similar
 
@@ -78,6 +86,14 @@ classdef dp_node_roi < dp_node
             msf_mkdir(fileparts(output.roi_stats_fn));
             msf_delete(output.roi_stats_fn);
             save(output.roi_stats_fn, 'info');
+
+        end
+
+        function [R,h_R] = roi_get_volume(obj, output, f, c_roi)
+            % note: this function is overloaded 
+
+            roi_fn = obj.roi_get_fn(output, f, c_roi);
+            [R,h_R] = mdm_nii_read(roi_fn);
 
         end
 

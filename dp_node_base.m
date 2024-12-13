@@ -63,7 +63,7 @@ classdef dp_node_base < dp_node_core & dp_node_base_support
                 obj.log(log_level, '%s: Error in node %s (mode: %s)', id, obj.name, obj.mode);
                 obj.log(log_level, '%s:   %s', id, me.message);
             end
-            
+
             for c = 1:numel(previous_outputs)
 
                 obj.log(2, '-------------------');
@@ -109,6 +109,7 @@ classdef dp_node_base < dp_node_core & dp_node_base_support
 
         function output = run_inner(obj, po)
 
+
             % In deep mode, we get the po by recursively running deeper
             if (obj.opt.deep_mode) && (~isempty(obj.previous_node))
                 po = obj.previous_node.run_inner(po);
@@ -121,7 +122,7 @@ classdef dp_node_base < dp_node_core & dp_node_base_support
             [input, output] = obj.run_po2io(po);
 
             % Run and clean
-            obj.log(4, '\noutput (declared):\n%s', formattedDisplayText(input));            
+            obj.log(5, '\noutput (declared):\n%s', formattedDisplayText(output));            
             
             output = obj.run_on_one(input, output);
             output = obj.run_clean(output);

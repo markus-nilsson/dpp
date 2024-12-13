@@ -37,8 +37,8 @@ classdef dp_node_csv < dp_node
             info = load(input.roi_stats_fn);
             info = info.info;
 
-            h_str = ''; % header string 
-            d_str = ''; % data string
+            h_str = 'id, '; % header string 
+            d_str = sprintf('%s, ', input.id); % data string
             for c_roi = 1:numel(info.roi_stats)
 
                 roi_stat = info.roi_stats(c_roi);
@@ -89,7 +89,10 @@ classdef dp_node_csv < dp_node
             txt = {};
             for c = 1:numel(outputs)
                 tmp = mdm_txt_read(outputs{c}.csv_fn);
-                txt = cat(1, txt, tmp);
+                if (c == 1)
+                    txt = tmp(1);
+                end
+                txt = cat(1, txt, tmp(2));
             end
 
             msf_mkdir(msf_fileparts(txt_fn));
