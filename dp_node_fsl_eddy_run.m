@@ -1,7 +1,12 @@
 classdef dp_node_fsl_eddy_run < dp_node
 
     properties
-        b_range = 10; % to avoid complaints in our data
+        % to avoid complaints in our data 
+        % (Siemens used to compute the b-value, so it could end up as 
+        %  b = 50 even for data intended to be b = 0 and we do not want
+        %  those to be placed in their own shell, but, we also acquire
+        %  data with b = 100, which we want to have in a shell of its own)
+        b_range = 60; 
     end
 
     methods
@@ -20,6 +25,7 @@ classdef dp_node_fsl_eddy_run < dp_node
             out_fn = fullfile(a,b);
 
             cmd = ['eddy_cuda10.2 ' ...
+                'diffusion ' ...
                 sprintf('--imain=%s ', input.dmri_fn) ...
                 sprintf('--mask=%s ', input.mask_fn) ...
                 sprintf('--acqp=%s ', input.acqp_fn) ...
@@ -27,6 +33,7 @@ classdef dp_node_fsl_eddy_run < dp_node
                 sprintf('--bvecs=%s ', input.bvec_fn) ...
                 sprintf('--bvals=%s ', input.bval_fn) ...
                 sprintf('--data_is_shelled ') ...
+                sprintf('--b_range=%i ', obj.b_range), ...
                 sprintf('--out=%s ', out_fn)];
 
             % optional

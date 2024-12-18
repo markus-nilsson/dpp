@@ -29,7 +29,18 @@ classdef dp_node_dmri_xps_from_json < dp_node
 
         function output = execute(obj, input, output)
 
+            % Create xps from json
             xps = fwf_xps_from_siemens_json(input.dmri_fn);
+
+            % Test it
+            I = mdm_nii_read(input.dmri_fn);
+
+            if (size(I,4) ~= xps.n)
+                error('Sizes of xps and nii does not match (%i vs %i)', ...
+                    xps.n, size(I,4));
+            end
+            
+
             mdm_xps_save(xps, output.xps_fn);
 
             msf_mkdir(fileparts(output.status_file_fn));

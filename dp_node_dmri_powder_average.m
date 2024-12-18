@@ -4,6 +4,10 @@ classdef dp_node_dmri_powder_average < dp_node_dmri
 
     methods
 
+        function obj = dp_node_dmri_powder_average()
+            obj.output_test = {'dmri_fn'};
+        end
+
 
         function output = i2o(obj, input)
 

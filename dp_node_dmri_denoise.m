@@ -1,4 +1,4 @@
-classdef dp_node_dmri_denoise < dp_node
+classdef dp_node_dmri_denoise < dp_node_dmri
 
     % runs dwidenosie from mrtix
 

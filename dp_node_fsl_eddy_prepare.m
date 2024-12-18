@@ -57,7 +57,36 @@ classdef dp_node_fsl_eddy_prepare < dp_node
 
             tmp = str2num(txt);
 
+            % for tensor-valued encoding, force different b-values for the
+            % shells, to make eddy run
+            xps = mdm_xps_load(input.xps_fn);
 
+            b_delta = xps.b_delta;
+            b_delta = round(b_delta * 10) / 10;
+            
+            ind = xps.b < 10e6; % assign b=0 to most max b_delta
+            b_delta(ind) = max(b_delta(~ind)); 
+
+            b_delta_unique = unique(b_delta);
+            
+            if (numel(b_delta_unique) > 1) % we have b-tensor encoding
+
+                % add max-b plus 500 to each new b_delta, but let 
+                % lte be as it is
+                db = 500;
+                for c = 1:numel(b_delta_unique)
+            
+                    if (b_delta_unique(c) == 1), continue; end
+
+                    ind = b_delta == b_delta_unique(c);
+
+                    tmp(ind) = tmp(ind) + max(tmp) + db;
+
+                end
+                
+            end
+
+            % Store the output
             mdm_txt_write({num2str(tmp)}, output.bval_fn);
 
             1;

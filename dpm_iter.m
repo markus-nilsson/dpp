@@ -42,6 +42,13 @@ classdef dpm_iter < dpm
                 outputs{c} = msf_rmfield(outputs{c}, 'iter');
             end
 
+            % Reeport
+            if (sum(ind == 0) > 0)
+                obj.node.log(0, '%tPruning %i of %i items, outputs missing', ...
+                    sum(ind == 0), numel(ind));
+            end
+
+            % Prune
             outputs = outputs(ind == 1);
 
         end

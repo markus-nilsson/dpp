@@ -1,5 +1,10 @@
 classdef dp_node_roi_from_label < dp_node_roi & dp_node_core_roi
 
+    properties (Hidden)
+        last_labels_fn = [];
+        cache;
+    end
+
 
     methods
 
@@ -11,7 +16,7 @@ classdef dp_node_roi_from_label < dp_node_roi & dp_node_core_roi
 
         function output = i2o(obj, input)
             output = i2o@dp_node_roi(obj, input);
-            output.label_fn = input.label_fn; % pass through label for roi_fn
+            output.labels_fn = input.labels_fn; % pass through label for roi_fn
         end
 
         function roi_fn = roi_get_fn(obj, output, f, c_roi)
@@ -35,9 +40,30 @@ classdef dp_node_roi_from_label < dp_node_roi & dp_node_core_roi
 
         end
 
-        function [R,h_R] = roi_get_volume(obj, output, ~, c_roi)
-            [R,h_R] = mdm_nii_read(output.label_fn);
-            R = (R == obj.roi_ids(c_roi));
+        function [R,h] = roi_get_volume(obj, output, ~, c_roi)
+
+            % implement caching here, to speed things up
+            if (~strcmp(output.labels_fn, obj.last_labels_fn))
+                obj.last_labels_fn = output.labels_fn;
+
+                [R,h] = mdm_nii_read(output.labels_fn);
+
+                obj.cache.R = R;
+                obj.cache.h = h;
+            else
+                R = obj.cache.R;
+                h = obj.cache.h;
+            end
+
+            switch (ndims(R))
+                case 3
+                    R = (R == obj.roi_ids(c_roi));
+                case 4
+                    R = R(:, :, :, obj.roi_ids(c_roi));
+                otherwise
+                    error('strange dimension of ROI file');
+            end
+
         end
 
 

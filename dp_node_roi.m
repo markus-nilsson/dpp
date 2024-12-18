@@ -1,4 +1,4 @@
-classdef dp_node_roi < dp_node
+classdef dp_node_roi < dp_node & dp_node_core_roi
 
     % implements method by which we compile information from an ROI 
 
@@ -28,15 +28,15 @@ classdef dp_node_roi < dp_node
             info.roi_names = obj.roi_names;            
 
             % Get which files that can be analyzed
+            %   all that ends with _fn
+            %   except label_fn
             f = fieldnames(input);
 
             for c = 1:numel(f)
                 ind(c) = ...
                     strcmp(f{c}(max(1, end-2):end), '_fn') & ...
-                    ~strcmp(f{c}, 'label_fn');
+                    ~strcmp(f{c}, 'labels_fn');
             end
-
-
 
             f = f(ind);
 
@@ -52,7 +52,7 @@ classdef dp_node_roi < dp_node
                 % For each ROI
                 for c_roi = 1:numel(obj.roi_names)
 
-                    % not we use input not output here... which is 
+                    % now we use input not output here... which is 
                     % a bit nasty...
                     [R, h_R] = obj.roi_get_volume(input, f{c}, c_roi);
 
@@ -60,6 +60,10 @@ classdef dp_node_roi < dp_node
 
                     % extract values
                     V = I(R(:) > 0);
+
+                    % This allows the ROI size to be different across 
+                    % contrasts
+                    tmp.n = sum(R(:) > 0);
 
                     tmp.mean = mean(V);
                     tmp.std = std(V, 1);

@@ -2,10 +2,9 @@ classdef dp_node_dmri_qti_pa < dp_node
 
     methods
 
-        function obj = dp_node_dmri_qti()
+        function obj = dp_node_dmri_qti_pa()
             obj.output_test = {'mki_fn', 'mka_fn', 'md_fn'};
         end
-
 
         function output = i2o(obj, input)
 
