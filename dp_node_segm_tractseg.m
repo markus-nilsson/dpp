@@ -1,4 +1,4 @@
-classdef dp_node_segm_tractseg < dp_node
+classdef dp_node_segm_tractseg < dp_node_segm
 
     % inputs
     % dmri_fn
@@ -84,14 +84,6 @@ classdef dp_node_segm_tractseg < dp_node
 
         end
 
-        function ids = segm_ids(obj)
-            [~,ids] = obj.segm_info();
-            ids = cell2mat(ids);
-        end
-
-        function labels = segm_labels(obj)
-            labels = obj.segm_info();
-        end
     end
 
     methods (Hidden)

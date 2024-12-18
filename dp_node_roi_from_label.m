@@ -5,10 +5,13 @@ classdef dp_node_roi_from_label < dp_node_roi & dp_node_core_roi
         cache;
     end
 
-
     methods
 
-        function obj = dp_node_roi_from_label(name, roi_names, roi_ids)
+        function obj = dp_node_roi_from_label(name, segm_node)
+
+            roi_names = segm_node.segm_labels();
+            roi_ids   = segm_node.segm_ids();
+
             obj = obj@dp_node_roi(name, msf_tmp_path, roi_names);
             obj.roi_use_single = 1; % assume label applies to all contrats
             obj.roi_ids = roi_ids;
@@ -57,7 +60,14 @@ classdef dp_node_roi_from_label < dp_node_roi & dp_node_core_roi
 
             switch (ndims(R))
                 case 3
-                    R = (R == obj.roi_ids(c_roi));
+                    ids = obj.roi_ids{c_roi};
+
+                    O = zeros(h.dim(2), h.dim(3), h.dim(4)); 
+
+                    for c = 1:numel(ids)
+                        O = O | (R == ids(c));
+                    end
+                    R = O;
                 case 4
                     R = R(:, :, :, obj.roi_ids(c_roi));
                 otherwise

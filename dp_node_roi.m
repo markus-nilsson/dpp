@@ -9,7 +9,7 @@ classdef dp_node_roi < dp_node & dp_node_core_roi
             obj.name = name;
             obj.roi_bp = bp;
             obj.roi_names = roi_names;
-            obj.roi_ids = ones(size(roi_names)); 
+            obj.roi_ids = cell(ones(size(roi_names))); 
             % field names too
 
             obj.output_test = {'roi_stats_fn'};

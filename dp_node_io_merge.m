@@ -180,8 +180,16 @@ classdef dp_node_io_merge < dp_node
 
                 % set required fields to that of first node to merge
                 outputs{i}.bp = inputs{i}.output{1}.bp;
-                outputs{i}.op = inputs{i}.output{1}.op;
                 outputs{i}.id = inputs{i}.output{1}.id;
+
+                % Look through outouts for an op, take the first you find
+                for k = 1:numel(inputs{i}.output)
+                    if (isfield(inputs{i}.output{k}, 'op'))
+                        outputs{i}.op = inputs{i}.output{k}.op;
+                        break;
+                    end
+                end
+                
             end
 
         end

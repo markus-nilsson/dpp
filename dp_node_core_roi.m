@@ -16,7 +16,11 @@ classdef dp_node_core_roi < handle
 
         roi_names; % cell array
 
-        roi_ids; % array of ids, usually just 1's for separate ROIs, but different for labels
+        % cell array of ids, 
+        % usually just 1's for separate ROIs, 
+        % but different for labels
+        % here it can be multiple labels for merging! 
+        roi_ids; 
 
         roi_can_be_modified = true; % False not yet implemented (!)
 
