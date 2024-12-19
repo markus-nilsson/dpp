@@ -15,6 +15,8 @@ classdef dp_node_segm_brats < dp_node_segm
             output.t2_fn = fullfile(input.op, 'normalized_bet', 't2_bet_normalized.nii.gz');
             output.t1c_fn = fullfile(input.op, 'normalized_bet', 't1c_bet_normalized.nii.gz');
             output.flair_fn = fullfile(input.op, 'normalized_bet', 'fla_bet_normalized.nii.gz');
+
+            output.md_fn = input.md_fn;
             
         end
 
