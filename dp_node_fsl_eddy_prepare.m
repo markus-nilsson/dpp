@@ -30,7 +30,8 @@ classdef dp_node_fsl_eddy_prepare < dp_node
 
             output.xps_fn = input.xps_fn;
 
-            output.acqp_fn = dp.new_fn(input.op, input.dmri_fn, '_acqp', '.txt');
+            output.acqp_fn =  dp.new_fn(input.op, input.dmri_fn, '_acqp', '.txt');
+
             output.index_fn = dp.new_fn(input.op, input.dmri_fn, '_index', '.txt');
             
             output.bval_fn = dp.new_fn(input.op, input.dmri_fn, '_adjusted', '.txt');
@@ -40,13 +41,17 @@ classdef dp_node_fsl_eddy_prepare < dp_node
 
         function output = execute(obj, input, output)
 
-            % replace with better info e.g. from json later
-            mdm_txt_write({'0 -1 0 0.0646', '0 1 0 0.0646'}, output.acqp_fn);
+            % write acquistion parameters (if missing)
+            if (~exist(output.acqp_fn, 'file'))
+                obj.log(1, 'No acq params found, making them up (in %s)', obj.name);
+                mdm_txt_write({'0 -1 0 0.1', '0 1 0 0.1'}, output.acqp_fn);
+            end
 
+            % write the index file (full of '1' as this is for ap only)
             h = mdm_nii_read_header(input.dmri_fn);
             mdm_txt_write(num2cell(zeros(1, h.dim(5)) + '1'), output.index_fn);
 
-            % group b-values
+            % allow modification of b-values
             txt = mdm_txt_read(input.bval_fn);
 
             if (numel(txt) == 1)
@@ -88,8 +93,6 @@ classdef dp_node_fsl_eddy_prepare < dp_node
 
             % Store the output
             mdm_txt_write({num2str(tmp)}, output.bval_fn);
-
-            1;
                        
         end
 
