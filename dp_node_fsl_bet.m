@@ -16,8 +16,8 @@ classdef dp_node_fsl_bet < dp_node
         end
     
         function output = i2o(obj, input)
-            output.mask_fn = msf_fn_new_path(input.op, msf_fn_append(input.nii_fn, '_mask'));
-            output.nii_fn  = msf_fn_new_path(input.op, msf_fn_append(input.nii_fn, '_bet'));
+            output.mask_fn = dp.new_fn(input.op, input.nii_fn, '_mask');
+            output.nii_fn  = dp.new_fn(input.op, input.nii_fn, '_bet');
         end
 
         function output = execute(obj, input, output)

@@ -24,8 +24,8 @@ classdef dp_node_dmri_denoise < dp_node_dmri
             msf_mkdir(fileparts(output.dmri_fn));
             msf_system(cmd);
 
-            % copy the xps from the original data (if this dataset has
-            % xps's)
+            % copy the xps from the original data 
+            % (if this dataset has xps's)
             xps_fn = mdm_xps_fn_from_nii_fn(input.dmri_fn);
 
             xps = mdm_xps_load(xps_fn);

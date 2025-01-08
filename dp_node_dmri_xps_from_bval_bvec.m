@@ -10,7 +10,6 @@ classdef dp_node_dmri_xps_from_bval_bvec < dp_node_dmri_xps
             obj.b_delta = b_delta;
         end
 
-
         function output = execute(obj, input, output)
 
             xps = mdm_xps_from_bval_bvec(...
