@@ -20,7 +20,7 @@ classdef dp_node_fsl_eddy_run < dp_node
 
     methods
 
-        function dp_node_fsl_eddy_run()
+        function obj = dp_node_fsl_eddy_run()
             if (ismac)
                 obj.eddy_binary = 'eddy';
             else
@@ -54,7 +54,7 @@ classdef dp_node_fsl_eddy_run < dp_node
                 sprintf('--out=%s ', out_fn)];
 
             if (isfield(input, 'topup_data_path'))
-                cmd = sprintf('%s --topup=%s ', cmd, input.topup_data_path));
+                cmd = sprintf('%s --topup=%s ', cmd, input.topup_data_path);
             end
 
             if (obj.do_repol)
