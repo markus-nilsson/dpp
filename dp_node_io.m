@@ -4,8 +4,8 @@ classdef dp_node_io < dp_node_io_append
     
     methods
 
-        function obj = dp_node_io(fi,fo)
-            obj = obj@dp_node_io_append({{fi, fo}});
+        function obj = dp_node_io(f_out,f_in)
+            obj = obj@dp_node_io_append({{f_out, f_in}});
         end        
 
     end

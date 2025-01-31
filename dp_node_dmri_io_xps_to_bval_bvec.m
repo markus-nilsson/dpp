@@ -20,6 +20,7 @@ classdef dp_node_dmri_io_xps_to_bval_bvec < dp_node_dmri
             % we may need additional rounding here
             b = round(xps.b * 1e-6);
 
+            msf_mkdir(fileparts(output.bval_fn));
             mdm_txt_write({num2str(b')}, output.bval_fn);
 
             f = @(x) round(x * 1e5) / 1e5;

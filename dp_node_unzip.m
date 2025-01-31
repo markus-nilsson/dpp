@@ -16,7 +16,7 @@ classdef dp_node_unzip < dp_node
 
         function output = execute(obj, input, output)
 
-            cmd = sprintf('unzip -o -j %s -d %s', input.zip_fn, ...
+            cmd = sprintf('unzip -o -j "%s" -d "%s"', input.zip_fn, ...
                 output.unzipped_folder);
 
             system(cmd);

@@ -8,9 +8,10 @@ classdef dp_node_dcm2nii_and_xps < dp_node_workflow
             a = dp_node_dcm2nii();
 
             % need a better solution here, to deal with information better
-            b = dp_node_make_xps();
+            b = dp_node_io('dmri_fn', 'nii_fn');
+            c = dp_node_dmri_xps_make();
 
-            obj = obj@dp_node_workflow({a,b});
+            obj = obj@dp_node_workflow({a,b,c});
 
             % do not test on xps here, as we apply this also to non-
             % diffusion data, where no xps will be created

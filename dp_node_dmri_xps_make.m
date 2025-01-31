@@ -2,13 +2,23 @@ classdef dp_node_dmri_xps_make < dp_node_dmri_xps
 
     methods
 
+        function obj = dp_node_dmri_xps_make()
+            obj.input_test = {'dmri_fn'};
+        end
+
         function output = execute(obj, input, output)
 
             % Check that we have the necessary input
             if ~(isfield(input, 'bval_fn') && exist(input.bval_fn, 'file'))
-                obj.log('%s: no bval_fn from previous node', input.id);
+                obj.log('%s: bval_fn missing', input.id);
                 return;
             end
+
+            if ~(isfield(input, 'bvec_fn') && exist(input.bvec_fn, 'file'))
+                obj.log('%s: no bvec_fn missing', input.id);
+                return;
+            end
+            
 
             % figure out the value of b-delta
             % ideally, use the json instead of this hack
