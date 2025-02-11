@@ -1,14 +1,26 @@
 classdef dp_node_dmri_disco < dp_node_workflow
 
-    properties
+    methods
 
-        topup_opt;
+        function obj = dp_node_dmri_disco(license_fn)
+            
+            % input: freesurfer license file
+
+            nodes = {...
+                dp_node_dmri_disco_synb0(license_fn), ...
+                dp_node_io('topup_opt', dp_node_dmri_disco.topup_opt()), ...
+                dp_node_dmri_topup_b0(), ...
+                dp_node_dmri_topup_apply()};
+
+            obj = obj@dp_node_workflow(nodes);
+
+        end
 
     end
 
-    methods
+    methods (Static)
 
-        function obj = dp_node_dmri_disco()
+        function topt = topup_opt()
 
             % Topup options from 
             % https://github.com/MASILab/Synb0-DISCO/blob/master/src/synb0.cnf
@@ -51,47 +63,7 @@ classdef dp_node_dmri_disco < dp_node_workflow
             
             % If set to 1 the images are individually scaled to a common mean intensity
             topt.scale = 1 ;
-
-
-            if (0)
-
-                nodes = {...
-                    dp_node_append({...
-                        {'original_op', 'op'}, ...
-                        {'op', @(x) x.tmp.bp}}, 0), ...
-                    dp_node_dmri_disco_synb0(), ...
-                    dp_node_dmri_topup_b0(), ...
-                    dp_node_append({...
-                        {'op', 'original_op'}}, 1), ...
-                    dp_node_dmri_topup_apply()};
-
-            else % keep output, debug like workflow
-
-                nodes = {...
-                    dp_node_dmri_disco_synb0(), ...
-                    dp_node_io('topup_opt', topt), ...
-                    dp_node_dmri_topup_b0(), ...
-                    dp_node_dmri_topup_apply()};
-
-            end
-
-            obj = obj@dp_node_workflow(nodes);
-
-            obj.topup_opt = topt; % for outside use
-
-
+            
         end
-
-        function input = po2i(obj, po)
-
-            input = po;
-
-            % This will become a part of the output of the second
-            % node above, so it will be properly cleaned
-            input.tmp.bp = msf_tmp_path();
-            input.tmp.do_delete = 1;
-
-        end
-
     end
 end

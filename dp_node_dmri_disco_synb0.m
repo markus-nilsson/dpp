@@ -1,12 +1,14 @@
 classdef dp_node_dmri_disco_synb0 < dp_node
 
     properties
-        license_fn = '/home/fuji/Software/freeSurfer/freesurfer/license.txt';
+        license_fn;
     end
 
     methods
 
-        function obj = dp_node_dmri_disco_synb0()
+        function obj = dp_node_dmri_disco_synb0(license_fn)
+            obj.license_fn = license_fn;
+            obj.input_test = {'dmri_fn', 't1_fn'};
             obj.output_test = {'synb0_fn', 'topup_nii_fn'};
         end
 
