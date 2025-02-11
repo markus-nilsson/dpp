@@ -1,17 +1,18 @@
-classdef dp_node_list_subjects_in_folder < dp_node_list_subjects
+classdef dp_node_primary_list_folder < dp_node_primary
 
     properties
+        bp;
         pattern = '*';
     end
 
     methods
 
-        function obj = dp_node_list_subjects_in_folder(bp, pattern)
+        function obj = dp_node_primary_list_folder(bp, pattern)
             obj.bp = bp;
             obj.pattern = pattern;
         end
 
-        function outputs = get_outputs(obj)
+        function outputs = get_iterable(obj)
 
             d = dir(fullfile(obj.bp, obj.pattern));
 

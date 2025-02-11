@@ -126,9 +126,9 @@ classdef dp_node_base_support < dp_node_core
             output = obj.get_dpm().run_on_one(input, output);
         end
 
-        % run the data processing mode's processing/reporting
+        % for overloading
         function outputs = process_outputs(obj, outputs)
-            outputs = obj.get_dpm().process_outputs(outputs);
+            1; 
         end
        
         function pop = manage_po(obj, pop)
@@ -201,9 +201,6 @@ classdef dp_node_base_support < dp_node_core
 
             opt.indent = zeros(1, 2*(opt.c_level - 1)) + ' ';
 
-            if (ischar(opt.id_filter))
-                opt.id_filder = {opt.id_filter};
-            end
         end
 
     end

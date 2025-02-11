@@ -1,4 +1,4 @@
-classdef dp_node_list_subjects_lund < dp_node_list_subjects
+classdef dp_node_primary_list_lund < dp_node_primary
 
     % This class provides outputs that list subjects, which 
     % are structured on the Lund pipeline format:
@@ -6,25 +6,30 @@ classdef dp_node_list_subjects_lund < dp_node_list_subjects
     % Subject_ID/Exam_date_1/
 
     properties
+        bp;
         project_prefix
     end
     
     methods
 
-        function obj = dp_node_list_subjects_lund(bp, project_prefix)
+        function obj = dp_node_primary_list_lund(bp, project_prefix)
             obj.bp = bp;
             obj.project_prefix = project_prefix;
+
+            if (project_prefix(end) == '_')
+                warning('Prefix should not end with underscore');
+            end
         end
 
-        function outputs = get_outputs(obj)
+        function outputs = get_iterable(obj)
 
             tmp = fullfile(obj.bp, sprintf('%s_*', obj.project_prefix));
             
-            obj.log(1, 'Searching for subjects: %s', tmp);
+            obj.log(0, '%tSearching for subjects: %s', tmp);
             d = dir(tmp);
 
             if (numel(d) == 0)
-                obj.log(1, '  Found nothing');
+                obj.log(0, '%t  Found nothing');
             end
 
             outputs = {};

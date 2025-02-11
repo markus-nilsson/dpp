@@ -41,6 +41,8 @@ classdef dp_node_base < dp_node_core & dp_node_base_support
             elseif (strcmp(obj.mode, 'iter_deep')) % mode still used?
                 outputs = previous_outputs;
                 return;
+            else
+                obj.log(0, '%tFound %i candidate items', numel(previous_outputs));   
             end
 
             % Loop over all previous outputs
@@ -52,16 +54,9 @@ classdef dp_node_base < dp_node_core & dp_node_base_support
             outputs = cell(size(previous_outputs));
             err_list = cell(size(previous_outputs));
 
-            % Display error messages more often in deep mode
-            if (obj.opt.deep_mode)
-                log_level = 0;
-            else
-                log_level = 2;
-            end
-
             function err_log_fun(me, id)
-                obj.log(log_level, '%s: Error in node %s (mode: %s)', id, obj.name, obj.mode);
-                obj.log(log_level, '%s:   %s', id, me.message);
+                obj.log(0, '%s:   Error in node %s (mode: %s)', id, obj.name, obj.mode);
+                obj.log(0, '%s:     %s', id, me.message);
             end
 
             for c = 1:numel(previous_outputs)
@@ -78,12 +73,15 @@ classdef dp_node_base < dp_node_core & dp_node_base_support
                 obj.log(1, ' ');
             end
 
-            % Trim
+            % Trim by eliminating empty outputs
             f = @(x) x(cellfun(@(y) ~isempty(y), x));
             outputs = f(outputs);
             err_list = f(err_list);
 
-            % Wrap up with some reporting
+            % Run the node's postprocessing
+            outputs = obj.process_outputs(outputs);
+
+            % Wrap up with some reporting (including from the dpm)
             obj.analyze_output(previous_outputs, outputs, err_list);
             outputs = obj.get_dpm().process_outputs(outputs);
 

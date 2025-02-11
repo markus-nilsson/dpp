@@ -106,9 +106,6 @@ more of the following fields
 - `do_overwrite`, a boolean that determines whether existing files will be
   written over or not (note: output files  older than input files will always
   be written over) 
-- `id_filter`, which is either a string or a cell array of strings, which
-  force the data processing to only execute on items in the cell array
-  of previous outputs where the `id` field matches one in this list
 
 See `dp_nose_base.m` for a full list (static method: `default_opt`). 
 
@@ -148,7 +145,7 @@ Running the node without catching errors may cause it to stop early, in a subjec
 with input/output errors, that you may wish to ignore. To deal with this, run the 
 node for a subject where all preceeding nodes work correctly. For example
 
-`my_node().run('report', struct('do_try_catch', 0, 'id_filter', 'my_subject_id', 'verbose', 3))`
+`my_node().run('report', struct('do_try_catch', 0, 'verbose', 3))`
 
 
 ## Stand alone use

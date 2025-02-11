@@ -1,20 +1,20 @@
 classdef dp_node_io_filter_by_id < dp_node
 
-    % Filter by ID, in either include or exclude mode
+    % Filter by ID, in either include or exclude filter_mode
     properties
         ids = {}
-        mode = 'include' % or exclude
+        filter_mode = 'include' % or exclude
     end
 
     methods
 
-        function obj = dp_node_io_filter_by_id(ids, mode)
+        function obj = dp_node_io_filter_by_id(ids, filter_mode)
 
             if (~iscell(ids)), ids = {ids}; end
             
             obj.ids = ids;
 
-            if (nargin > 1), obj.mode = mode; end
+            if (nargin > 1), obj.filter_mode = filter_mode; end
         end
 
         function outputs = process_outputs(obj, outputs)
@@ -35,19 +35,19 @@ classdef dp_node_io_filter_by_id < dp_node
             end
 
             % Report on result of filtering
-            if (numel(inputs) > 1)
-                node.log(0, '%tFiltering: %i out of %i outputs will be %sd', ...
-                    obj.mode, sum(status), numel(inputs));
+            if (numel(outputs) > 1)
+                obj.log(0, '\n%tFiltering: %i out of %i outputs will be %sd', ...
+                    sum(status), numel(outputs), obj.filter_mode);
             end
 
             % Execute filter
-            switch (obj.mode)
+            switch (obj.filter_mode)
                 case 'include'
                     outputs = outputs(status);
                 case 'exclude'
                     outputs = outputs(~status);
                 otherwise
-                    error('Unknown filtering mode (%s)', obj.mode)
+                    error('Unknown filtering filter_mode (%s)', obj.filter_mode)
             end
             
 
