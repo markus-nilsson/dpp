@@ -23,6 +23,7 @@ classdef dp_node_segm_synthseg < dp_node
     methods
 
         function obj = dp_node_segm_synthseg()
+            obj.input_test = {'nii_fn'};
             obj.output_test = {'labels1mm_fn'};
         end
 
