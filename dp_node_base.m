@@ -32,7 +32,7 @@ classdef dp_node_base < dp_node_core & dp_node_base_support
             obj.log(0, '%tRunning %s with mode ''%s''', obj.name, obj.mode);
 
             % Retreive previous outputs
-            previous_outputs = obj.filter_iterable(obj.get_iterable());
+            previous_outputs = obj.get_iterable();
             
             if (isempty(previous_outputs))
                 obj.log(0, '%tNo output from previous node - no actions will be taken!');

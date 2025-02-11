@@ -1,10 +1,10 @@
 classdef dp_node_list_subjects < dp_node_primary
 
+    % to do: rename as dp_node_primary_list_subjects
+    %        just do get_iterable directly
+
     properties
         bp;
-        n_max = inf;
-        id_exclude;
-
     end
 
     methods
@@ -13,14 +13,6 @@ classdef dp_node_list_subjects < dp_node_primary
 
             % abstract
             outputs = obj.get_outputs();
-
-            % filter in this early stage
-            outputs = dp_item.exclude(outputs, obj, obj.id_exclude);
-
-            % trim to desired length
-            outputs = outputs(1:min(end, obj.n_max));
-
-            
 
         end
 

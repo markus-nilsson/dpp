@@ -42,30 +42,6 @@ classdef dp_node_base_support < dp_node_core
 
         end  
 
-        function previous_outputs = filter_iterable(obj, previous_outputs)
-
-            obj.log(0, '%tFound %i candidate items', numel(previous_outputs));            
-            
-            % one of these functions that are here to make life easier
-            % but that should not have to be here if things were 
-            % done correctly from the start
-            if (isa(obj.previous_node, 'dp_node_primary'))
-                ind = ones(size(previous_outputs));
-                for c = 1:numel(ind)
-                    if (previous_outputs{c}.id(1) == '.')
-                        ind(c) = 0;
-                    end
-                end
-                previous_outputs = previous_outputs(ind == 1);
-                obj.log(2, '%tCleaned %i bad items', sum(ind == 0));                
-            end
-
-            % Filter and exclude items
-            previous_outputs = dp_item.exclude(previous_outputs, obj);
-            previous_outputs = dp_item.filter(previous_outputs, obj);
-
-        end
-     
         function [output, err] = run_fun(obj, fun, err_log_fun, do_try_catch)
 
             if (nargin < 4), do_try_catch = obj.opt.do_try_catch; end
@@ -213,7 +189,6 @@ classdef dp_node_base_support < dp_node_core
             
             opt = msf_ensure_field(opt, 'verbose', 0);
             opt = msf_ensure_field(opt, 'do_try_catch', 1);
-            opt = msf_ensure_field(opt, 'id_filter', {});
             opt = msf_ensure_field(opt, 'iter_mode', 'iter');
 
             opt = msf_ensure_field(opt, 'deep_mode', 0);
@@ -225,8 +200,6 @@ classdef dp_node_base_support < dp_node_core
             opt.c_level = opt.c_level + 1;
 
             opt.indent = zeros(1, 2*(opt.c_level - 1)) + ' ';
-
-            opt = msf_ensure_field(opt, 'id_filter', {});
 
             if (ischar(opt.id_filter))
                 opt.id_filder = {opt.id_filter};

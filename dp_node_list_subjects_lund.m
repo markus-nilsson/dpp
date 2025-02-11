@@ -39,7 +39,7 @@ classdef dp_node_list_subjects_lund < dp_node_list_subjects
                     output.bp = obj.bp;
                     output.id = fullfile(d(c).name, d2(c2).name);
 
-                    outputs{end+1} = output;
+                    outputs{end+1} = output; %#ok<AGROW>
 
                 end
             end
