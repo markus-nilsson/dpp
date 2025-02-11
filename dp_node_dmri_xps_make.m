@@ -6,6 +6,15 @@ classdef dp_node_dmri_xps_make < dp_node_dmri_xps
             obj.input_test = {'dmri_fn'};
         end
 
+        function po = po2i(~, po)
+
+            if (~isfield(po, 'bval_fn')) && (~isfield(po, 'bvec_fn'))
+                [a,b] = mdm_fn_nii2bvalbvec(po.dmri_fn);
+                po.bval_fn = a;
+                po.bvec_fn = b;
+            end
+        end
+
         function output = execute(obj, input, output)
 
             % Check that we have the necessary input

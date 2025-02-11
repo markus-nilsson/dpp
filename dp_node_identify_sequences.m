@@ -10,8 +10,8 @@ classdef dp_node_identify_sequences < dp_node
 
     properties
         patterns;
-
         multiple_hit_strategy = 'error'; % alt: first, last
+        name_db = {};
     end
 
     methods 
@@ -25,13 +25,28 @@ classdef dp_node_identify_sequences < dp_node
             obj.patterns = patterns;
         end
 
+        function obj = update(obj, opt, mode) 
+            obj = update@dp_node(obj, opt, mode);
+
+            % clear name db at start of each execution
+            obj.name_db = {};
+        end
+
         function output = i2o(obj, input)
+
 
             % make a pass-through to keep all info
             output = input;
 
             if (~exist(input.nii_path, 'dir'))
                 error('nii path does not exist (%s) in node %s', input.nii_path, obj.name);
+            end
+
+            % save all nii files to a db in this node
+            d = dir(fullfile(input.nii_path, '*.nii.gz'));
+
+            for c = 1:numel(d)
+                obj.name_db{end+1} = d(c).name;
             end
 
             f = obj.patterns;
@@ -78,7 +93,9 @@ classdef dp_node_identify_sequences < dp_node
 
                 output.(f{c}{1}) = tmp;
 
+                % Report helpful information if nothing was found
                 if (isempty(output.(f{c}{1})))
+
                     obj.log(1, '%s: File not found for field %s pattern %s', ...
                         input.id, ...
                         f{c}{1}, formattedDisplayText(f{c}{2}));
@@ -102,6 +119,23 @@ classdef dp_node_identify_sequences < dp_node
 
             end
             
+        end
+
+
+        function test_pattern(obj, pattern)
+
+            % Convert the wildcard to a regular expression.
+            % This simple conversion replaces '.' with '\.' and '*' with '.*'
+            rx = ['^', strrep(strrep(pattern, '.', '\.'), '*', '.*'), '$'];
+
+            % Test each string in the list
+            matches = find(~cellfun(@isempty, regexp(obj.name_db, rx)));
+
+            % Print them
+            for c = 1:numel(matches)
+                fprintf('%i: %s\n', c, obj.name_db{matches(c)});
+            end
+
         end
 
     end
