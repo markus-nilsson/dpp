@@ -1,5 +1,9 @@
 classdef dp_node_dmri_disco_synb0 < dp_node
 
+    % Potential problems: 
+    % Memory limits in docker. Make sure you have 20 Gb or above. 
+    
+
     properties
         license_fn;
     end
@@ -57,13 +61,13 @@ classdef dp_node_dmri_disco_synb0 < dp_node
             copyfile(input.t1_fn, fullfile(wp, 'T1.nii.gz'));
 
             % run the docker container
-            cmd = sprintf('docker run --rm -v %s:/INPUTS/ -v %s:/OUTPUTS/ -v %s:/extra/freesurfer/license.txt --user $(id -u):$(id -g) leonyichencai/synb0-disco:v3.1 -notopup', ...
+            cmd = sprintf('docker run --platform=linux/amd64 --rm -v %s:/INPUTS/ -v %s:/OUTPUTS/ -v %s:/extra/freesurfer/license.txt --user $(id -u):$(id -g) leonyichencai/synb0-disco:v3.1 -notopup', ...
                 [wp '/'], [op '/'], obj.license_fn);
 
             [r, msg, cmd_full] = msf_system(cmd);
 
             if (r ~= 0)
-                error('could not execute docker container')
+                error('could not execute docker container: \n\n%s\n', msg)
             end
 
             % save the synthetic b0 (virtual pa)

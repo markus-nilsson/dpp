@@ -1,5 +1,7 @@
 classdef dp_node_dmri_disco < dp_node_workflow
 
+    % For debugging, check dp_node_dmri_disco_synb0
+
     methods
 
         function obj = dp_node_dmri_disco(license_fn)

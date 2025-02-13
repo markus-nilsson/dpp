@@ -5,8 +5,7 @@ classdef dp_node_dmri_io_xps_to_bval_bvec < dp_node_dmri
 
         function output = i2o(obj, input)
 
-            output.dmri_fn = input.dmri_fn;
-            output.xps_fn = input.xps_fn;
+            output = input;
 
             output.bval_fn = dp.new_fn(input.op, input.dmri_fn, '', '.bval');
             output.bvec_fn = dp.new_fn(input.op, input.dmri_fn, '', '.bvec');
