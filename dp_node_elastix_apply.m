@@ -22,9 +22,7 @@ classdef dp_node_elastix_apply < dp_node
         end
 
         function output = i2o(obj, input, output)
-
             output.nii_fn = dp.new_fn(input.op, input.nii_fn, '_trans');
-
         end
 
         function output = execute(obj, input, output)

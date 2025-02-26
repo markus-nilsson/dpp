@@ -23,6 +23,7 @@ classdef dp_node_elastix_coreg < dp_node
     methods
 
         function obj = dp_node_elastix_coreg(p, mio_opt)
+            
             if (nargin >= 1), obj.p = p; end
             if (nargin >= 2), obj.mio_opt = mio_opt; end
 

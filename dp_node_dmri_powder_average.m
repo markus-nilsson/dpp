@@ -1,6 +1,6 @@
 classdef dp_node_dmri_powder_average < dp_node_dmri
 
-    % coregistration of fa using flirt
+    % powder average data (average across diffusion encoding directions)
 
     methods
 

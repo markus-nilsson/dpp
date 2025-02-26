@@ -12,6 +12,8 @@ classdef dp_node_dmri_subsample < dp_node
         function obj = dp_node_dmri_subsample(xps_fun, suffix)
             obj.xps_fun = xps_fun;
             obj.suffix = suffix;
+
+            if (suffix(1) ~= '_'), warning('probably want _suffix'); end
         end
 
         function output = i2o(obj, input)

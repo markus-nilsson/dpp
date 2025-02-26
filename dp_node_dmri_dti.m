@@ -32,7 +32,10 @@ classdef dp_node_dmri_dti < dp_node
         function output = execute(obj, input, output)
 
             % diffusion data
-            s = mdm_s_from_nii(input.dmri_fn);
+            s.nii_fn = input.dmri_fn;
+            s.xps = mdm_xps_load(input.xps_fn); 
+            
+            % s = mdm_s_from_nii(input.dmri_fn); 
 
             if (isfield(input, 'mask_fn'))
                 s.mask_fn = input.mask_fn;
