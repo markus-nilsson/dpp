@@ -174,7 +174,7 @@ classdef dp_node_workflow < dp_node % assume this is for nifti files
 
             % Standard is to just use the previous node
             if (~isempty(obj.previous_node))
-                previous_outputs = get_iterable@dp_node_base(obj);
+                previous_outputs = get_iterable@dp_node(obj);
                 return;
             end
 

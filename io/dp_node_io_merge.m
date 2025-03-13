@@ -75,7 +75,7 @@ classdef dp_node_io_merge < dp_node
 
         function obj = update(obj, varargin) % update involved nodes
 
-            obj = update@dp_node_base(obj, varargin{:});
+            obj = update@dp_node(obj, varargin{:});
 
             for c = 1:numel(obj.previous_nodes)
                 obj.previous_nodes{c}.update(varargin{:});

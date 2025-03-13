@@ -1,4 +1,4 @@
-classdef dp_node_items < dp_node_base
+classdef dp_node_items < dp_node_core
 
     % iterate with nodes over items within a node
 
@@ -54,7 +54,7 @@ classdef dp_node_items < dp_node_base
 
         function obj = update(obj, varargin) % set necessary properties
 
-            obj = update@dp_node_base(obj, varargin{:});
+            obj = update@dp_node_core(obj, varargin{:});
             
             obj.inner_node.update(varargin{:});
 
