@@ -1,6 +1,8 @@
-classdef dp_node_segm_synthseg < dp_node
+classdef dp_node_segm_synthseg < dp_node_segm
+
 
     % brain segmentation using SynthSeg++ (or 2.0)
+    %    https://github.com/BBillot/SynthSeg
     %
     % input
     % 
@@ -16,38 +18,44 @@ classdef dp_node_segm_synthseg < dp_node
     properties
 
         n_threads = 3;
-        synthseg_ex = '~/Software/SynthSeg/scripts/commands/SynthSeg_predict.py';
+        synthseg_path = '/usr/local/SynthSeg';
 
     end
 
     methods
 
-        function obj = dp_node_segm_synthseg()
+        function obj = dp_node_segm_synthseg(n_threads)
             obj.input_test = {'nii_fn'};
-            obj.output_test = {'labels1mm_fn'};
+            obj.output_test = {'labels_fn'};
+
+            if (nargin > 0), obj.n_threads = n_threads; end
+
         end
 
         function output = i2o(obj, input)
-            output.labels_fn    = dp.new_fn(input.op, input.nii_fn, '_labels');
-            output.labels1mm_fn = dp.new_fn(input.op, input.nii_fn, '_labels1mm');
+            output.resampled_fn    = dp.new_fn(input.op, input.nii_fn, '_rs');
+            output.labels_fn = dp.new_fn(input.op, input.nii_fn, '_labels1mm');
             output.qc_fn        = dp.new_fn(input.op, input.nii_fn, '_qc', '.csv');
             output.vol_fn       = dp.new_fn(input.op, input.nii_fn, '_vol', '.csv');
         end
 
         function output = execute(obj, input, output)
 
+            synthseg_ex = fullfile(obj.synthseg_path, 'scripts/commands/SynthSeg_predict.py');
+
             % Build the flirt command
             synthseg_cmd = cat(2, ...
                 sprintf('conda run -n synthseg_38 '), ...
                 sprintf('--cwd %s ', pwd), ...
-                sprintf('python %s ', obj.synthseg_ex), ...
+                sprintf('python %s ', synthseg_ex), ...
                 sprintf('--i %s ', input.nii_fn), ...
-                sprintf('--o %s ', output.labels1mm_fn), ...
+                sprintf('--o %s ', output.labels_fn), ...
                 sprintf('--threads %i ', obj.n_threads), ...
                 sprintf('--qc %s ', output.qc_fn), ...
                 sprintf('--vol %s ', output.vol_fn), ...
-                '--cpu ', ...
+                sprintf('--resample %s ', output.resampled_fn), ...
                 '--parc ', ...
+                '--cpu', ...
                 '');
 
             msf_mkdir(fileparts(output.labels_fn));
@@ -59,14 +67,6 @@ classdef dp_node_segm_synthseg < dp_node
 
         end
 
-        function ids = segm_ids(obj)
-            [~,ids] = obj.segm_info();
-            ids = cell2mat(ids);
-        end
-
-        function labels = segm_labels(obj)
-            labels = obj.segm_info();
-        end
     end
 
     methods (Hidden)

@@ -74,6 +74,8 @@ classdef dp_node_base_support < dp_node_core
 
         function analyze_output(obj, previous_outputs, outputs, errors)
 
+            do_show_first_error = 0;
+
             % Check if we're missing outputs because of an error 
             % (do generous logging)
             if (numel(outputs) == 0) && (numel(previous_outputs) > 0)
@@ -86,13 +88,8 @@ classdef dp_node_base_support < dp_node_core
                     obj.log(0, '  and no errors occurred during processing - unexpected!');
                 else
                     obj.log(0, '  probably beacuse one or more errors occurred.');
-                    obj.log(0, ' ');
-                    obj.log(0, '  First error:');
-                    obj.log(0, ' ');
-                    obj.log(0, '<a href="matlab: opentoline(''%s'', %d)">%s</a>', errors{1}.stack(1).file, errors{1}.stack(1).line, errors{1}.message);
-                    obj.log(0, ' ');
-                    obj.log(0, '%s', formattedDisplayText(errors{1}.stack(1)));
-                    obj.log(0, ' ');
+                    
+                    do_show_first_error = 1;
 
                 end
  
@@ -101,6 +98,16 @@ classdef dp_node_base_support < dp_node_core
                 obj.log(0, '%tNote: %i errors occurred (%i valid outputs out of %i previous outputs)', ...
                     numel(errors), numel(outputs), numel(previous_outputs));
                 
+            end
+
+            if (do_show_first_error) || ((obj.opt.verbose >= 1) && (numel(errors) > 0))
+                obj.log(0, ' ');
+                obj.log(0, '  First error:');
+                obj.log(0, ' ');
+                obj.log(0, '<a href="matlab: opentoline(''%s'', %d)">%s</a>', errors{1}.stack(1).file, errors{1}.stack(1).line, errors{1}.message);
+                obj.log(0, ' ');
+                obj.log(0, '%s', formattedDisplayText(errors{1}.stack(1)));
+                obj.log(0, ' ');
             end
         
         end        
