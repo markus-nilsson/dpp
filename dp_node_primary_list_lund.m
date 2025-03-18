@@ -3,7 +3,7 @@ classdef dp_node_primary_list_lund < dp_node_primary
     % This class provides outputs that list subjects, which 
     % are structured on the Lund pipeline format:
     %
-    % Subject_ID/Exam_date_1/
+    % output{c}.id = 'Subject_ID/Exam_date_1/'
 
     properties
         bp;

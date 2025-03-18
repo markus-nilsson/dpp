@@ -24,23 +24,6 @@ classdef dp_node_files_to_items < dp_node_items
 
         end
 
-        function yes_no = do_filter(obj, fn)
-            
-            yes_no = 0; % (default is opposite of match)
-
-            if (isempty(obj.filter_list)), return; end
-
-            for c = 1:numel(obj.filter_list)
-
-                if (~isempty(regexp(fn, obj.filter_list{c})))
-                    yes_no = 1; % yes
-                    return;
-                end
-
-            end
-
-        end
-
         function input = po2i(obj, po)
 
             % xxx: split this class into more and glue with workflow
@@ -50,11 +33,18 @@ classdef dp_node_files_to_items < dp_node_items
                 error('missing field ip');
             end
 
+            if (~exist(po.ip, 'dir'))
+                error('missing input folder %s', po.ip);
+            end
+
             % expect:
             % po.ip (input folder with files of type ext)
             % po.op (output folder)
-
+            
             di = dir(fullfile(po.ip, obj.ext));
+
+
+            obj.log(1, 'Searcing in %s with extension %s gave %i outputs\n', po.ip, obj.ext, numel(di));
 
             input.items = {};
             for c = 1:numel(di)
@@ -71,7 +61,8 @@ classdef dp_node_files_to_items < dp_node_items
                             if (obj.do_print_filter)
                                 obj.log('Skipping: %s:%s\n', po.id, di(c).name);
                             end
-                            continue;
+          
+                  continue;
                         end
 
                     case 'include'
@@ -97,6 +88,23 @@ classdef dp_node_files_to_items < dp_node_items
             end
         end
 
+        function yes_no = do_filter(obj, fn)
+            
+            yes_no = 0; % (default is opposite of match)
+
+            if (isempty(obj.filter_list)), return; end
+
+            for c = 1:numel(obj.filter_list)
+
+                if (~isempty(regexp(fn, obj.filter_list{c})))
+                    yes_no = 1; % yes
+                    return;
+                end
+
+            end
+
+        end
+        
 
     end
 end

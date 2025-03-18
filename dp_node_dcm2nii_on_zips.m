@@ -1,5 +1,7 @@
 classdef dp_node_dcm2nii_on_zips < dp_node_files_to_items
 
+    
+
     methods
 
         function obj = dp_node_dcm2nii_on_zips(filter_list, filter_mode)          
