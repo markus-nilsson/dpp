@@ -94,8 +94,8 @@ classdef dp_node_roi < dp_node & dp_node_core_roi
         end
 
         function [R,h_R] = roi_get_volume(obj, output, f, c_roi)
-            % note: this function is overloaded 
 
+            % note: this function is overloaded 
             roi_fn = obj.roi_get_fn(output, f, c_roi);
             [R,h_R] = mdm_nii_read(roi_fn);
 

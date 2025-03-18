@@ -7,6 +7,8 @@ classdef dp_node_io_merge < dp_node
     % consider using items
     properties
         previous_nodes = {};
+        do_prefix = 1; % add node name as prefix to merged fields
+                       % 0 - do not do this for the first node to be merged
     end
 
     methods
@@ -36,7 +38,7 @@ classdef dp_node_io_merge < dp_node
 
             % rename (legacy)
             previous_outputs = dp_node_io_merge.rename_outputs(previous_outputs, ...
-                obj.previous_nodes);
+                obj.previous_nodes, obj.do_prefix);
 
             % report on outcome
             obj.log(0, '%t--> Merging outputs resulted in %i items', ...
@@ -149,7 +151,7 @@ classdef dp_node_io_merge < dp_node
 
         end
 
-        function outputs = rename_outputs(inputs, nodes)
+        function outputs = rename_outputs(inputs, nodes, do_prefix)
 
             % grab node names
             names = cell(size(nodes));
@@ -174,7 +176,14 @@ classdef dp_node_io_merge < dp_node
                     f = fieldnames(tmp);
 
                     for k = 1:numel(f)
-                        outputs{i}.([names{j} '_' f{k}]) = tmp.(f{k});
+
+                        if (do_prefix) || (j > 1)
+                            new_fieldname = [names{j} '_' f{k}];
+                        else
+                            new_fieldname = f{k};
+                        end
+
+                        outputs{i}.(new_fieldname) = tmp.(f{k});
                     end
                 end
 

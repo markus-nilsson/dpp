@@ -73,6 +73,13 @@ classdef dpm_mgui < dpm_iter
                     ref.f  = f{c2};
                     ref.output = output;
 
+                    % allows information about display axes to be passed
+                    if (isfield(output, 'caxis')) && isfield(output.caxis, f{c2})
+                        ref.caxis = output.caxis.(f{c2});
+                    else
+                        ref.caxis = [];
+                    end
+
                     % Store the reference
                     c_item = c_item + 1;
                     EG.data.ref(c_item) = ref;

@@ -181,8 +181,6 @@ classdef dp_node < dp_node_base
             str = g(cell2mat(cellfun(@(x) cat(2, x, ' / '), f, ...
                 'UniformOutput', false)));
         end
-        
-        
 
     end
 
