@@ -19,7 +19,7 @@ classdef dp_node_dmri_topup2_prep < dp_node
             
         end
 
-        function output = execute(~, input, output)
+        function output = execute(obj, input, output)
 
             % define options
             opt = mdm_opt();
@@ -72,7 +72,9 @@ classdef dp_node_dmri_topup2_prep < dp_node
                 error('Unexpected ap encoding direction');
             end
 
-            if (~strcmp(pa_json.PhaseEncodingDirection, 'j'))
+            tmp = pa_json.PhaseEncodingDirection;
+            if (~strcmp(tmp, 'j'))
+                obj.log(1, 'Bad pa encoding direction: %s', tmp);
                 error('Unexpected pa encoding direction');
             end
 

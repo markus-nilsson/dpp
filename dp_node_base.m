@@ -86,7 +86,16 @@ classdef dp_node_base < dp_node_core & dp_node_base_support
             outputs = obj.get_dpm().process_outputs(outputs);
 
             if (obj.opt.c_level == 1)
-                obj.log(0, '\nOperation took %1.1f seconds\n', toc);
+                t = toc;
+                if (toc < 60)
+                    obj.log(0, '\nOperation took %1.1f seconds\n', t);
+                elseif (toc < 3600)
+                    obj.log(0, '\nOperation took %1.1f minutes\n', t/60);
+                elseif (toc < 3600*24)
+                    obj.log(0, '\nOperation took %1.1f hours\n', t/60/60);
+                else
+                    obj.log(0, '\nOperation took %1.1f days\n', t/60/60/24);
+                end
             end
             
         end

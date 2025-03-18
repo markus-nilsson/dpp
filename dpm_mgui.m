@@ -42,6 +42,12 @@ classdef dpm_mgui < dpm_iter
                     output = output.input;
                 end
 
+                % Sanitize the output (so that it does not become too
+                % large). Temporary solution. In the future, make the
+                % reference into a class with a handle. 
+                output = msf_rmfield(output, 'wf_output');
+                output = msf_rmfield(output, 'wf_input');
+
                 f = fieldnames(output);
 
                 for c2 = 1:numel(f)
