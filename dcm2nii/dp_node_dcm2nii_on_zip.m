@@ -1,8 +1,8 @@
-classdef dp_node_unzip_dcm2nii < dp_node_workflow
+classdef dp_node_dcm2nii_on_zip < dp_node_workflow
 
     methods
 
-        function obj = dp_node_unzip_dcm2nii()
+        function obj = dp_node_dcm2nii_on_zip()
 
             a = dp_node_unzip_to_tmp;
             
