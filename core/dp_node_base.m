@@ -54,9 +54,12 @@ classdef dp_node_base < dp_node_core & dp_node_base_support
             outputs = cell(size(previous_outputs));
             err_list = cell(size(previous_outputs));
 
+            % Define error logging 
+            tmp_level = strcmp(obj.mode, 'iter'); % 0 normally, 1 for iter
+
             function err_log_fun(me, id)
-                obj.log(0, '%s:   Error in node %s (mode: %s)', id, obj.name, obj.mode);
-                obj.log(0, '%s:     %s', id, me.message);
+                obj.log(tmp_level, '%t%s:   Error in node %s (mode: %s)', id, obj.name, obj.mode);
+                obj.log(tmp_level, '%t%s:     %s', id, me.message);
             end
 
             for c = 1:numel(previous_outputs)

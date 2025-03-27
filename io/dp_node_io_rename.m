@@ -1,11 +1,17 @@
 classdef dp_node_io_rename < dp_node
 
     % Relabels field, or allows computation of fields
+    %
+    % Constructor takes 
+    %
+    %   translation_table = { {'output_field', 'input_field'} }
+    %
+    % if input field is a function, run it on the input
+    % otherwise, set output_field to input_field
 
     properties
-        translation_table; % { {'output_field', 'input_field'} }
-        % if input field is a function, run it on the input
-        % oterwise, set output_field to input_field
+        translation_table;
+        do_rename_immediately = 0; 
     end
     
     methods
@@ -26,20 +32,31 @@ classdef dp_node_io_rename < dp_node
 
             f = obj.translation_table;
             for c = 1:numel(f)
-                if (isa(f{c}{2}, 'function_handle'))
+
+                if (isa(f{c}{2}, 'function_handle')) % to set values, wrap in function handle
+                
                     output.(f{c}{1}) = f{c}{2}(input);
-                elseif (all(ischar(f{c}{2}))) % assume field name
+                
+                else % grab the contents of the field
 
                     if (~isfield(input, f{c}{2}))
+
                         obj.log(0, '%s: Error', input.id);
                         obj.log(0, '%s:   %s field missing (fields present: %s)', ...
                             input.id, f{c}{2}, strjoin(fieldnames(input)));
                     end
 
                     output.(f{c}{1}) = input.(f{c}{2});
-                else % just set the contents of the field
-                    output.(f{c}{1}) = f{c}{2};
+                
                 end
+
+                % Set the new field also to the input, allowing it to be
+                % used in later translations (somewhat dangerous, use with
+                % carefullness)
+                if (obj.do_rename_immediately)
+                    input.(f{c}{1}) = output.(f{c}{1});
+                end
+
             end
 
         end
