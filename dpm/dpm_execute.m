@@ -9,6 +9,7 @@ classdef dpm_execute < dpm
         function obj = dpm_execute(node)
             obj = obj@dpm(node);
             obj.do_run_on_all_in_workflow = 1;
+            obj.err_log_level = 0;
         end
 
         function mode_name = get_mode_name(obj)
