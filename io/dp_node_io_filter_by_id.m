@@ -1,6 +1,9 @@
 classdef dp_node_io_filter_by_id < dp_node
 
     % Filter by ID, in either include or exclude filter_mode
+
+    % xxx: Weak implementation as of now  (2025-03-28)
+
     properties
         ids = {}
         filter_mode = 'include' % or exclude
@@ -15,6 +18,32 @@ classdef dp_node_io_filter_by_id < dp_node
             obj.ids = ids;
 
             if (nargin > 1), obj.filter_mode = filter_mode; end
+        end
+
+        function output = i2o(obj, input)
+
+            % Just pass through if all is good
+            output = input;
+
+            % Check for a match
+            is_match = 0;
+            for c = 1:numel(obj.ids)
+                if (isequal(input.id, obj.ids{c}))
+                    is_match = 1;
+                end
+            end
+
+            % Deal with the consequences
+            switch (obj.filter_mode)
+                case 'include'
+                    if (~is_match), error('Subject not included'); end
+                case 'exclude'
+                    if (is_match), error('Subject excluded'); end
+                otherwise
+                    error('invalid filter_mode (%s)', obj.filter_mode);
+            end
+
+
         end
 
         function outputs = process_outputs(obj, outputs)

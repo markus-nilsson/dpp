@@ -3,6 +3,8 @@ classdef dp_node_io_cache < dp_node
     % dp_node_io_cache caches the full list of outputs.
     % When get_iterable is called, if the cache is empty it calls the parent's
     % get_iterable, stores the result, and returns it. Otherwise, it returns the cached outputs.
+
+    % xxx: Does not work very well together with deep executes
     
     properties
         cache = {};  % An empty cell array means no cache is stored.
