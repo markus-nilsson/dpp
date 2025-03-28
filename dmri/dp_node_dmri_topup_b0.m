@@ -2,6 +2,8 @@ classdef dp_node_dmri_topup_b0 < dp_node
 
     % Estimate b0 using topup
 
+    % Should move to fsl library
+
     methods
 
         function obj = dp_node_dmri_topup_b0()
@@ -9,7 +11,7 @@ classdef dp_node_dmri_topup_b0 < dp_node
         end
         
         % construct names of output files
-        function output = i2o(obj, input)
+        function output = i2o(~, input)
 
             % pass on the input
             output = input;
