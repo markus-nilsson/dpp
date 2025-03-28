@@ -19,14 +19,6 @@ classdef dp % data processor
 
     methods (Static)
 
-
-        function node = setup_node(name, prev, node)
-            warning('use node.setup instead')
-            node.name = name;
-            node.previous_node = prev;
-
-        end
-
         function fn = new_fn(op, fn, suffix, ext)
             
             if (nargin < 3), suffix = ''; end

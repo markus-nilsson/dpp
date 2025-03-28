@@ -63,7 +63,8 @@ classdef dp_node_io_merge < dp_node
             pos = dp_node_io_merge.intersect_outputs(pos);
 
             % rename (legacy)
-            pos = dp_node_io_merge.rename_outputs(pos, obj.previous_nodes);
+            pos = dp_node_io_merge.rename_outputs(pos, ...
+                obj.previous_nodes, obj.do_prefix);
 
             output = pos{1};
 
