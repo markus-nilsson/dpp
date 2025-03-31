@@ -10,9 +10,8 @@ classdef dp_node_core_syscmd < dp_node_core_log & handle
 
             % test if the convda environment exists
             if (~isempty(obj.conda_env))
-                1
+                1;
             end
-
 
         end
 

@@ -4,8 +4,7 @@ classdef dp_node_io_cache < dp_node
     % When get_iterable is called, if the cache is empty it calls the parent's
     % get_iterable, stores the result, and returns it. Otherwise, it returns the cached outputs.
 
-    % xxx: Does not work very well together with deep executes
-    
+   
     properties
         cache = {};  % An empty cell array means no cache is stored.
     end
@@ -14,7 +13,9 @@ classdef dp_node_io_cache < dp_node
 
         function outputs = get_iterable(obj)
 
-            if isempty(obj.cache)
+            if obj.opt.deep_mode % not sensible for deepmode
+                outputs = get_iterable@dp_node(obj);
+            elseif isempty(obj.cache)
                 outputs = get_iterable@dp_node(obj);
                 obj.cache = outputs;
                 obj.log(1, 'Cached %d outputs from parent.', numel(outputs));

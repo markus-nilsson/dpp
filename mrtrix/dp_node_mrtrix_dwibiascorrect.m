@@ -17,9 +17,7 @@ classdef dp_node_mrtrix_dwibiascorrect < dp_node_mrtrix & dp_node_dmri
                 input.bvec_fn, ...
                 input.bval_fn);
 
-            obj.system(cmd);
-
-            mdm_xps_save(xps, output.xps_fn);
+            obj.syscmd(cmd);
 
 
         end

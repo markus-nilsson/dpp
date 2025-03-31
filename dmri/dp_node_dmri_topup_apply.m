@@ -11,6 +11,7 @@ classdef dp_node_dmri_topup_apply < dp_node
 
             output.op = input.op;
 
+            % xxx: better naming warranted
             output.dmri_fn = dp.new_fn(output.op, input.nii_ap_fn, '_topup');
             
             output.xps_fn = mdm_xps_fn_from_nii_fn(output.dmri_fn);
