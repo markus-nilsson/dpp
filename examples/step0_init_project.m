@@ -8,6 +8,6 @@
 mkdir ../data
 mkdir ../reports
 
-!git clone git@github.com:markus-nilsson/md-dmri.git
-!git clone git@github.com:markus-nilsson/dpp.git
+!git clone https://github.com/markus-nilsson/md-dmri.git
+!git clone https://github.com/markus-nilsson/dpp.git
 

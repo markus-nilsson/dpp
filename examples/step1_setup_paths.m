@@ -7,3 +7,5 @@ cd dpp
 setup_paths;
 cd ..
 
+addpath('my_nodes');
+
