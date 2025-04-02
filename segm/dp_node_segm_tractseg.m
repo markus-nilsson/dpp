@@ -16,13 +16,21 @@ classdef dp_node_segm_tractseg < dp_node_segm
 
         function output = i2o(obj, input)
 
-            output.op = fullfile(input.op, 'tractseg');
+            output.op = input.op;
 
             f = @(x) fullfile(output.op, x);
-            output.mask_fn = f('nodif_brain_mask.nii.gz');
-            output.dmri_fn = f('dmri.nii.gz');
+            % output.mask_fn = f('nodif_brain_mask.nii.gz');
+            % output.dmri_fn = f('dmri.nii.gz');
+            % output.bval_fn = f('x.bvals');
+            % output.bvec_fn = f('x.bvecs');
+
+            output.mask_fn = f('nodif_brain_mask_MNI.nii.gz');
+            output.dmri_fn = f('Diffusion_MNI.nii.gz');
+            output.fa_fn = f('FA_MNI.nii.gz');
             output.bval_fn = f('x.bvals');
             output.bvec_fn = f('x.bvecs');
+
+            
 
             output.labels_fn = f('bundles.nii.gz');
 
@@ -37,7 +45,7 @@ classdef dp_node_segm_tractseg < dp_node_segm
             msf_mkdir(output.op);
 
             % put brain mask and dmri into the right place
-            copyfile(input.dmri_fn, output.dmri_fn);
+            copyfile(input.dmri_fn, fullfile(output.op, 'dmri.nii.gz'));
             copyfile(input.bval_fn, output.bval_fn);
             copyfile(input.bvec_fn, output.bvec_fn);
 
@@ -52,7 +60,7 @@ classdef dp_node_segm_tractseg < dp_node_segm
             op = tmp.Name;
 
             cmd = sprintf(...
-                'docker run -v %s:/data -t %s TractSeg -i %s -o /data %s --bvals %s --bvecs %s %s', ...
+                'docker run -v "%s":/data -t "%s" TractSeg -i "%s" -o /data %s --bvals "%s" --bvecs "%s" %s', ...
                 op, ...
                 'wasserth/tractseg_container:master', ... % docker name
                 'data/dmri.nii.gz', ...
@@ -61,22 +69,16 @@ classdef dp_node_segm_tractseg < dp_node_segm
                 'data/x.bvecs', ...
                 '--preprocess'); % register to mni space
 
-            [s,r] = system(cmd);
+            obj.syscmd(cmd);
 
-            if (s ~= 0) % output the command if this failed
-                obj.log(1, cmd);
-                obj.log(1, '');
-                obj.log(1, r);
-                obj.log(1, '');
-            end
            
             % wrap up the files in a 4D volume
-            h = mdm_nii_read_header(input.dmri_fn);
+            h = mdm_nii_read_header(output.dmri_fn);
             labels = obj.segm_labels();
             R = zeros(h.dim(2), h.dim(3), h.dim(4), numel(labels));
             for c = 1:numel(labels)
                 tmp = mdm_nii_read(fullfile(output.op, ...
-                    'bundle_segmentations', ...
+                    'bundle_segmentations_MNI', ...
                     cat(2, labels{c}, '.nii.gz')));
                 R(:,:,:,c) = tmp;
             end

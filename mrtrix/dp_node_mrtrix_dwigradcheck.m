@@ -42,11 +42,11 @@ classdef dp_node_mrtrix_dwigradcheck < dp_node_mrtrix & dp_node_dmri
             msf_delete(output.bval_fn);
             msf_delete(output.bvec_fn);
             
-            cmd = sprintf('dwigradcheck %s -fslgrad %s %s -export_grad_fsl %s %s', ...
+            cmd = sprintf('dwigradcheck "%s" -fslgrad "%s" "%s" -export_grad_fsl "%s" "%s"', ...
                 input.dmri_fn, ...
                 input.bvec_fn, input.bval_fn, ....
                 output.bvec_fn, output.bval_fn);
-            obj.system(cmd);
+            obj.syscmd(cmd);
 
             % write an xps too
             xps = mdm_xps_from_bval_bvec(output.bval_fn, output.bvec_fn);

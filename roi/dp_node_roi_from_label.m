@@ -69,7 +69,7 @@ classdef dp_node_roi_from_label < dp_node_roi & dp_node_core_roi
                     end
                     R = O;
                 case 4
-                    R = R(:, :, :, obj.roi_ids(c_roi));
+                    R = R(:, :, :, obj.roi_ids{c_roi});
                 otherwise
                     error('strange dimension of ROI file');
             end

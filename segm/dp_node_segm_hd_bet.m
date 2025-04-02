@@ -16,12 +16,12 @@ classdef dp_node_segm_hd_bet < dp_node
         function output = execute(obj, input, output)
 
             % Build the flirt command 
-            hd_bet_cmd = sprintf('hd-bet -i %s -o %s', ...
+            hd_bet_cmd = sprintf('hd-bet -i "%s" -o "%s"', ...
                 input.nii_fn, ...
                 output.nii_fn);
 
             msf_mkdir(fileparts(output.nii_fn));
-            [status, result] = msf_system(hd_bet_cmd); % Execute the command
+            obj.syscmd(hd_bet_cmd); % Execute the command
 
             % also output the mask
             [I,h] = mdm_nii_read(output.nii_fn);
