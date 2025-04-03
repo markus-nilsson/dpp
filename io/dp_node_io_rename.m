@@ -33,21 +33,44 @@ classdef dp_node_io_rename < dp_node
             f = obj.translation_table;
             for c = 1:numel(f)
 
-                if (isa(f{c}{2}, 'function_handle')) % to set values, wrap in function handle
-                
-                    output.(f{c}{1}) = f{c}{2}(input);
-                
-                else % grab the contents of the field
+                switch (class(f{c}{2}))
+                    
+                    case 'function_handle'
+                        output.(f{c}{1}) = f{c}{2}(input);
 
-                    if (~isfield(input, f{c}{2}))
+                    case {'struct', 'double'}
+                        output.(f{c}{1}) = f{c}{2};
+                    
+                    case {'string', 'char'}
 
-                        obj.log(0, '%s: Error', input.id);
-                        obj.log(0, '%s:   %s field missing (fields present: %s)', ...
-                            input.id, f{c}{2}, strjoin(fieldnames(input)));
-                    end
+                        % If you want to use strings, use function handle
+                        % (dp_node_rename({'field', @(x) 'your string'})
+                        %
+                        % Soft warning
+                        if (~isfield(input, f{c}{2}))
 
-                    output.(f{c}{1}) = input.(f{c}{2});
-                
+                            obj.log(0, '%s: Warning', input.id);
+
+                            obj.log(0, '%s:   %s field missing (fields present: %s)', ...
+                                input.id, f{c}{2}, strjoin(fieldnames(input)));
+
+                            obj.log(0, '%s:   If you wanted to set a string, use @(x) str instead', input.id);
+
+                            % Set the field to the string, soft error style
+                            output.(f{c}{1}) = (f{c}{2});
+                            
+
+                        else
+                            
+                            % Take the value from the input field
+                            output.(f{c}{1}) = input.(f{c}{2});
+    
+                        end
+
+                    otherwise 
+
+                        error('case not defined');
+
                 end
 
                 % Set the new field also to the input, allowing it to be
