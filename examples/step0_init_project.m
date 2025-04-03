@@ -7,7 +7,10 @@
 
 mkdir ../data
 mkdir ../reports
+mkdir my_nodes
 
 !git clone https://github.com/markus-nilsson/md-dmri.git
 !git clone https://github.com/markus-nilsson/dpp.git
 
+!cp dpp/examples/step1_setup_paths.m ./
+!cp dpp/examples/step2_process_data.m ./
