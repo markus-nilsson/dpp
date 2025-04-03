@@ -4,7 +4,34 @@ classdef dp_node_dmri_topup_apply < dp_node
     %
     % assume we do not have full ap/pa data, but only in ap
 
+    properties
+
+        output_name = [];
+        output_suffix = '_topup';
+    end
+
     methods
+
+        function obj = dp_node_dmri_topup_apply(name, suffix)
+
+            if (nargin > 0)
+
+                [~,~,ext] = msf_fileparts(name);
+
+                switch (ext)
+                    case {'.nii', '.nii.gz'}
+                        1; % ok
+                    otherwise
+                        error('need name to end with .nii.gz');
+                end
+            
+                obj.output_name = name; 
+
+            end
+
+            if (nargin > 1), obj.output_suffix = suffix; end
+
+        end
         
         % construct names of output files
         function output = i2o(obj, input)
@@ -12,7 +39,14 @@ classdef dp_node_dmri_topup_apply < dp_node
             output.op = input.op;
 
             % xxx: better naming warranted
-            output.dmri_fn = dp.new_fn(output.op, input.nii_ap_fn, '_topup');
+            if (isempty(obj.output_name))
+                output_name = input.nii_ap_fn; %#ok<PROPLC>
+            else
+                output_name = obj.output_name; %#ok<PROPLC>
+            end
+
+            output.dmri_fn = dp.new_fn(output.op, ...
+                output_name, obj.output_suffix); %#ok<PROPLC>
             
             output.xps_fn = mdm_xps_fn_from_nii_fn(output.dmri_fn);
 
@@ -23,46 +57,62 @@ classdef dp_node_dmri_topup_apply < dp_node
 
         function output = execute(obj, input, output)
 
-            % connect to data
-            s_ap = mdm_s_from_nii(input.nii_ap_fn);
-            s_pa = mdm_s_from_nii(input.nii_pa_fn);
-
-            % we may need to build a volume of zeros, if 
-            % we did not acquire all data both directions
-            if (s_ap.xps.n ~= s_pa.xps.n)
-
-                % assert that pa is the one with few directions
-                assert(s_pa.xps.n < s_ap.xps.n, 'assumption invalid');
-
-                [I,h] = mdm_nii_read(s_ap.nii_fn);
-                tmp_nii_fn = fullfile(output.tmp.bp, 'DMRI_PA_zeros.nii.gz');
-                mdm_nii_write(zeros(size(I)), tmp_nii_fn, h);
-                s_tmp_pa = s_ap;
-                s_tmp_pa.nii_fn = tmp_nii_fn;
-
+            % Connect to data
+            if (~isempty(input.nii_ap_fn))
+                s_ap = mdm_s_from_nii(input.nii_ap_fn);
+                if (s_ap.xps.n == 0), error('xps.n == 0'); end
             else
-                s_tmp_pa = s_pa;
+                s_ap.nii_fn = fullfile(output.tmp.bp, 'DMRI_AP_zeros.nii.gz');                
+                s_ap.xps.n = 0;                
             end
+            
+            if (~isempty(input.nii_pa_fn))
+                s_pa = mdm_s_from_nii(input.nii_pa_fn);
+                if (s_pa.xps.n == 0), error('xps.n == 0'); end                
+            else
+                s_pa.nii_fn = fullfile(output.tmp.bp, 'DMRI_PA_zeros.nii.gz');
+                s_pa.xps.n = 0;
+            end
+
+            
+            % Check and fix
+            if (s_ap.xps.n > 0) && (s_pa.xps.n == 0)
+                [I,h] = mdm_nii_read(s_ap.nii_fn);
+                mdm_nii_write(zeros(size(I)), s_pa.nii_fn, h);
+                s_pa.xps = s_ap.xps;                
+            end
+            
+            if (s_pa.xps.n > 0) && (s_ap.xps.n == 0)
+                [I,h] = mdm_nii_read(s_pa.nii_fn);
+                mdm_nii_write(zeros(size(I)), s_ap.nii_fn, h);
+                s_ap.xps = s_pa.xps;
+            end
+
+
+            % Now we should be all set, but check just in case
+            if (s_ap.xps.n ~= s_pa.xps.n)
+                error('fix this in your pipeline, set non-desired one to empty')
+            end
+
 
             % Define command
             msf_mkdir(fileparts(output.dmri_fn));
 
-            cmd = sprintf(['bash --login -c ''applytopup ' ...
+            cmd = sprintf(['applytopup ' ...
                 '--imain="%s","%s" ' ...
                 '--inindex=1,2 ' ...
                 '--topup="%s" ' ...
                 '--datain="%s" ' ...
-                '--out="%s"', ...
-                ''''], ...
-                s_ap.nii_fn, ...        % imain_1 (acquired data first)
-                s_tmp_pa.nii_fn, ...    % imain_2
-                input.topup_data_path, ...    % topup
-                input.topup_spec_fn, ...      % spec
-                output.dmri_fn);         % output_fn
+                '--out="%s"'], ...
+                s_ap.nii_fn, ...                % imain_1 
+                s_pa.nii_fn, ...                % imain_2
+                input.topup_data_path, ...      % topup
+                input.topup_spec_fn, ...        % spec
+                output.dmri_fn);                % output_fn
             
-            system(cmd);
+            obj.syscmd(cmd);
 
-            % save the xps too
+            % Save the xps too
             mdm_xps_save(s_ap.xps, output.xps_fn);
 
         end
