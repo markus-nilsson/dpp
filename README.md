@@ -156,11 +156,13 @@ node for a subject where all preceeding nodes work correctly. For example
 
 The nodes can also be used in a stand-alone fashion. Example for denoising
 
-`input.dmri_fn = 'my_path/your_dwi_volume.nii.gz';`
-`input.op = msf_fileparts(input.nii_fn);`
+```matlab
+input.dmri_fn = 'my_path/your_dwi_volume.nii.gz';
+input.op = msf_fileparts(input.nii_fn);
 
-`a = dp_node_dmri_denoise();`
-`a.execute(input, a.i2o(input));`
+a = dp_node_dmri_denoise();
+a.execute(input, a.i2o(input));
+```
 
 # Dependencies
 
