@@ -3,6 +3,10 @@
 Methods for building a data processing pipeline in MATLAB. Intended for use 
 with MRI data in general and diffusion MRI in particular.
 
+## Getting started
+
+See [examples](examples/), where you will find startup scripts, along with some examples. 
+
 ## General structure
 
 A node (`dp_node_base.m`) is a class that executes a single processing step. 
