@@ -6,12 +6,13 @@ classdef dp_node_csv < dp_node
     properties
         bp_csv; 
         vars; % e.g. mean, std, median, mad et cetera
+        fields = {};
     end
 
 
     methods
 
-        function obj = dp_node_csv(name, bp_csv, vars)
+        function obj = dp_node_csv(name, bp_csv, vars, fields)
             
             % meaningful name needed, as this becomes the file name
             obj.name = name; 
@@ -21,6 +22,11 @@ classdef dp_node_csv < dp_node
             
             % which variables to export to the csv
             obj.vars = vars;
+
+            % which fields to export (empty = all)
+            if (nargin > 3)
+                obj.fields = fields;
+            end
         end
 
         function output = i2o(obj, input)
@@ -46,6 +52,11 @@ classdef dp_node_csv < dp_node
                 roi_stat = info.roi_stats(c_roi);
                 
                 f = fieldnames(roi_stat);
+
+                % select only some fields
+                if (~isempty(obj.fields))
+                    f = intersect(f, obj.fields);
+                end
 
                 for c_field = 1:numel(f) % contrast, e.g. md, fa
 
