@@ -9,6 +9,7 @@ classdef dp_node_core_show_pipe < handle
         h_output;
 
         primary_outputs;
+        current_node;
     end
 
     properties (Abstract)
@@ -32,6 +33,8 @@ classdef dp_node_core_show_pipe < handle
 
             G = digraph(edges(:,1), edges(:,2), [], names);
 
+            % Set props
+            obj.current_node = obj;
 
             % Get first primary node
             primary_node = obj.get_primary_node();
@@ -51,7 +54,8 @@ classdef dp_node_core_show_pipe < handle
             set(h, ...
                 'NodeFontSize', 12, ...
                 'MarkerSize', 12, ...
-                'NodeColor', 'black');
+                'NodeColor', 'black', ...
+                'ButtonDownFcn', @(s,e) obj.ui_graph(s,e));
             title(ha, 'dp\_node Pipeline Connections');
             axis(ha, 'off');
 
@@ -72,26 +76,83 @@ classdef dp_node_core_show_pipe < handle
 
     methods (Hidden)
 
+        function ui_graph(obj, src, event)
+
+            % Get the axes where the click happened
+            ax = ancestor(src, 'axes');
+
+            % Get click location in data coordinates
+            clickPoint = ax.CurrentPoint(1, 1:2);
+
+            % Get node positions
+            nodeX = src.XData;
+            nodeY = src.YData;
+
+            % Compute distances from click to all nodes
+            distances = hypot(nodeX - clickPoint(1), nodeY - clickPoint(2));
+
+            % Define a click threshold (adjust as needed)
+            threshold = 0.05;  % depends on axis scale
+
+            % Find closest node within threshold
+            [minDist, idx] = min(distances);
+
+            if (minDist < threshold)
+
+                tmp = src.NodeLabel{idx};
+                
+                idx = str2double(tmp(1: (-1 + (find(tmp == ':', 1, 'first')))));
+
+                obj.current_node = obj.get_node_by_idx(idx);
+
+            end
+
+            obj.ui_items(src, event);
+
+        end
+
         function ui_items(obj, s,e)
 
             input = obj.primary_outputs{obj.h_items.ValueIndex};
 
-            output = obj.run('iter', struct('id_filter', obj.h_items.Value));
-            
-            1;
+            obj.h_input.Items = cellfun(@(x) ...
+                sprintf('%s: %s', x, input.(x)), fieldnames(input), 'UniformOutput',false);
+
+            % Grab outputs for this subject
+            try
+                output = obj.current_node.run('iter', struct(...
+                    'id_filter', obj.h_items.Value, ...
+                    'do_try_catch', 0));
+                me = {};
+            catch me
+                output = {};
+            end
+
+            if (numel(output) == 1)
+                output = output{1};
+
+                obj.h_output.Items = cellfun(@(x) ...
+                    sprintf('%s: %s', x, output.(x)), fieldnames(output), 'UniformOutput',false);
+
+            else
+
+                obj.h_output.Items = {...
+                    sprintf('#outputs = %i', numel(output)), ...
+                    sprintf('Error: %s', me.message)};
+
+            end
 
         end
 
 
         function nodes = get_previous_nodes(obj)
 
-            if (isa(obj, 'dp_node_io_merge')) % dont do this here
-                nodes = obj.previous_nodes;
-            elseif (~isempty(obj.previous_node))
+            if (~isempty(obj.previous_node))
                 nodes = {obj.previous_node};
             else
                 nodes = {};
             end
+            
         end
 
         function node = get_primary_node(obj)
@@ -109,6 +170,24 @@ classdef dp_node_core_show_pipe < handle
         function idx = get_new_id(obj)
             idx = obj.current_idx;
             obj.current_idx = obj.current_idx + 1;
+        end
+       
+        function node = get_node_by_idx(obj, idx)
+
+            if (abs(obj.idx - idx) < 0.001)
+                node = obj;
+            else
+                nodes = obj.get_previous_nodes();
+                for c = 1:numel(nodes)
+                    tmp = nodes{c}.get_node_by_idx(idx);
+                    if (~isempty(tmp))
+                        node = tmp;
+                        return;
+                    end
+                end
+                node = {};
+            end
+
         end
 
         function clean_id(obj)

@@ -48,20 +48,8 @@ classdef dp_node_io_filter_by_id < dp_node
 
         function outputs = process_outputs(obj, outputs)
 
-            % Find matches
-            status = ones(size(outputs)) == 0;
-            for c = 1:numel(status)
-
-                for c2 = 1:numel(obj.ids)
-
-                    if (isequal(outputs{c}.id, obj.ids{c2}))
-                        status(c) = true;
-                        break;
-                    end
-
-                end
-
-            end
+            status = dp_node_io_filter_by_id.match_filter(...
+                outputs, obj.ids);
 
             % Report on result of filtering
             if (numel(outputs) > 1)
@@ -80,6 +68,27 @@ classdef dp_node_io_filter_by_id < dp_node
             end
             
 
+        end
+        
+    end
+
+    methods (Static)
+
+        function status = match_filter(outputs, filter)
+
+            % Find matches
+            status = ones(size(outputs)) == 0;
+            
+            for c = 1:numel(status)
+
+                for c2 = 1:numel(filter)
+
+                    if (isequal(outputs{c}.id, filter{c2}))
+                        status(c) = true;
+                        break;
+                    end
+                end
+            end
         end
     end
 

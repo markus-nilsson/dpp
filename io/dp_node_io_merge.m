@@ -206,4 +206,13 @@ classdef dp_node_io_merge < dp_node
 
     end
 
+    methods (Hidden)
+
+        function nodes = get_previous_nodes(obj)
+
+            nodes = obj.previous_nodes;
+            
+        end        
+    end
+
 end

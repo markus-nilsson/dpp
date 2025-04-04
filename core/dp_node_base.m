@@ -33,6 +33,16 @@ classdef dp_node_base < dp_node_core & dp_node_base_support
 
             % Retreive previous outputs
             previous_outputs = obj.get_iterable();
+
+            % Filter 
+            if (isfield(opt, 'id_filter'))
+                if (~iscell(opt.id_filter)), opt.id_filter = {opt.id_filter}; end
+                status = dp_node_io_filter_by_id.match_filter(...
+                    previous_outputs, opt.id_filter);
+
+                % Keep matches
+                previous_outputs = previous_outputs(status == 1);
+            end
             
             if (isempty(previous_outputs))
                 obj.log(0, '%tNo output from previous node - no actions will be taken!');

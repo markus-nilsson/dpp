@@ -1,4 +1,4 @@
-classdef dp_node_primary < dp_node_core
+classdef dp_node_primary < dp_node_base
 
     methods (Abstract)
         get_iterable(obj) % need to be declared to work differently from core
