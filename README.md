@@ -105,6 +105,11 @@ data processing in the given `mode`. Examples of modes are
 
 Normally, you would use `iter` and `report` to troubleshoot a developing pipeline.
 
+The method `my_node.run(mode)` executes only `my_node`. If previous nodes
+have missing (unprocessed) output, it will do nothing about that. Conversely,
+the method `my_node().run_deep(mode)` executes the mode recursively on all 
+previous nodes. This method is, however, still experimental. 
+
 ## Options
 
 An options structure can be supplemented to the data processing, according
