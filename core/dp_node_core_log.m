@@ -1,15 +1,26 @@
-classdef dp_node_core_log < handle
+classdef dp_node_core_log < dp_node_core_opt & handle
+
+    properties (Hidden)
+        h_log_fn; % internal handle to log fn
+    end
 
     properties
-        log_opt; 
+        log_fn;
     end
+
 
     methods
 
         function obj = dp_node_core_log()
-            obj.log_opt.c_level = 0;
-            obj.log_opt.verbose = 0;
+            obj.h_log_fn = @(lvl, str) obj.print_log(lvl, str);
+        end
 
+        function log_fn = get.log_fn(obj)
+            log_fn = obj.get_primary_node().h_log_fn;
+        end
+
+        function set.log_fn(obj, val)
+            obj.get_primary_node().h_log_fn = val;
         end
 
         function log(obj, varargin)
@@ -43,11 +54,21 @@ classdef dp_node_core_log < handle
                 end
             end
 
-            if (obj.log_opt.verbose >= log_level)
-                log_str = strrep(log_str, '%t', ...
-                    char(zeros(1, max(0, 2*(obj.log_opt.c_level-1))) + ' '));
+            log_str = strrep(log_str, '%t', ...
+                char(zeros(1, max(0, 2*(obj.opt.c_level-1))) + ' '));
+            
+            log_str = sprintf(log_str, log_arg{:});
 
-                fprintf(cat(2, log_str, '\n'), log_arg{:});
+
+            % Send to log (replace with dynamic log management)
+            obj.log_fn(log_level, log_str);
+
+        end
+
+        function print_log(obj, log_level, log_str)
+
+            if (obj.opt.verbose >= log_level)
+                fprintf(cat(2, log_str, '\n'));
             end
 
         end

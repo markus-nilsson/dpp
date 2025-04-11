@@ -79,7 +79,6 @@ classdef dp_node_workflow < dp_node % assume this is for nifti files
             % all nodes in the workflow, just the last one
             if (~obj.get_dpm().do_run_on_all_in_workflow)
 
-
                 % this is a difficult one, try a new thing
                 output = run_on_one@dp_node(obj, input, output);
 

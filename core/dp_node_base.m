@@ -1,4 +1,4 @@
-classdef dp_node_base < dp_node_core & dp_node_base_support
+classdef dp_node_base < dp_node_core
 
     % this should really be named "run manager", as this
     % class implements functions related to running nodes
@@ -7,49 +7,52 @@ classdef dp_node_base < dp_node_core & dp_node_base_support
     % the support class
 
     properties
-        opt;
         do_i2o_pass = 0;
     end
 
-    methods
+    methods % public
 
         % run deep, experiment
         function outputs = run_deep(obj, mode, opt)
+            if (nargin < 3), opt.present = 1; end
             opt.deep_mode = 1;
             outputs = obj.run(mode, opt);
         end
 
-        % run on all outputs from the previous node
+        % set mode and options, and run the node! 
         function outputs = run(obj, mode, opt)
             
             if (nargin < 2), mode = 'report'; end
-            if (nargin < 3), opt.present = 1; end
+            if (nargin < 3), opt = []; end
 
-            % update options and mode of this node
-            obj.update(opt, mode);
+            % Reset runtime options
+            obj.opt_runtime = opt;     
 
-            % Report on status and init
+            % Run it using internal function!
+            outputs = obj.i_run(mode);
+
+        end
+    end
+
+    methods (Hidden) % internal functions
+
+        % run on all outputs from the previous node
+        function outputs = i_run(obj, mode)
+
+            % Keep track of execution depth (for logging)
+            obj.mode = mode;
+            obj.set_c_level();
+
+            % Report on status, init, options
             obj.log(0, '%tRunning %s with mode ''%s''', obj.name, obj.mode);
+            obj.log(3, 'Options: %s', formattedDisplayText(obj.opt));
 
             % Retreive previous outputs
-            previous_outputs = obj.get_iterable();
-
-            % Filter 
-            if (isfield(opt, 'id_filter'))
-                if (~iscell(opt.id_filter)), opt.id_filter = {opt.id_filter}; end
-                status = dp_node_io_filter_by_id.match_filter(...
-                    previous_outputs, opt.id_filter);
-
-                % Keep matches
-                previous_outputs = previous_outputs(status == 1);
-            end
+            previous_outputs = obj.filter_iterable(obj.get_iterable());
             
             if (isempty(previous_outputs))
                 obj.log(0, '%tNo output from previous node - no actions will be taken!');
                 outputs = {};
-                return;
-            elseif (strcmp(obj.mode, 'iter_deep')) % mode still used?
-                outputs = previous_outputs;
                 return;
             else
                 obj.log(0, '%tFound %i candidate items', numel(previous_outputs));   
@@ -74,14 +77,15 @@ classdef dp_node_base < dp_node_core & dp_node_base_support
 
             for c = 1:numel(previous_outputs)
 
-                obj.log(2, '-------------------');
-                obj.log(1, 'Running %s for %s', obj.name, previous_outputs{c}.id)
-                obj.log(2, '-------------------');
+                obj.log(2, '%t-------------------');
+                obj.log(1, '%tRunning %s for %s', obj.name, previous_outputs{c}.id)
+                obj.log(2, '%t-------------------');
 
                 % Run in a try-catch environment, if asked for
                 [outputs{c}, err_list{c}] = obj.run_fun(...
                     @() obj.run_inner(previous_outputs{c}), ...
-                    @(me) err_log_fun(me, previous_outputs{c}.id));
+                    @(me) err_log_fun(me, previous_outputs{c}.id), ...
+                    obj.opt.do_try_catch);
 
                 obj.log(1, ' ');
             end
@@ -114,7 +118,7 @@ classdef dp_node_base < dp_node_core & dp_node_base_support
         end
 
         function previous_outputs = get_iterable(obj)
-
+          
             if (isempty(obj.previous_node))
                 error('%s: previous_node not defined, aborting', obj.name);
             end
@@ -122,13 +126,25 @@ classdef dp_node_base < dp_node_core & dp_node_base_support
             if (obj.opt.deep_mode)
                 previous_outputs = obj.previous_node.get_iterable();
             else
-                previous_outputs = obj.previous_node.run(obj.opt.iter_mode, obj.opt);
+                previous_outputs = obj.previous_node.i_run(obj.opt.iter_mode);
             end
 
         end
 
-        function output = run_inner(obj, po)
+        function outputs = filter_iterable(obj, outputs)
 
+            % Filtering demands we have a filter
+            if (isempty(obj.opt.id_filter)), return; end
+
+            % Match and keep matches
+            status = dp_node_io_filter_by_id.match_filter(outputs, ...
+                obj.opt.id_filter);
+
+            outputs = outputs(status == 1);
+
+        end        
+
+        function output = run_inner(obj, po)
 
             % In deep mode, we get the po by recursively running deeper
             if (obj.opt.deep_mode) && (~isempty(obj.previous_node))
@@ -186,12 +202,11 @@ classdef dp_node_base < dp_node_core & dp_node_base_support
 
         end
 
-        % tests for required input fields (helps debugging)
         % here we do not test whether files exist, only if the fields
         % are in place -- to make debugging easier
         function test_input(obj, input)
 
-            f = unique(cat(2, obj.input_test, obj.input_fields));
+            f = obj.input_test;
             tmp = {};
             
             % test for missing fields
@@ -245,21 +260,6 @@ classdef dp_node_base < dp_node_core & dp_node_base_support
             output = obj.get_dpm().run_on_one(input, output);
         end
 
-        function output = run_clean(obj, output)
-
-            % clean up temporary directory if asked to do so
-            if (~isstruct(output)), return; end
-            
-            if (isfield(output, 'tmp')) && ...
-                    (isfield(output.tmp, 'do_delete')) && ...
-                    (output.tmp.do_delete)
-
-                msf_delete(output.tmp.bp);
-
-            end
-            
-        end
-        
         % allow this to be called by e.g. the execute method
         function outputs = execute_on_outputs(obj, outputs)
             1;

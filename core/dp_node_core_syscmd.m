@@ -1,6 +1,6 @@
 classdef dp_node_core_syscmd < dp_node_core_log & handle
 
-    properties
+    properties (Hidden)
         conda_env = '';
     end
 

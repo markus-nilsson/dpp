@@ -15,23 +15,6 @@ classdef dp_node < dp_node_base
         end
 
 
-        function output = run_clean(obj, output)
-            
-            % xxx: move this, make it private, and then 
-            %      have it run function handles instead
-
-            % clean up temporary directory if asked to do so
-            if (~isstruct(output)), return; end
-            if (~isfield(output, 'tmp')), return; end
-
-            output.tmp = msf_ensure_field(output.tmp, 'do_delete', 0);
-            
-            if (output.tmp.do_delete)
-                msf_delete(output.tmp.bp);
-            end
-
-        end
-
         function [status, f, age] = input_exist(obj, input)
             [status, f, age] = obj.io_exist2(input, obj.input_test);
         end

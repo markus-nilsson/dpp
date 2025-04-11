@@ -25,8 +25,6 @@ classdef dp_node_dmri_preprocess_hardi < dp_node_workflow
 
             obj = obj@dp_node_workflow({a,b,c,d,e,f,g});            
 
-            obj.input_fields = {'nii_ap_fn', 'nii_pa_fn'};
-
         end
 
     end

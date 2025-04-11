@@ -4,6 +4,8 @@ classdef dpm < handle
 
     properties
         node;
+
+        % xxx: these should be converted to options
         do_run_on_all_in_workflow = 0;
         do_input_check = 1;
         err_log_level = 1; % what level run errors are reported at

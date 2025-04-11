@@ -1,50 +1,18 @@
-classdef dp_node_base_support < dp_node_core
+classdef dp_node_core_run_fun < ...
+        dp_node_core_central & ...
+        dp_node_core_log & ...
+        handle
 
     % methods to support the running of nodes
     % but that are not crucial for the logic
 
+    properties (Abstract)
+        name;
+    end
 
     methods
 
-        function obj = update(obj, opt, mode) % set necessary properties
-
-            if (isempty(obj.name)), obj.name = class(obj); end
-
-            if (nargin < 2), opt.present = 1; end
-            if (nargin < 3), mode = obj.mode; end
-
-            % set mode first
-            obj.mode = mode;            
-           
-            obj.opt = dp_node_base.default_opt(opt);
-
-            if (~isempty(obj.mode))
-                obj.opt = obj.get_dpm().dp_opt(obj.opt);
-            end
-
-            % force outside do_try_catch
-            if (isfield(opt, 'do_try_catch'))
-                obj.opt.do_try_catch = opt.do_try_catch;
-            end
-
-            % Report options
-            obj.log(3, 'Options: %s', formattedDisplayText(obj.opt));
-
-            % set log options
-            obj.log_opt.verbose = obj.opt.verbose;
-            obj.log_opt.c_level = obj.opt.c_level;
-
-            % not sure if this is always a good idea, but let us try it
-            if (~isempty(obj.previous_node)) && (obj.opt.deep_mode)
-                obj.previous_node.do_dpm_passthrough = 1;                
-                obj.previous_node.update(obj.opt, mode);
-            end
-
-        end  
-
-        function [output, err] = run_fun(obj, fun, err_log_fun, do_try_catch)
-
-            if (nargin < 4), do_try_catch = obj.opt.do_try_catch; end
+        function [output, err] = run_fun(~, fun, err_log_fun, do_try_catch)
 
             if (~do_try_catch) % normal run
 
@@ -100,33 +68,22 @@ classdef dp_node_base_support < dp_node_core
                 
             end
 
-            if (do_show_first_error) || ((obj.opt.verbose >= 1) && (numel(errors) > 0))
-                obj.log(0, ' ');
-                obj.log(0, '  First error:');
-                obj.log(0, ' ');
-                obj.log(0, '<a href="matlab: opentoline(''%s'', %d)">%s</a>', errors{1}.stack(1).file, errors{1}.stack(1).line, errors{1}.message);
-                obj.log(0, ' ');
-                obj.log(0, '%s', formattedDisplayText(errors{1}.stack(1)));
-                obj.log(0, ' ');
+            % Log level (make it visible at level 0 if requested)
+            l = 1;
+
+            if (do_show_first_error), l = 0; end
+
+            if (numel(errors) > 0)
+                obj.log(l, ' ');
+                obj.log(l, '  First error:');
+                obj.log(l, ' ');
+                obj.log(l, '<a href="matlab: opentoline(''%s'', %d)">%s</a>', errors{1}.stack(1).file, errors{1}.stack(1).line, errors{1}.message);
+                obj.log(l, ' ');
+                obj.log(l, '%s', formattedDisplayText(errors{1}.stack(1)));
+                obj.log(l, ' ');
             end
         
         end        
-
-
-        function output = run_clean(obj, output)
-
-            % clean up temporary directory if asked to do so
-            if (~isstruct(output)), return; end
-            
-            if (isfield(output, 'tmp')) && ...
-                    (isfield(output.tmp, 'do_delete')) && ...
-                    (output.tmp.do_delete)
-
-                msf_delete(output.tmp.bp);
-
-            end
-            
-        end
         
         % run the data processing mode's function here
         function output = run_on_one(obj, input, output)
@@ -134,11 +91,11 @@ classdef dp_node_base_support < dp_node_core
         end
 
         % for overloading
-        function outputs = process_outputs(obj, outputs)
+        function outputs = process_outputs(~, outputs)
             1; 
         end
        
-        function pop = manage_po(obj, pop)
+        function pop = manage_po(~, pop)
             if (~msf_isfield(pop, 'id')), error('id field missing'); end
         end
 
@@ -186,28 +143,6 @@ classdef dp_node_base_support < dp_node_core
                 end
             end
             
-        end
-
-    end
-
-    methods (Static)
-
-        function opt = default_opt(opt)
-            
-            opt = msf_ensure_field(opt, 'verbose', 0);
-            opt = msf_ensure_field(opt, 'do_try_catch', 1);
-            opt = msf_ensure_field(opt, 'iter_mode', 'iter');
-
-            opt = msf_ensure_field(opt, 'deep_mode', 0);
-            
-            % do not write over existing data as per default
-            opt = msf_ensure_field(opt, 'do_overwrite', 0);
-            
-            opt = msf_ensure_field(opt, 'c_level', 0);
-            opt.c_level = opt.c_level + 1;
-
-            opt.indent = zeros(1, 2*(opt.c_level - 1)) + ' ';
-
         end
 
     end

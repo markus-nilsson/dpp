@@ -27,7 +27,6 @@ classdef dp_node_items_from_files < dp_node_items
             % expect:
             % po.ip (input folder with files of type ext)
             % po.op (output folder)            
-            obj.input_fields = {'ip', 'op'};
 
         end
 

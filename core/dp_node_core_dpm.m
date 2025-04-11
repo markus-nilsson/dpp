@@ -4,12 +4,10 @@ classdef dp_node_core_dpm < handle
 
     properties
         mode;
-        dpm_list;
 
         % not sure this is on the right level
-        input_fields = {}; % part of testing to make life easier
-        input_test = [];  % field that will be tested by input_exists
-        output_test = []; % field that will be tested by output_exists
+        input_test = {};  % fields that will be tested by input_exists
+        output_test = {}; % fields that will be tested by output_exists
         
     end
 
@@ -20,6 +18,7 @@ classdef dp_node_core_dpm < handle
 
     properties (Hidden)
         do_dpm_passthrough = 0;
+        dpm_list;        
     end
 
     methods
