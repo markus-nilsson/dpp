@@ -18,6 +18,15 @@ classdef dp_node_core_opt < ...
     properties (Hidden)
         opt_runtime = [];
         opt_node = [];
+        opt_default = struct(...
+                'verbose', 0, ...
+                'do_try_catch', 1, ...
+                'iter_mode', 'iter', ...
+                'deep_mode', 0, ...
+                'do_overwrite', 0, ...
+                'c_level', 0, ...
+                'id_filter', [], ...
+                'run_id', []);
     end
 
     methods
@@ -26,11 +35,15 @@ classdef dp_node_core_opt < ...
             obj.opt_node.present = 1;
         end
 
-        % Store the runtime opts in the primary node
+        % Store/load the runtime opts in the primary node
         function set.opt_runtime(obj, opt)
             obj.get_primary_node().opt_runtime = opt;
         end
 
+        function opt = get.opt_runtime(obj)
+            opt = obj.get_primary_node().opt_runtime;
+        end
+        
         % Keep track of how deeply we have recursed
         function set_c_level(obj)
             
@@ -47,14 +60,19 @@ classdef dp_node_core_opt < ...
 
             f = @(x, field, val) obj.ensure_field(x, field, val);
 
+            % Start with defaults]
+            opt = obj.opt_default;
+
             % First grab the runtime options
             try
-                opt = obj.get_primary_node().opt_runtime;
+                opt_runtime = obj.get_primary_node().opt_runtime;
+                opt = obj.merge_opt(opt, opt_runtime);
             catch
                 warning('Primary node not found in %s', obj.name);
                 opt = [];
                 return;
             end
+            
 
             % Gently add node's options
             g = @(x, field) obj.gently_copy_field(x, field, obj.opt_node);            
@@ -65,23 +83,18 @@ classdef dp_node_core_opt < ...
                 opt.c_level = obj.opt_node.c_level;
             end
 
-
-            % Gently add default options
-            opt = f(opt, 'verbose', 0);
-            opt = f(opt, 'do_try_catch', 1);
-            opt = f(opt, 'iter_mode', 'iter');
-            opt = f(opt, 'deep_mode', 0);
-            opt = f(opt, 'do_overwrite', 0);
-            opt = f(opt, 'c_level', 0);
-            opt = f(opt, 'id_filter', {});
-
             if (~isempty(obj.mode))
                 opt = obj.get_dpm().dp_opt(opt);
+            end
+
+            if (isequal(opt.id_filter, []))
+                opt.id_filter = {};
             end
 
             if (~iscell(opt.id_filter))
                 opt.id_filter = {opt.id_filter};
             end
+
 
         end
 
@@ -115,6 +128,15 @@ classdef dp_node_core_opt < ...
             end
         end
 
+        function a = merge_opt(a, b)
+
+            f = fieldnames(b);
+            for c = 1:numel(f)
+                a.(f{c}) = b.(f{c});
+            end
+
+
+        end
 
     end
 

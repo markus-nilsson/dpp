@@ -1,5 +1,7 @@
 classdef dpm_iter < dpm
 
+    % This mode works by doing 
+
     methods
 
         function mode_name = get_mode_name(obj)
@@ -35,6 +37,12 @@ classdef dpm_iter < dpm
                 return;
             end
 
+            % Implement caching
+            if (obj.node.cache_present())
+                outputs = obj.node.cache_get();
+                return;
+            end
+
             % Consider re/implementing some reporting here
             ind = zeros(size(outputs));
             for c = 1:numel(outputs)
@@ -50,6 +58,10 @@ classdef dpm_iter < dpm
 
             % Prune
             outputs = outputs(ind == 1);
+
+            % Store in cache
+            obj.node.cache_store(outputs);
+
 
         end
 

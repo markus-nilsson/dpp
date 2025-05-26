@@ -3,45 +3,12 @@ classdef dp_node_core_pipeline_manager < handle
     % Code for managing nodes as a pipeline
     % The ID's of the nodes are created on request
 
-    properties (Abstract)
-        name;
-        previous_node;
-    end
-
     properties (Hidden)
         current_idx;
         idx;
     end
 
     methods
-
-        % Overload this e.g. in dp_node_io_merge
-        function nodes = get_previous_nodes(obj)
-
-            if (~isempty(obj.previous_node))
-                nodes = {obj.previous_node};
-            else
-                nodes = {};
-            end
-
-        end
-
-        function node = get_primary_node(obj)
-
-            nodes = obj.get_previous_nodes();
-
-            if (isempty(nodes))
-                node = obj;
-
-                if (~isa(node, 'dp_node_primary'))
-                    error('primary node mode be of type dp_node_primary')
-                end
-
-            else % search left branch to get to primary node
-                node = nodes{1}.get_primary_node();
-            end
-
-        end
 
         % assigns 
         function idx = get_new_id(obj)

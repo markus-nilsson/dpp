@@ -4,6 +4,7 @@ classdef dp_node_core_dpm < handle
 
     properties
         mode;
+        dpm_cache = struct()
 
         % not sure this is on the right level
         input_test = {};  % fields that will be tested by input_exists
@@ -40,6 +41,12 @@ classdef dp_node_core_dpm < handle
         function dpm = get_dpm(obj, mode)
 
             if (nargin < 2), mode = obj.mode; end
+
+            % Hack to speed things up
+            if (isfield(obj.dpm_cache, 'mode'))
+                dpm = obj.dpm_cache.(mode);
+                return;
+            end
             
             ind = cellfun(@(x) strcmp(mode, x.get_mode_name()), obj.dpm_list);
 
@@ -48,6 +55,8 @@ classdef dp_node_core_dpm < handle
             if (numel(ind) > 0)
             
                 dpm = obj.dpm_list{ind};
+
+                obj.dpm_cache.(mode) = dpm;
             
             else % dpm not supported, but allow passthrough for workflows
                 

@@ -26,6 +26,7 @@ classdef dp_node_base < dp_node_core
             if (nargin < 3), opt = []; end
 
             % Reset runtime options
+            opt.run_id = datetime('now'); 
             obj.opt_runtime = opt;     
 
             % Run it using internal function!
