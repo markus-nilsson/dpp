@@ -212,6 +212,11 @@ classdef dui_show_io < handle
 
             else
 
+                if (isempty(me))
+                    me.message = 'No error reported';
+                end
+
+
                 obj.h_output.Data = {...
                     sprintf('#outputs = %i', numel(output)), ...
                     sprintf('Error: %s', me.message)};

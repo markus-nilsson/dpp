@@ -8,12 +8,17 @@ classdef dp_node_io_merge < dp_node
     properties
         previous_nodes = {};
         do_prefix = 1; % add node name as prefix to merged fields
-                       % 0 - do not do this for the first node to be merged
+        % 0 - do not do this for the first node to be merged
     end
 
     methods
 
-        function obj = dp_node_io_merge(nodes)
+        function obj = dp_node_io_merge(varargin)
+            if (nargin == 1)
+                nodes = varargin{1};
+            else
+                nodes = varargin;
+            end
             obj.previous_nodes = nodes;
         end
 
@@ -29,7 +34,7 @@ classdef dp_node_io_merge < dp_node
             % grab previous output from each previous node
             list_of_outputs = cell(size(obj.previous_nodes));
             for c = 1:numel(obj.previous_nodes)
-                tmp = obj.previous_nodes{c}.run(obj.opt.iter_mode, obj.opt);              
+                tmp = obj.previous_nodes{c}.run(obj.opt.iter_mode, obj.opt);
                 list_of_outputs{c} = tmp;
             end
 
@@ -56,7 +61,8 @@ classdef dp_node_io_merge < dp_node
             % grab previous output from each previous node
             pos = cell(size(obj.previous_nodes));
             for c = 1:numel(obj.previous_nodes)
-                pos{c} = {obj.previous_nodes{c}.run_inner(po)};              
+                obj.previous_nodes{c}.mode = obj.mode;
+                pos{c} = {obj.previous_nodes{c}.run_inner(po)};
             end
 
             % keep only those outputs where the ids intersect
@@ -70,16 +76,6 @@ classdef dp_node_io_merge < dp_node
 
             %output = run_inner@dp_node(obj, po);
 
-
-        end
-
-        function obj = update(obj, varargin) % update involved nodes
-
-            obj = update@dp_node(obj, varargin{:});
-
-            for c = 1:numel(obj.previous_nodes)
-                obj.previous_nodes{c}.update(varargin{:});
-            end
 
         end
 
@@ -172,11 +168,17 @@ classdef dp_node_io_merge < dp_node
                 outputs{i}.id = inputs{i}.id;
 
                 for j = 1:numel(inputs{i}.output)
+
                     tmp = inputs{i}.output{j};
-                
+
                     f = fieldnames(tmp);
 
                     for k = 1:numel(f)
+
+                        % skip workflow stuff
+                        if (isequal(f{k}, 'wf_input')), continue; end 
+                        if (isequal(f{k}, 'wf_output')), continue; end 
+                    
 
                         if (do_prefix) || (j > 1)
                             new_fieldname = [names{j} '_' f{k}];

@@ -34,7 +34,7 @@ classdef dp_node_core_pipeline_manager < handle
                 node = obj;
 
                 if (~isa(node, 'dp_node_primary'))
-                    error('primary node mode be of type dp_node_primarys')
+                    error('primary node mode be of type dp_node_primary')
                 end
 
             else % search left branch to get to primary node

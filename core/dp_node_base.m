@@ -148,9 +148,10 @@ classdef dp_node_base < dp_node_core
 
             % In deep mode, we get the po by recursively running deeper
             if (obj.opt.deep_mode) && (~isempty(obj.previous_node))
+                obj.previous_node.mode = obj.mode;
                 po = obj.previous_node.run_inner(po);
             end
-
+            
             % Excessive logging with verbose level 2
             obj.log(2, '\nStarting %s', obj.name);
 

@@ -6,9 +6,11 @@ classdef dp_node_workflow < dp_node % assume this is for nifti files
 
     methods
 
-        function obj = dp_node_workflow(nodes)
+        function obj = dp_node_workflow(nodes, name)
             
             obj.nodes = nodes;
+
+            if (nargin > 1), obj.name = name; end
 
             % Basic checking
             if (numel(nodes) <= 1)
@@ -16,9 +18,13 @@ classdef dp_node_workflow < dp_node % assume this is for nifti files
             end
 
             % set previous nodes
+            obj.nodes{1}.connect(obj); % xxx: see note below
             for c = 2:numel(nodes)
-                obj.nodes{c}.previous_node = obj.nodes{c-1};
+                obj.nodes{c}.connect(obj.nodes{c-1});
             end
+
+            % (connecting the first node to allow an unbroken chain to the
+            %  first primary node, but this is more of a fix than a feature)
             
             % enable passthrough, so that nodes in the workflow can 
             % be used with any of the dpm's supported by the class
@@ -26,7 +32,7 @@ classdef dp_node_workflow < dp_node % assume this is for nifti files
                 obj.nodes{c}.do_dpm_passthrough = 1; 
             end
         end
-
+    
         function output = i2o(obj, input)
 
             c_input = cell(size(obj.nodes));
@@ -109,7 +115,8 @@ classdef dp_node_workflow < dp_node % assume this is for nifti files
                 for c = 1:numel(obj.nodes)
 
                     % Transfer the options to the node
-                    obj.nodes{c}.opt = obj.opt;
+                    %obj.nodes{c}.opt = obj.opt; % should not be necessary
+                    %now
                     obj.nodes{c}.mode = obj.mode;
 
                     this_input  = output.wf_input{c};

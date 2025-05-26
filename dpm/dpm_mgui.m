@@ -41,6 +41,7 @@ classdef dpm_mgui < dpm_iter
                 if (isa(node, 'dp_node_roi'))
                     output = output.input;
                 end
+                output = msf_rmfield(output, 'input');
 
                 % Sanitize the output (so that it does not become too
                 % large). Temporary solution. In the future, make the
@@ -54,6 +55,7 @@ classdef dpm_mgui < dpm_iter
 
                     try 
                         if (~contains(f{c2}, '_fn')), continue; end
+                        if (contains(f{c2}, '_fns')), continue; end % xxx
                         if (~contains(output.(f{c2}), '.nii.gz')), continue; end
                     catch me
                         disp(me.message);

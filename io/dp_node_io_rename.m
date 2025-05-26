@@ -49,7 +49,7 @@ classdef dp_node_io_rename < dp_node
                         % Soft warning
                         if (~isfield(input, f{c}{2}))
 
-                            obj.log(0, '%s: Warning', input.id);
+                            obj.log(0, '%s: Warning (%s)', input.id, obj.name);
 
                             obj.log(0, '%s:   %s field missing (fields present: %s)', ...
                                 input.id, f{c}{2}, strjoin(fieldnames(input)));

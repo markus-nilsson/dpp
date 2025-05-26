@@ -48,7 +48,13 @@ classdef dp_node_core_opt < ...
             f = @(x, field, val) obj.ensure_field(x, field, val);
 
             % First grab the runtime options
-            opt = obj.get_primary_node().opt_runtime;
+            try
+                opt = obj.get_primary_node().opt_runtime;
+            catch
+                warning('Primary node not found in %s', obj.name);
+                opt = [];
+                return;
+            end
 
             % Gently add node's options
             g = @(x, field) obj.gently_copy_field(x, field, obj.opt_node);            

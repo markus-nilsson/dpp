@@ -117,7 +117,7 @@ classdef dui_show_graph < handle
             distances = hypot(nodeX - clickPoint(1), nodeY - clickPoint(2));
 
             % Define a click threshold (adjust as needed)
-            threshold = 0.05;  % depends on axis scale
+            threshold = 0.5;  % depends on axis scale
 
             % Find closest node within threshold
             [minDist, idx] = min(distances);
