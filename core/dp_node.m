@@ -152,7 +152,7 @@ classdef dp_node < dp_node_base
                 end
             end
 
-            status2 = cellfun( @(x) exist(io.(x), 'file') == 2, f);
+            %status2 = cellfun( @(x) exist(io.(x), 'file') == 2, f);
 
         end        
 

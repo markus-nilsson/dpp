@@ -30,7 +30,6 @@ classdef dp_node_core_connect < handle
             if (nargin > 2), warning('use set_name'); end
             
             obj.previous_node = previous_node;
-            obj.primary_node = obj.get_primary_node(0);
 
             if (nargin > 2), obj.name = name; end
 
@@ -57,6 +56,7 @@ classdef dp_node_core_connect < handle
 
             if (nargin < 2), do_use_cache = 1; end
 
+            % Use cache if available
             if (~isempty(obj.primary_node)) && (do_use_cache)
                 node = obj.primary_node;
                 return;
@@ -67,10 +67,14 @@ classdef dp_node_core_connect < handle
             if (isempty(nodes))
 
                 if (~isa(obj, 'dp_node_primary'))
-                    error('primary node mode be of type dp_node_primarys')
-                end
+                    node = []; 
+                    warning('primary node must be of type dp_node_primary')
+                    return;
+                else
 
                 node = obj;                
+                
+                end
 
             else % search left branch to get to primary node
                 node = nodes{1}.get_primary_node();

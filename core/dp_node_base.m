@@ -46,7 +46,7 @@ classdef dp_node_base < dp_node_core
 
             % Report on status, init, options
             obj.log(0, '%tRunning %s with mode ''%s''', obj.name, obj.mode);
-            obj.log(3, 'Options: %s', formattedDisplayText(obj.opt));
+            obj.log(3, 'Options: %s', obj.opt);
 
             % Retreive previous outputs
             previous_outputs = obj.filter_iterable(obj.get_iterable());
@@ -162,26 +162,26 @@ classdef dp_node_base < dp_node_core
             [input, output] = obj.run_po2io(po);
 
             % Run and clean
-            obj.log(5, '\noutput (declared):\n%s', formattedDisplayText(output));            
+            obj.log(5, '\noutput (declared):\n%s', output);            
             
             output = obj.run_on_one(input, output);
             output = obj.run_clean(output);
             
-            obj.log(2, '\noutput (after clean):\n%s', formattedDisplayText(output));
+            obj.log(2, '\noutput (after clean):\n%s', output);
 
         end
 
         % previous output to output (of the present node)
         function [input, output] = run_po2io(obj, po) 
 
-            obj.log(3, '\nprevious_output:\n%s', formattedDisplayText(po));
+            obj.log(3, '\nprevious_output:\n%s', po);
 
             % Previous output to a new input
             input = obj.run_po2i(po);
             obj.test_input(input);
 
             % Build output
-            obj.log(3, '\ninput:\n%s', formattedDisplayText(input));
+            obj.log(3, '\ninput:\n%s', input);
             output = obj.run_i2o(input);
         end
 

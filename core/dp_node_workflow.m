@@ -151,7 +151,6 @@ classdef dp_node_workflow < dp_node % assume this is for nifti files
         function output = run_clean(obj, output)
 
             for c = 1:numel(obj.nodes)
-                obj.nodes{c}.opt = obj.opt; % transfer options to node
                 output.wf_output{c} = obj.nodes{c}.run_clean(output.wf_output{c});
             end
             

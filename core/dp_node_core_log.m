@@ -38,12 +38,27 @@ classdef dp_node_core_log < dp_node_core_opt & handle
                 varargin = cat(2, log_level, varargin);
             end
 
+            log_level = varargin{1};
+
+            % Stop all formatting (which takes time) of logs that will
+            % not be displayed
+            if (obj.opt.do_log_early_stop) && (obj.opt.verbose < log_level)
+                return;
+            end
+            
+
             if (numel(varargin) < 2), varargin{2} = ''; end
             if (numel(varargin) < 3), varargin{3} = ''; end
 
-            log_level = varargin{1};
             log_str = varargin{2};
             log_arg = varargin(3:end);
+
+            % Convert structs to strings
+            for c = 1:numel(log_arg)
+                if (isstruct(log_arg{c}))
+                    log_arg{c} = formattedDisplayText(log_arg{c});
+                end
+            end
 
             % the first log_arg is usually the subject id, which we may
             % need to sanitize from \ on windows... but let's sanitize all
