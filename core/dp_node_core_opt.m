@@ -12,21 +12,27 @@ classdef dp_node_core_opt < ...
     % All these options are gently assembled into an options struct
 
     properties
-        opt; % this is what the node will report
     end
     
     properties (Hidden)
-        opt_runtime = [];
-        opt_node = [];
-        opt_default = struct(...
-                'verbose', 0, ...
-                'do_try_catch', 1, ...
-                'iter_mode', 'iter', ...
-                'deep_mode', 0, ...
-                'do_overwrite', 0, ...
-                'c_level', 0, ...
-                'id_filter', [], ...
-                'run_id', []);
+        opt_node = struct();
+    end
+
+    properties (Dependent)
+        opt_runtime; 
+        opt; % this is what the node will report
+    end
+
+    properties (Access = private) % default runtime opts
+        opt_runtime_hidden = struct(...
+            'c_level', 0, ...
+            'verbose', 0, ...
+            'do_try_catch', 1, ...
+            'iter_mode', 'iter', ...
+            'deep_mode', 0, ...
+            'do_overwrite', 0, ...
+            'id_filter', [], ...
+            'run_id', []);
     end
 
     methods
@@ -37,52 +43,36 @@ classdef dp_node_core_opt < ...
 
         % Store/load the runtime opts in the primary node
         function set.opt_runtime(obj, opt)
-            obj.get_primary_node().opt_runtime = opt;
+            primary_node = obj.get_primary_node();
+            old_opt = primary_node.opt_runtime;
+            opt = obj.merge_opt(old_opt, opt); 
+            primary_node.opt_runtime_hidden = opt; 
         end
 
         function opt = get.opt_runtime(obj)
-            opt = obj.get_primary_node().opt_runtime;
+            opt = obj.get_primary_node().opt_runtime_hidden;
         end
         
         % Keep track of how deeply we have recursed
-        function set_c_level(obj)
-            
-            % Update 
-            tmp = obj.get_primary_node().opt_runtime;
-            tmp = obj.ensure_field(tmp, 'c_level', 0);
-            tmp.c_level = tmp.c_level + 1;
-            obj.get_primary_node().opt_runtime = tmp;
+        function obj = c_level_plus(obj)
+            obj.opt_runtime.c_level = obj.opt_runtime.c_level + 1; 
+        end
 
-            obj.opt_node.c_level = tmp.c_level;
+        function obj = c_level_minus(obj)
+            obj.opt_runtime.c_level = obj.opt_runtime.c_level - 1;
         end
 
         function opt = get.opt(obj)
 
-            f = @(x, field, val) obj.ensure_field(x, field, val);
-
-            % Start with defaults]
-            opt = obj.opt_default;
-
-            % First grab the runtime options
+            % start with runtime opts
             try
-                opt_runtime = obj.get_primary_node().opt_runtime;
-                opt = obj.merge_opt(opt, opt_runtime);
+                opt =  obj.opt_runtime;
             catch
                 warning('Primary node not found in %s', obj.name);
-                opt = [];
+                opt = []; % will cause downstream erros, that's good
                 return;
             end
-            
-
-            % Gently add node's options
-            g = @(x, field) obj.gently_copy_field(x, field, obj.opt_node);            
-            opt = g(opt, 'do_overwrite');
-            
-            % Forcefully add the node's c_level
-            if (isfield(obj.opt_node, 'c_level'))
-                opt.c_level = obj.opt_node.c_level;
-            end
-
+                        
             if (~isempty(obj.mode))
                 opt = obj.get_dpm().dp_opt(opt);
             end
@@ -94,21 +84,6 @@ classdef dp_node_core_opt < ...
             if (~iscell(opt.id_filter))
                 opt.id_filter = {opt.id_filter};
             end
-
-
-        end
-
-
-        function obj = update(~, ~, ~) % set necessary properties
-            error('not used any more');
-
-            % --> this is no longer implemented
-            %
-            % % not sure if this is always a good idea, but let us try it
-            % if (~isempty(obj.previous_node)) && (obj.opt.deep_mode)
-            %     obj.previous_node.do_dpm_passthrough = 1;
-            %     obj.previous_node.update(obj.opt, mode);
-            % end
 
         end
 

@@ -19,7 +19,9 @@ classdef dp_node_io_merge < dp_node
             else
                 nodes = varargin;
             end
+
             obj.previous_nodes = nodes;
+            
         end
 
         function previous_outputs = get_iterable(obj)
@@ -33,9 +35,10 @@ classdef dp_node_io_merge < dp_node
 
             % grab previous output from each previous node
             list_of_outputs = cell(size(obj.previous_nodes));
+            
             for c = 1:numel(obj.previous_nodes)
                 list_of_outputs{c} = ...
-                    obj.previous_nodes{c}.i_run(obj.opt.iter_mode);;
+                    obj.previous_nodes{c}.i_run(obj.opt.iter_mode);
             end
 
             % keep only those outputs where the ids intersect

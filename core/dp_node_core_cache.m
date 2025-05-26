@@ -18,7 +18,6 @@ classdef dp_node_core_cache < dp_node_core_opt & handle
 
         function outputs = cache_get(obj)
 
-
             if (obj.cache_present())
                 outputs = obj.cache.outputs;                
             else

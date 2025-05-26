@@ -65,15 +65,19 @@ classdef dp_node_core_connect < handle
             nodes = obj.get_previous_nodes();
 
             if (isempty(nodes))
-                node = obj;
 
-                if (~isa(node, 'dp_node_primary'))
+                if (~isa(obj, 'dp_node_primary'))
                     error('primary node mode be of type dp_node_primarys')
                 end
+
+                node = obj;                
 
             else % search left branch to get to primary node
                 node = nodes{1}.get_primary_node();
             end
+
+            % Store for caching
+            obj.primary_node = node;
 
         end        
         

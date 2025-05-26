@@ -42,7 +42,7 @@ classdef dp_node_base < dp_node_core
 
             % Keep track of execution depth (for logging)
             obj.mode = mode;
-            obj.set_c_level();
+            obj.c_level_plus();
 
             % Report on status, init, options
             obj.log(0, '%tRunning %s with mode ''%s''', obj.name, obj.mode);
@@ -115,6 +115,8 @@ classdef dp_node_base < dp_node_core
                     obj.log(0, '\nOperation took %1.1f days\n', t/60/60/24);
                 end
             end
+
+            obj.c_level_minus();           
             
         end
 

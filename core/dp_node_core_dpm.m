@@ -43,7 +43,7 @@ classdef dp_node_core_dpm < handle
             if (nargin < 2), mode = obj.mode; end
 
             % Hack to speed things up
-            if (isfield(obj.dpm_cache, 'mode'))
+            if (isfield(obj.dpm_cache, mode))
                 dpm = obj.dpm_cache.(mode);
                 return;
             end
