@@ -10,7 +10,7 @@ classdef dp_node_fsl_fast < dp_node
 
     methods
 
-        function obj = dp_node_fsl_bet(opt_str)
+        function obj = dp_node_fsl_fast(opt_str)
             if (nargin > 0), obj.opt_str = opt_str; end
             obj.input_test = {'nii_fn'};
             obj.output_test = {'nii_fn'};

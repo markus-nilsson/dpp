@@ -12,7 +12,7 @@ classdef dp_node_core_log < dp_node_core_opt & handle
     methods
 
         function obj = dp_node_core_log()
-            obj.h_log_fn = @(lvl, str) obj.print_log(lvl, str);
+            obj.h_log_fn = @(lvl, str, verbose) obj.print_log(lvl, str, verbose);
         end
 
         function log_fn = get.log_fn(obj)
@@ -76,13 +76,13 @@ classdef dp_node_core_log < dp_node_core_opt & handle
 
 
             % Send to log (replace with dynamic log management)
-            obj.log_fn(log_level, log_str);
+            obj.log_fn(log_level, log_str, obj.opt.verbose);
 
         end
 
-        function print_log(obj, log_level, log_str)
+        function print_log(obj, log_level, log_str, verbose)
 
-            if (obj.opt.verbose >= log_level)
+            if (verbose >= log_level)
                 fprintf(cat(2, log_str, '\n'));
             end
 
