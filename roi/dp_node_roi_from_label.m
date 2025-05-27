@@ -2,7 +2,7 @@ classdef dp_node_roi_from_label < dp_node_roi & dp_node_core_roi
 
     properties (Hidden)
         last_labels_fn = [];
-        cache;
+        roi_cache;
     end
 
     methods
@@ -51,11 +51,11 @@ classdef dp_node_roi_from_label < dp_node_roi & dp_node_core_roi
 
                 [R,h] = mdm_nii_read(output.labels_fn);
 
-                obj.cache.R = R;
-                obj.cache.h = h;
+                obj.roi_cache.R = R;
+                obj.roi_cache.h = h;
             else
-                R = obj.cache.R;
-                h = obj.cache.h;
+                R = obj.roi_cache.R;
+                h = obj.roi_cache.h;
             end
 
             switch (ndims(R))

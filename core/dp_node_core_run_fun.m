@@ -10,6 +10,11 @@ classdef dp_node_core_run_fun < ...
         name;
     end
 
+    properties
+        do_i2o_pass = 0;
+    end
+    
+
     methods
 
         function [output, err] = run_fun(~, fun, err_log_fun, do_try_catch)

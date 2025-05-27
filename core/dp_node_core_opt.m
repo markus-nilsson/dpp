@@ -67,7 +67,7 @@ classdef dp_node_core_opt < ...
 
             % start with runtime opts
             try
-                opt =  obj.opt_runtime;
+                opt = obj.opt_runtime;
             catch
                 warning('Primary node not found in %s', obj.name);
                 opt = []; % will cause downstream erros, that's good

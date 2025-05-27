@@ -68,16 +68,7 @@ classdef dp_node_workflow < dp_node % assume this is for nifti files
             
         end
 
-        function obj = update(obj, varargin) % set necessary properties
 
-            obj = update@dp_node(obj, varargin{:});
-            
-            % make sure nodes involves have names, are updated
-            for c = 1:numel(obj.nodes)
-                obj.nodes{c}.update(varargin{:});
-            end
-
-        end
 
         function output = run_on_one(obj, input, output)
 

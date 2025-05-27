@@ -18,6 +18,11 @@ classdef dp_node_items < dp_node_core
             obj.inner_node = inner_node;
         end
 
+        function obj = connect(obj, previous_node, name)
+            obj = connect@dp_node_core(obj, previous_node);
+            obj.inner_node.connect(previous_node); % tell inner node about prev node
+        end
+
         function input = po2i(obj, po)
 
             if (~isfield(po, 'items'))
@@ -41,6 +46,21 @@ classdef dp_node_items < dp_node_core
             
         end
 
+
+        % previous output to output (of the present node)
+        function [input, output] = run_po2io(obj, po) 
+
+            obj.log(3, '\nprevious_output:\n%s', po);
+
+            % Previous output to a new input
+            input = obj.run_po2i(po);
+            %obj.inner_node.test_input(input);
+
+            % Build output
+            obj.log(3, '\ninput:\n%s', input);
+            output = obj.run_i2o(input);
+        end                
+
         function output = run_on_one(obj, input, output)
 
             f = @(input, output) obj.inner_node.run_on_one(input, output);
@@ -51,14 +71,6 @@ classdef dp_node_items < dp_node_core
             output.items = obj.items_fun(f, input.items, output.items);
 
         end     
-
-        function obj = update(obj, varargin) % set necessary properties
-
-            obj = update@dp_node_core(obj, varargin{:});
-            
-            obj.inner_node.update(varargin{:});
-
-        end        
 
         function output = run_clean(obj, output)
 

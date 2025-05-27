@@ -6,10 +6,6 @@ classdef dp_node_base < dp_node_core
     % this should include all logic, while the helper functions are in 
     % the support class
 
-    properties
-        do_i2o_pass = 0;
-    end
-
     methods % public
 
         % run deep, experiment

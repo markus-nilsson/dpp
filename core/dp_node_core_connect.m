@@ -68,7 +68,7 @@ classdef dp_node_core_connect < handle
 
                 if (~isa(obj, 'dp_node_primary'))
                     node = []; 
-                    warning('primary node must be of type dp_node_primary')
+                    warning('primary node not found (current node not a dp_node_primary)')
                     return;
                 else
 

@@ -16,9 +16,6 @@ classdef dp_node_elastix_apply_to_many < dp_node_workflow
 
             obj = obj@dp_node_workflow({a,b,c});
 
-
         end
-
-
     end
 end
