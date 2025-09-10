@@ -1,5 +1,8 @@
 classdef dp_node_md < dp_node
 
+    % Calculates mean diffusivity (MD) maps from diffusion-weighted images. Performs
+    % linear fitting to estimate apparent diffusion coefficients within specified b-value ranges.
+
     properties
 
         % defaults for mdt mapping

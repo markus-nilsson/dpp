@@ -1,6 +1,7 @@
 classdef dp_node_dmri_topup_io < dp_node
 
-    % this is to help test and build inputs to topup
+    % Input/output handler for TOPUP processing workflows. Validates and prepares file paths
+    % for anterior-posterior and posterior-anterior diffusion acquisitions required by TOPUP.
 
     methods
 

@@ -1,5 +1,8 @@
 classdef dp_node_dmri_topup_prep_merge < dp_node_io_merge
 
+    % Merges datasets from multiple processing nodes for TOPUP preparation. Combines
+    % data streams while maintaining proper organization and parameter tracking.
+
     properties
         names;
     end

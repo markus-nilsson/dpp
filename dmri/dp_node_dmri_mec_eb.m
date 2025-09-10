@@ -1,5 +1,8 @@
 classdef dp_node_dmri_mec_eb < dp_node_dmri
 
+    % Enhanced motion and eddy current correction with extended options for ELASTIX-based
+    % registration. Provides additional parameter control for improved motion correction performance.
+
     methods
 
         function input = po2i(obj, po)

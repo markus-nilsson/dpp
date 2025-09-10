@@ -1,13 +1,7 @@
 classdef dp_node_dmri_subsample_b0 < dp_node_dmri
 
-    % subsamples the b0 of a dmri sequence 
-
-    % input
-    % dmri_fn
-    % xps_fn
-
-    % output
-    % nii_fn
+    % Extracts and subsamples b0 (non-diffusion-weighted) images from diffusion MRI data.
+    % Creates a reduced dataset containing only the reference images for processing workflows.
 
     methods
 

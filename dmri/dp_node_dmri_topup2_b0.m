@@ -1,6 +1,7 @@
 classdef dp_node_dmri_topup2_b0 < dp_node
 
-    % Estimate b0 using topup
+    % Estimates distortion field maps from b0 images using the enhanced TOPUP implementation.
+    % Computes susceptibility-induced distortion parameters with improved accuracy and stability.
 
     methods
 

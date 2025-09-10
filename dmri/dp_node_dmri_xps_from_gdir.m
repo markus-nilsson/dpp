@@ -1,5 +1,8 @@
 classdef dp_node_dmri_xps_from_gdir < dp_node_dmri_xps
 
+    % Creates experimental parameter sets (XPS) from gradient direction files. Processes
+    % gradient table information to generate acquisition parameters for diffusion analysis.
+
     methods
 
         function obj = dp_node_dmri_xps_from_gdir()

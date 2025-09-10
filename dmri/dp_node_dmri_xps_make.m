@@ -1,5 +1,8 @@
 classdef dp_node_dmri_xps_make < dp_node_dmri_xps
 
+    % Creates experimental parameter sets (XPS) from bval/bvec files. Automatically
+    % locates and processes b-value and gradient direction files associated with diffusion data.
+
     methods
 
         function obj = dp_node_dmri_xps_make()

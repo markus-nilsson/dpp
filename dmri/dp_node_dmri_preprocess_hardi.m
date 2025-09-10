@@ -1,6 +1,7 @@
 classdef dp_node_dmri_preprocess_hardi < dp_node_workflow
 
-    % holder of biofinder2 standard workflow
+    % Standard HARDI preprocessing pipeline for BioFinder2 workflows. Combines brain extraction,
+    % eddy current correction, denoising, and topup distortion correction for high-quality diffusion data.
 
     methods
         

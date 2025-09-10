@@ -1,5 +1,8 @@
 classdef dp_node_dmri_dti < dp_node
 
+    % Performs Diffusion Tensor Imaging (DTI) analysis using linear least squares fitting.
+    % Computes standard DTI metrics including fractional anisotropy (FA), mean diffusivity (MD), and signal intensity maps.
+
     properties
         filter_sigma = 0;
     end

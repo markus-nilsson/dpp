@@ -1,6 +1,7 @@
 classdef dp_node_dmri_flirt < dp_node_fsl_flirt
 
-    % coregistration of fa using flirt
+    % Registers fractional anisotropy (FA) maps to standard space using FSL FLIRT.
+    % Performs affine coregistration for spatial normalization of diffusion-derived metrics.
 
     methods
 

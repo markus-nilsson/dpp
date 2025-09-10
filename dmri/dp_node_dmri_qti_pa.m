@@ -1,5 +1,8 @@
 classdef dp_node_dmri_qti_pa < dp_node
 
+    % Performs powder-averaged Q-space Trajectory Imaging (QTI) analysis. Computes
+    % rotationally invariant kurtosis metrics from diffusion data for microstructural analysis.
+
     methods
 
         function obj = dp_node_dmri_qti_pa()

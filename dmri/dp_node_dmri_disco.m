@@ -1,6 +1,7 @@
 classdef dp_node_dmri_disco < dp_node_workflow
 
-    % For debugging, check dp_node_dmri_disco_synb0
+    % DISCO workflow for synthetic b0 generation and topup distortion correction. Combines
+    % synthetic b0 creation with complete topup processing for single-direction diffusion datasets.
 
     methods
 

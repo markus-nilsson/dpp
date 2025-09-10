@@ -1,5 +1,8 @@
 classdef dp_node_dmri_divide < dp_node
 
+    % Divides diffusion MRI data by performing mathematical division operations. Typically used
+    % for signal normalization or creating ratio maps between different acquisition conditions.
+
     properties
         suffix;
     end

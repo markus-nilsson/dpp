@@ -1,5 +1,8 @@
 classdef dp_node_dmri_mec < dp_node
 
+    % Performs motion and eddy current correction for diffusion MRI data using ELASTIX.
+    % Corrects for subject motion and scanner-related distortions during diffusion acquisition.
+
     methods
 
         function input = po2i(obj, po)

@@ -1,6 +1,7 @@
 classdef dp_node_dmri_topup_prep < dp_node
 
-    % pulls out data and saves it in ap pa order
+    % Prepares data for TOPUP distortion correction by organizing anterior-posterior and
+    % posterior-anterior acquisitions. Extracts and formats data in the required AP/PA order.
 
     methods
 

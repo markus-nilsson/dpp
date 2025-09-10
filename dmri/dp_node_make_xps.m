@@ -1,6 +1,7 @@
 classdef dp_node_make_xps < dp_node_dmri_xps_make
 
-    % legacy leftover, consider editing dcm2nii pipe instead
+    % Legacy wrapper for XPS creation from NIfTI files. Provides backward compatibility
+    % for older processing pipelines that use different input naming conventions.
 
     methods
 

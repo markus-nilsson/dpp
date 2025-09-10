@@ -1,8 +1,7 @@
 classdef dp_node_dmri_topup_apply < dp_node
 
-    % apply topup to volume
-    %
-    % assume we do not have full ap/pa data, but only in ap
+    % Applies TOPUP distortion correction to diffusion volumes. Uses pre-computed field maps
+    % to correct susceptibility-induced distortions in diffusion-weighted images.
 
     properties
 

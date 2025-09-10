@@ -1,5 +1,8 @@
 classdef dp_node_dmri_topup_prep_one < dp_node
 
+    % Prepares individual datasets for TOPUP processing by extracting phase-encoding parameters
+    % and organizing acquisition data. Handles single-direction data preparation for distortion correction.
+
     properties
         suffix = '_topuprep';
         

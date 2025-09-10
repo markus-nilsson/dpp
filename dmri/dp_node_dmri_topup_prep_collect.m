@@ -1,8 +1,7 @@
 classdef dp_node_dmri_topup_prep_collect < dp_node
 
-    % Collect volumes prepared for topup
-
-    % assume previous node is dp_node_dmri_topup_prep_merge
+    % Collects and consolidates volumes prepared for TOPUP processing. Organizes multiple
+    % datasets into the final format required for distortion correction analysis.
 
     
     methods

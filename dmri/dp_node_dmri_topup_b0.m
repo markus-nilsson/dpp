@@ -1,8 +1,7 @@
 classdef dp_node_dmri_topup_b0 < dp_node
 
-    % Estimate b0 using topup
-
-    % Should move to fsl library
+    % Estimates distortion field maps from b0 images using FSL TOPUP. Computes
+    % susceptibility-induced distortion parameters for subsequent correction applications.
 
     methods
 

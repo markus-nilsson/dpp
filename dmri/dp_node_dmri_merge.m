@@ -1,8 +1,7 @@
 classdef dp_node_dmri_merge < dp_node
 
-    % merge dmri files
-    %
-    % assume implicit xps namgin (i.e. by mdm_xps_fn_from_nii_fn)
+    % Merges multiple diffusion MRI datasets into a single combined dataset. Concatenates
+    % data volumes and corresponding acquisition parameters while maintaining proper metadata.
 
     properties
         merge_fields;

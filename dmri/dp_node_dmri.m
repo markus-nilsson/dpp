@@ -1,6 +1,7 @@
 classdef dp_node_dmri < dp_node
 
-    % helpful methods for dmri processing
+    % Base class for diffusion MRI processing nodes. Provides common helper methods
+    % and utilities for handling diffusion data, including automatic XPS file handling.
 
     methods
 

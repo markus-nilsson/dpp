@@ -1,5 +1,8 @@
 classdef dp_node_dmri_bet < dp_node_workflow
 
+    % Brain extraction workflow for diffusion MRI data using FSL BET. Extracts a brain mask
+    % by processing the b0 image and applies the mask to the full diffusion dataset.
+
     methods
 
         function obj = dp_node_dmri_bet(opt_str)
