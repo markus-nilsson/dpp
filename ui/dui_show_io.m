@@ -107,6 +107,12 @@ classdef dui_show_io < handle
                     EG.data.ref(1).name = field;
                     EG.data.roi_list = {};
                     EG.data.nii_fn_to_roi_fn = @(a,b) [];
+
+                    EG.roi.I_roi = [];
+                    EG.roi.is_updated = 0;
+                    EG.roi.roi_filename = [];
+
+                    
                     mgui_close();
                     mgui(EG, 3);
                     return;
