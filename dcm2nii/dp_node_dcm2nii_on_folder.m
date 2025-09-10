@@ -16,10 +16,6 @@ classdef dp_node_dcm2nii_on_folder < dp_node_items
             obj = obj@dp_node_items(dp_node_dcm2nii_and_xps());
         end
 
-        % function yes_no = do_skip(obj, fn)
-        %     yes_no = 0;
-        % end
-
         function input = po2i(obj, po)
 
             % expect:

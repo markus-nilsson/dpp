@@ -2,6 +2,7 @@ classdef dpm_execute < dpm
 
     properties
         do_run_execute = 1;
+        do_date_check = 1;
     end
 
     methods
@@ -70,7 +71,7 @@ classdef dpm_execute < dpm
 
             
             % check ages
-            if (~isempty(input_age) && ~isempty(output_age))
+            if (~isempty(input_age) && ~isempty(output_age)) && (obj.do_date_check)
 
                 [min_output_age, output_ind] = nanmin(output_age);
                 [max_input_age, input_ind] = nanmax(input_age);

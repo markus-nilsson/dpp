@@ -75,6 +75,12 @@ classdef dp_node_identify_sequences < dp_node
                         switch (obj.multiple_hit_strategy)
 
                             case 'error'
+
+                                obj.log(1, '%s: Multiple files found', input.id);
+                                for c2 = 1:numel(tmp)
+                                    obj.log(1, '%s:     %s', input.id, tmp{c2});
+                                end
+                                
                                 error('Multiple files found');
 
                             case 'first'
@@ -97,7 +103,7 @@ classdef dp_node_identify_sequences < dp_node
                 % Report helpful information if nothing was found
                 if (isempty(output.(f{c}{1})))
 
-                    obj.log(1, '%s: File not found for field %s pattern %s', ...
+                    obj.log(1, '\n%s: File not found for field %s pattern %s', ...
                         input.id, ...
                         f{c}{1}, formattedDisplayText(f{c}{2}));
 
@@ -109,7 +115,6 @@ classdef dp_node_identify_sequences < dp_node
                         d2 = dir(fullfile(input.nii_path, '*.nii*'));
                         for c2 = 1:numel(d2)
                             obj.log(1, '%s:     %s', input.id, d2(c2).name);
-                            
                         end
                     end
                     
