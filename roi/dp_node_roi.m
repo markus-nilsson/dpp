@@ -1,6 +1,15 @@
 classdef dp_node_roi < dp_node & dp_node_core_roi
 
     % implements method by which we compile information from an ROI 
+    % 
+    % n - number of voxels (e.g. ROI volume) 
+    % mean
+    % std
+    % median
+    % mad
+    % quantile_1st, 5th, 10th, 25th, 50th, 75th, 90th, 95th, 99th
+    %
+    % to export these to a csv file, use dp_node_csv
 
     methods
 
