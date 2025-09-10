@@ -2,6 +2,13 @@ classdef dp_node_csv < dp_node
 
     % takes information from e.g. an dp_node_roi node and writes it to 
     % a csv file (or text file, really)
+    %
+    % if you modify the arguments to the constructor, for example, to ask
+    % for more variables to be exported, you need to run with the do_overwrite
+    % flag active, as the system will otherwise see that you already did an export
+    % (it does not check which variables were exported)
+    %
+    % e.g. your_node.run('execute', struct('do_overwrite', 1))
 
     properties
         bp_csv; 
