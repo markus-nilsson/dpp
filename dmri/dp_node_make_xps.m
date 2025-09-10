@@ -2,6 +2,7 @@ classdef dp_node_make_xps < dp_node_dmri_xps_make
 
     % Legacy wrapper for XPS creation from NIfTI files. Provides backward compatibility
     % for older processing pipelines that use different input naming conventions.
+    % XXX: Will be removed in future releases
 
     methods
 

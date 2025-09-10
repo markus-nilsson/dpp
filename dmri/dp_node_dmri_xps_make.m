@@ -1,7 +1,9 @@
 classdef dp_node_dmri_xps_make < dp_node_dmri_xps
 
-    % Creates experimental parameter sets (XPS) from bval/bvec files. Automatically
-    % locates and processes b-value and gradient direction files associated with diffusion data.
+    % Creates experimental parameter sets (XPS) from bval/bvec files for diffusion MRI analysis.
+    % Automatically detects sequence type from filename patterns (LTE, PTE, STE, DTI, DKI, HARDI, etc.)
+    % and sets appropriate b_delta values. Combines b-values, gradient directions, and encoding 
+    % parameters into standardized XPS format for downstream processing and analysis.
 
     methods
 

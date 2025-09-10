@@ -1,7 +1,15 @@
 classdef dp_node_dmri_xps_from_json < dp_node
 
-    % Creates experimental parameter sets (XPS) from JSON metadata files. Extracts diffusion
-    % acquisition parameters from BIDS-style JSON sidecar files for proper data characterization.
+    % builds an xps from the json file information
+    %
+    % overwrites an existing xps, if a status file does not exist
+    % this if a bit awkward, but allow us to overwrite the xps
+    % without duplicating the nii file
+
+    % as input, we need
+    % input.dmri_fn (but we assume we also have associated .json file)
+    
+    % needs code from Filip's fwf resources
 
     methods
 

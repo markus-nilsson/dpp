@@ -1,7 +1,8 @@
 classdef dp_node_dmri_mec_eb < dp_node_dmri
 
-    % Enhanced motion and eddy current correction with extended options for ELASTIX-based
-    % registration. Provides additional parameter control for improved motion correction performance.
+    % Extrapolation-based motion and eddy current correction for diffusion MRI data. 
+    % Uses registration to b0 images to correct motion, then computes high b-value references 
+    % by extrapolating from low b-value data for improved motion correction performance.
 
     methods
 
