@@ -43,22 +43,6 @@ classdef dp_node_dcm2nii < dp_node
             output.bval_fn = f('bval');
             output.bvec_fn = f('bvec');
 
-            % this is quite akward, but I cannot see another
-            % way to make this work
-            if (exist(output.nii_fn, 'file') && exist(output.json_fn, 'file'))
-
-                % make this controllabe by options, if this causes problems
-
-                if (~exist(output.bvec_fn, 'file'))
-                    output.bvec_fn = '';
-                end
-
-                if (~exist(output.bval_fn, 'file'))
-                    output.bval_fn = '';
-                end
-
-            end
-
             % convert in temporary folder
             output.tmp.bp = msf_tmp_path();
             output.tmp.do_delete = 1;

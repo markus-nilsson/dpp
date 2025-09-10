@@ -1,4 +1,4 @@
-classdef dp_node_items < dp_node_core
+classdef dp_node_items < dp_node_base
 
     % iterate with nodes over items within a node
 
@@ -18,7 +18,7 @@ classdef dp_node_items < dp_node_core
             obj.inner_node = inner_node;
         end
 
-        function obj = connect(obj, previous_node, name)
+        function obj = connect(obj, previous_node)
             obj = connect@dp_node_core(obj, previous_node);
             obj.inner_node.connect(previous_node); % tell inner node about prev node
         end

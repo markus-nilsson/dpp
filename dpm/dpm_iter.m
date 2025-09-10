@@ -31,9 +31,9 @@ classdef dpm_iter < dpm
 
             if (numel(outputs) == 0), return; end
 
-            % Does not work for items, fix implementatin
+            % Does not work for items, fix implementation
             if (isfield(outputs{1}, 'items'))
-                warning('not implemented');
+                %warning('not implemented');
                 return;
             end
 

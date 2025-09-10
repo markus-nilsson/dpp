@@ -1,6 +1,6 @@
-classdef dp_node_dcm2nii_on_zips < dp_node_files_to_items
+classdef dp_node_dcm2nii_on_zips < dp_node_workflow
 
-    
+    % searches for *.zip in input.op, unzips these, and convers to dicom
 
     methods
 
@@ -9,14 +9,11 @@ classdef dp_node_dcm2nii_on_zips < dp_node_files_to_items
             if (nargin < 1), filter_list = {}; end
             if (nargin < 2), filter_mode = 'exclude'; end
 
-            % should be rewritten as a workflow that uses
-            % dp_node_items_from_files instead
-            
-            obj = obj@dp_node_files_to_items(...
-                dp_node_unzip_dcm2nii(), ...
-                '*.zip', ...
-                filter_list, ...
-                filter_mode);
+            a = dp_node_io_files_to_items('*.zip', 'zip_fn', filter_list, filter_mode);
+            b = dp_node_items(dp_node_dcm2nii_on_zip());
+
+            obj = obj@dp_node_workflow({a,b});
+
 
         end
 
