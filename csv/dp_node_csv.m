@@ -1,11 +1,11 @@
 classdef dp_node_csv < dp_node
 
-    % takes information from an dp_node_roi node and writes it to 
+    % takes information from e.g. an dp_node_roi node and writes it to 
     % a csv file (or text file, really)
 
     properties
         bp_csv; 
-        vars; % e.g. mean, std, median, mad et cetera
+        vars; % e.g. mean, and more (see comment in constructor)
         fields = {};
     end
 
@@ -20,7 +20,9 @@ classdef dp_node_csv < dp_node
             % csv collection for all subjects  
             obj.bp_csv = bp_csv;
             
-            % which variables to export to the csv
+            % which variables to export to the csv 
+            % the fields available are determined by the previous output
+            % see dp_node_roi for a full list
             obj.vars = vars;
 
             % which fields to export (empty = all)
