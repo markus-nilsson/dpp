@@ -27,20 +27,77 @@ classdef dp_io_spec < handle
         
         function obj = print(obj)
 
-            for c = 1:numel(obj.spec)
-                disp(sprintf('%s: %s', obj.spec{c}.field_name, obj.spec{c}.description));
-            end
+            disp(' ');
 
+            for c_mandatory = [1 0]
+                
+                switch (c_mandatory)
+                    case 1
+                        disp('Input fields (mandatory)');
+                    case 0
+                        disp('Input fields (optional)');
+                end
+
+                disp(' ');
+
+                n = max(cellfun(@(x) numel(x), obj.get_all_fields()));
+
+                f = @(x) cat(2, x, repmat(' ', 1, n - numel(x)));
+
+                c_fields = 0;
+                for c = 1:numel(obj.spec)
+                    if (obj.spec{c}.is_mandatory == c_mandatory)
+                        c_fields = c_fields + 1;
+                        disp(sprintf(' %i. %s - %s', c_fields, ...
+                            f(obj.spec{c}.field_name), obj.spec{c}.description));
+                    end
+                end
+
+                if (c_fields == 0)
+                    disp('None');
+                end
+
+                disp(' ');
+            end
+            
+
+        end
+
+        function f = get_legacy_fields(obj)
+            switch (obj.type)
+                case 'input'
+                    f = cat(1, obj.node.input_test);
+                case 'output'
+                    f = cat(1, obj.node.output_test);
+            end
+        end
+
+        function f = get_all_fields(obj)
+            f = cellfun(@(x) x.field_name, obj.spec, 'UniformOutput', 0);            
         end
 
         function f = get_mandatory_fields(obj)
-            f = cellfun(@(x) x.field_name, obj.spec, 'UniformOutput', 0);
+            f = obj.get_all_fields();
             f = f(cellfun(@(x) x.is_mandatory, obj.spec));            
         end
 
-        function f = get_test_fields(obj)
+        function f = get_test_fields(obj, io)
+
+            % Let the new structure be used
             f = cellfun(@(x) x.field_name, obj.spec, 'UniformOutput', 0);
-            f = f(cellfun(@(x) x.do_test, obj.spec));            
+            f = f(cellfun(@(x) x.do_test, obj.spec));
+
+            if (~isempty(f)), return; end 
+
+            % Legacy: use input/output test property
+            f = obj.get_legacy_fields();
+
+            if (~isempty(f)), return; end
+
+            % Legacy: If not specified, use all _fn fields
+            f = fieldnames(io);
+            f = f(cellfun(@(x) ~isempty(strfind(x(max(1,(end-2)):end), '_fn')), f));
+            
         end
         
         function test(obj, input)
@@ -49,69 +106,32 @@ classdef dp_io_spec < handle
 
             % fields to test
             f = obj.get_mandatory_fields();
-
-            % legacy 
-            switch (obj.type)
-                case 'input'
-                    f = cat(1, obj.node.input_test);
-                case 'output'
-                    f = cat(1, obj.node.output_test);
-            end
-            
+            f = cat(1, f, obj.get_legacy_fields());            
 
             % test if the fields are in place
             tmp = {};
-
-            % test for missing fields
             for c = 1:numel(f)
-                field_name = f{c};
-
-                if (~isfield(input, field_name))
-                    tmp{end+1} = field_name; %#ok<AGROW>
+                if (~isfield(input, f{c}))
+                    tmp{end+1} = f{c}; %#ok<AGROW>
                 end
             end
 
             if (~isempty(tmp))
                 error('input fields missing (%s) in %s', strjoin(tmp, ', '), obj.node.name);
             end
-
             
         end
 
 
         function [status, f, age] = exist(obj, io)
 
-            status = [];
-            f = [];
-            age = [];
+            status = []; f = []; age = [];
 
             if (obj.enabled == false), return; end
 
-            % not yet written for the spec herein
-
             % test that files exist
-            test_fields = obj.get_test_fields();
+            f = obj.get_test_fields(io);
 
-            if (~isempty(test_fields)) % test only the fields asked for
-                
-                for c = 1:numel(test_fields)
-
-                    if (~isfield(io, test_fields{c}))
-                        disp(fieldnames(io)); % error will be thrown
-                    end
-
-                    tmp.(test_fields{c}) = io.(test_fields{c});
-                end
-                do_pass_empty = 0;
-            else
-                tmp = io;
-                do_pass_empty = 1;
-            end
-
-           
-            % select fields with names ending with _fn
-            f = fieldnames(tmp);
-            f = f(cellfun(@(x) ~isempty(strfind(x(max(1,(end-2)):end), '_fn')), f));
 
             % Report the presence of the files
             status = zeros(size(f));

@@ -11,6 +11,8 @@ classdef dp_node_primary < dp_node_base
                 dpm_iter(obj), ...
                 dpm_report(obj)};
 
+            obj.input_spec.remove('op');
+
         end
 
         %  not implemented yet

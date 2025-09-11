@@ -23,6 +23,8 @@ classdef dp_node_identify_sequences < dp_node
             end
 
             obj.patterns = patterns;
+
+            obj.input_spec.remove('op');
             
         end
 

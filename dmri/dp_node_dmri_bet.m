@@ -28,6 +28,9 @@ classdef dp_node_dmri_bet < dp_node_workflow
 
             obj = obj@dp_node_workflow(nodes);
 
+            obj.input_spec.add('dmri_fn', 1, 1, 'file', 'dMRI volume');
+            
+
         end
 
         function input = po2i(obj, po)

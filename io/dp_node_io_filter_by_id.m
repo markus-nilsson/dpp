@@ -1,4 +1,4 @@
-classdef dp_node_io_filter_by_id < dp_node
+classdef dp_node_io_filter_by_id < dp_node_io_parent
 
     % Filter by ID, in either include or exclude filter_mode
 

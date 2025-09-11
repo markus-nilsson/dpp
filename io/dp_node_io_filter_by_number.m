@@ -1,4 +1,4 @@
-classdef dp_node_io_filter_by_number < dp_node
+classdef dp_node_io_filter_by_number < dp_node_io_parent
 
     % Filter by number of outputs allowed
     properties

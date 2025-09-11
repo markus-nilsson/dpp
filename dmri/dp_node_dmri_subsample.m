@@ -19,7 +19,6 @@ classdef dp_node_dmri_subsample < dp_node
 
         function output = i2o(obj, input)
             output.dmri_fn = dp.new_fn(input.op, input.dmri_fn, obj.suffix);
-
             output.xps_fn = mdm_xps_fn_from_nii_fn(output.dmri_fn);
         end
 

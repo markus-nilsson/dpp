@@ -1,4 +1,4 @@
-classdef dp_node_io_rename < dp_node
+classdef dp_node_io_rename < dp_node_io_parent
 
     % Relabels field, or allows computation of fields
     %

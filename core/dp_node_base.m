@@ -15,7 +15,8 @@ classdef dp_node_base < dp_node_core
 
         function obj = dp_node_base()
             s = dp_io_spec(obj);
-            s.add('bp', 'path', 1, 1, 'Base path');
+            s.add('bp', 'path', 1, 0, 'Base path');
+            s.add('op', 'path', 1, 0, 'Output path');
             s.add('id', 'string', 1, 0, 'Subject/session identifier');
             obj.input_spec = s;
 
@@ -49,7 +50,8 @@ classdef dp_node_base < dp_node_core
             if (nargin < 3), opt = []; end
 
             % Reset runtime options
-            opt.run_id = datetime('now'); 
+            opt.run_id = datetime('now');
+            opt.c_level = 0;
             obj.opt_runtime = opt;     
 
             % Run it using internal function!
