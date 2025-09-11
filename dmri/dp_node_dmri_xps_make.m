@@ -9,6 +9,11 @@ classdef dp_node_dmri_xps_make < dp_node_dmri_xps
 
         function obj = dp_node_dmri_xps_make()
             obj.input_test = {'dmri_fn'};
+            
+            obj.input_spec.add('dmri_fn', 'file', 1, 1, 'Diffusion MRI nifti file');
+            obj.input_spec.add('bval_fn', 'file', 0, 1, 'B-value file (auto-detected if not provided)');
+            obj.input_spec.add('bvec_fn', 'file', 0, 1, 'B-vector file (auto-detected if not provided)');
+            obj.input_spec.add('id', 'string', 0, 0, 'Subject/session identifier');
         end
 
         function po = po2i(~, po)

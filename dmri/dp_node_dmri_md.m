@@ -16,6 +16,12 @@ classdef dp_node_md < dp_node
     end
 
     methods
+        
+        function obj = dp_node_md()
+            obj.input_spec.add('nii_fn', 'file', 1, 1, 'Nifti file for MD calculation');
+            obj.input_spec.add('bp', 'path', 1, 1, 'Base path');
+            obj.input_spec.add('mask_fn', 'file', 0, 1, 'Brain mask file (optional)');
+        end
 
         function output = i2o(obj, input)
 

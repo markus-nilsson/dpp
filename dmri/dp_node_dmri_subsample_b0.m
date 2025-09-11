@@ -13,6 +13,10 @@ classdef dp_node_dmri_subsample_b0 < dp_node_dmri
     % nii_fn
 
     methods
+        
+        function obj = dp_node_dmri_subsample_b0()
+            obj.input_spec.add('dmri_fn', 'file', 1, 1, 'Diffusion MRI nifti file');
+        end
 
         function output = i2o(obj, input)
 

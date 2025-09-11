@@ -10,6 +10,12 @@ classdef dp_node_dmri_topup_prep < dp_node
             obj.input_test = {...
                 'nii_ap_fn', 'nii_pa_fn', ...
                 'xps_ap_fn', 'xps_pa_fn'};
+            
+            obj.input_spec.add('nii_ap_fn', 'file', 1, 1, 'Anterior-posterior nifti file');
+            obj.input_spec.add('nii_pa_fn', 'file', 1, 1, 'Posterior-anterior nifti file');
+            obj.input_spec.add('xps_ap_fn', 'file', 0, 1, 'AP experimental parameter set file (auto-generated if not provided)');
+            obj.input_spec.add('xps_pa_fn', 'file', 0, 1, 'PA experimental parameter set file (auto-generated if not provided)');
+            obj.input_spec.add('nii', 'struct', 0, 0, 'Nifti structure (optional)');
 
         end
 

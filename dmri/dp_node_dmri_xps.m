@@ -7,6 +7,8 @@ classdef dp_node_dmri_xps < dp_node
 
         function obj = dp_node_dmri_xps()
             obj.output_test = {'dmri_fn', 'xps_fn'};
+            
+            obj.input_spec.add('dmri_fn', 'file', 1, 1, 'Diffusion MRI nifti file');
         end
 
         function output = i2o(obj, input)
