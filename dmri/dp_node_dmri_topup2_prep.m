@@ -4,6 +4,14 @@ classdef dp_node_dmri_topup2_prep < dp_node
     % handling. Formats AP/PA acquisitions for the improved TOPUP processing pipeline.
 
     methods
+        
+        function obj = dp_node_dmri_topup2_prep()
+            obj.input_spec.add('ap_dmri_fn', 'file', 1, 1, 'Anterior-posterior diffusion MRI nifti file');
+            obj.input_spec.add('pa_dmri_fn', 'file', 1, 1, 'Posterior-anterior diffusion MRI nifti file');
+            obj.input_spec.add('ap_json_fn', 'file', 1, 1, 'Anterior-posterior JSON parameter file');
+            obj.input_spec.add('pa_json_fn', 'file', 1, 1, 'Posterior-anterior JSON parameter file');
+            obj.input_spec.add('nii', 'struct', 0, 0, 'Nifti structure (optional)');
+        end
 
         function output = i2o(~, input)
 

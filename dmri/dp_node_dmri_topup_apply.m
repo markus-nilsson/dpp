@@ -12,6 +12,11 @@ classdef dp_node_dmri_topup_apply < dp_node
     methods
 
         function obj = dp_node_dmri_topup_apply(name, suffix)
+            
+            obj.input_spec.add('nii_ap_fn', 'file', 0, 1, 'Anterior-posterior nifti file (optional)');
+            obj.input_spec.add('nii_pa_fn', 'file', 0, 1, 'Posterior-anterior nifti file (optional)');
+            obj.input_spec.add('topup_data_path', 'path', 1, 1, 'Path to TOPUP data files');
+            obj.input_spec.add('topup_spec_fn', 'file', 1, 1, 'TOPUP specification file');
 
             if (nargin > 0)
 

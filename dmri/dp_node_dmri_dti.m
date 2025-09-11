@@ -13,6 +13,11 @@ classdef dp_node_dmri_dti < dp_node
             obj.input_test = {'dmri_fn'};
             obj.output_test = {'md_fn', 'fa_fn', 's0_fn', 'fa_col_fn'};
             
+            obj.input_spec.add('dmri_fn', 'file', 1, 1, 'Diffusion MRI nifti file');
+            obj.input_spec.add('xps_fn', 'file', 1, 1, 'Experimental parameter set file');
+            obj.input_spec.add('mask_fn', 'file', 0, 1, 'Brain mask file (optional)');
+            obj.input_spec.add('opt', 'struct', 0, 0, 'Options structure (optional)');
+            
             if (nargin > 0)
                 obj.filter_sigma = filter_sigma;
             end

@@ -12,6 +12,9 @@ classdef dp_node_dmri_smooth < dp_node_dmri
         function obj = dp_node_dmri_smooth(filter_sigma)
             if (nargin > 0), obj.filter_sigma = filter_sigma; end
             obj.output_test = {'dmri_fn'};
+            
+            obj.input_spec.add('dmri_fn', 'file', 1, 1, 'Diffusion MRI nifti file');
+            obj.input_spec.add('mask_fn', 'file', 0, 1, 'Brain mask file (optional)');
         end
 
         function output = i2o(obj, input)

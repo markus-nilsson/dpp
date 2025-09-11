@@ -11,6 +11,9 @@ classdef dp_node_dmri_xps_force < dp_node_dmri_xps
 
         function obj = dp_node_dmri_xps_force(xps)
             obj.xps = xps;
+            
+            % This node forces a specific XPS and doesn't use any input fields
+            % from the data, so no input_spec needed beyond the base path/op
         end
 
         function output = execute(obj, ~, output)

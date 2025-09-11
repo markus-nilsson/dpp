@@ -17,6 +17,9 @@ classdef dp_node_dmri_disco_synb0 < dp_node
             obj.license_fn = license_fn;
             obj.input_test = {'dmri_fn', 't1_fn'};
             obj.output_test = {'synb0_fn', 'topup_nii_fn'};
+            
+            obj.input_spec.add('dmri_fn', 'file', 1, 1, 'Diffusion MRI nifti file');
+            obj.input_spec.add('t1_fn', 'file', 1, 1, 'T1-weighted nifti file');
         end
 
         % construct names of output files

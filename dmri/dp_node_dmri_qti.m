@@ -7,6 +7,10 @@ classdef dp_node_dmri_qti < dp_node
 
         function obj = dp_node_dmri_qti()
             obj.output_test = {'mki_fn', 'mka_fn', 'md_fn'};
+            
+            obj.input_spec.add('dmri_fn', 'file', 1, 1, 'Diffusion MRI nifti file');
+            obj.input_spec.add('xps_fn', 'file', 1, 1, 'Experimental parameter set file');
+            obj.input_spec.add('mask_fn', 'file', 0, 1, 'Brain mask file (optional)');
         end
 
 
