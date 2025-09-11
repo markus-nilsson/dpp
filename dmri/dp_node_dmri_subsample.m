@@ -15,6 +15,8 @@ classdef dp_node_dmri_subsample < dp_node
             obj.suffix = suffix;
 
             if (suffix(1) ~= '_'), warning('probably want _suffix'); end
+            
+            obj.input_spec.add('dmri_fn', 'file', 1, 1, 'Diffusion MRI nifti file');
         end
 
         function output = i2o(obj, input)
