@@ -10,6 +10,7 @@ classdef dp_node_primary < dp_node_base
             obj.dpm_list = {...
                 dpm_iter(obj), ...
                 dpm_report(obj)};
+
         end
 
         %  not implemented yet

@@ -36,7 +36,6 @@ classdef dp_node_identify_sequences < dp_node
 
         function output = i2o(obj, input)
 
-
             % make a pass-through to keep all info
             output = input;
 

@@ -15,7 +15,6 @@ classdef dp_node < dp_node_base
 
         end
 
-
         function [status, f, age] = input_exist(obj, input)
             [status, f, age] = obj.io_exist2(input, obj.input_test);
         end
