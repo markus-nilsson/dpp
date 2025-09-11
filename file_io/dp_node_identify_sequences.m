@@ -23,6 +23,7 @@ classdef dp_node_identify_sequences < dp_node
             end
 
             obj.patterns = patterns;
+            
         end
 
         function obj = update(obj, opt, mode) 

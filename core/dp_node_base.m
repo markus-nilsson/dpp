@@ -5,8 +5,21 @@ classdef dp_node_base < dp_node_core
     %
     % this should include all logic, while the helper functions are in 
     % the support class
+    properties
+        input_spec;
+    end
+    
 
     methods % public
+
+        function obj = dp_node_base()
+
+            s = dp_input_spec();
+            s.add('bp', 'path', 1, 1, 'Base path');
+            s.add('id', 'string', 1, 0, 'Subject/session identifier');
+            s.add('op', 'string', 1, 0, 'Output path'); 
+            obj.input_spec = s;
+        end
 
         % run deep, experiment
         function outputs = run_deep(obj, mode, opt)
@@ -181,10 +194,6 @@ classdef dp_node_base < dp_node_core
             output = obj.run_i2o(input);
         end
 
-        function pop = manage_po(obj, pop)
-            if (~msf_isfield(pop, 'id')), error('id field missing'); end
-        end
-
         % compute input to this node from previous output
         function input = run_po2i(obj, pop, varargin)
 
@@ -240,7 +249,7 @@ classdef dp_node_base < dp_node_core
 
             output = obj.i2o(input);
 
-            % check quality of input
+            % optionally transfer input to output
             f = {'id', 'op', 'bp'};            
 
             if (obj.do_i2o_pass) % pass all inputs to outputs
