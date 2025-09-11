@@ -16,11 +16,7 @@ classdef dp_node_core_central < handle
         function output = execute(~, ~, output)
             1;
         end
-        
-        function output = visualize(~, ~, output)
-            1;
-        end
-       
+      
     end   
 
 end

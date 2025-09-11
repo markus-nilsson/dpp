@@ -21,6 +21,9 @@ classdef dp_node_io_merge < dp_node
             end
 
             obj.previous_nodes = nodes;
+
+            obj.input_spec.enabled = 0;
+            obj.output_spec.enabled = 0;
             
         end
 
@@ -80,16 +83,6 @@ classdef dp_node_io_merge < dp_node
             %output = run_inner@dp_node(obj, po);
 
 
-        end
-
-        function [status, f, age] = input_exist(obj, input)
-            status = []; f = []; age = []; % implement later
-            %[status, f, age] = obj.io_exist2(input, obj.input_test);
-        end
-
-        function [status, f, age] = output_exist(obj, output)
-            status = []; f = []; age = [];
-            %[status, f, age] = obj.io_exist2(output, obj.output_test);
         end
 
     end

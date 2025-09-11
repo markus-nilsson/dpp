@@ -4,11 +4,11 @@ classdef dpm_iter < dpm
 
     methods
 
-        function mode_name = get_mode_name(obj)
+        function mode_name = get_mode_name(~)
             mode_name = 'iter';
         end
         
-        function opt = dp_opt(obj, opt)
+        function opt = dp_opt(~, opt)
 
             opt = msf_ensure_field(opt, 'verbose', 0);
 

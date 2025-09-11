@@ -7,6 +7,7 @@ classdef dp_node_base < dp_node_core
 
     properties
         input_spec;
+        output_spec;
     end
     
 
@@ -17,11 +18,22 @@ classdef dp_node_base < dp_node_core
             s.add('bp', 'path', 1, 1, 'Base path');
             s.add('id', 'string', 1, 0, 'Subject/session identifier');
             obj.input_spec = s;
+
+            obj.output_spec = dp_io_spec(obj);
         end
 
         function input_print(obj)
             obj.input_spec.print();
         end
+
+        function [status, f, age] = input_exist(obj, input)
+            [status, f, age] = obj.input_spec.exist(input);
+        end
+
+        function [status, f, age] = output_exist(obj, output)
+            [status, f, age] = obj.output_spec.exist(output);
+        end
+        
 
         % run deep, experiment
         function outputs = run_deep(obj, mode, opt)
@@ -200,7 +212,7 @@ classdef dp_node_base < dp_node_core
            
             % Prepare input and trasfer key fields (gently)
             input = obj.po2i(pop);
-            input = dp_input.copy(input, pop, {'id', 'op', 'bp'});
+            input = dp_io.copy(input, pop, {'id', 'op', 'bp'});
                 
         end
 
@@ -209,7 +221,7 @@ classdef dp_node_base < dp_node_core
         function output = run_i2o(obj, input)
 
             % check quality of input
-            obj.input_spec.test(input, obj.input_test);
+            obj.input_spec.test(input);
 
             output = obj.i2o(input);
 
@@ -220,7 +232,7 @@ classdef dp_node_base < dp_node_core
                 f = cat(2, fieldnames(input));
             end
 
-            output = dp_input.copy(output, input, f);
+            output = dp_io.copy(output, input, f);
             
         end
 

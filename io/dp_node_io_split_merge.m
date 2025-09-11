@@ -58,8 +58,6 @@ classdef dp_node_io_split_merge < dp_node_io_merge
 
         end
 
-
-
         function obj = connect(obj, varargin)
             obj = connect@dp_node_io_merge(obj, varargin{:});
 
@@ -69,16 +67,6 @@ classdef dp_node_io_split_merge < dp_node_io_merge
             end
 
         end        
-
-
-        function [status, f, age] = input_exist(obj, input)
-            [status, f, age] = obj.io_exist2(input, obj.input_test);
-        end
-
-        function [status, f, age] = output_exist(obj, output)
-            [status, f, age] = obj.io_exist2(output, obj.output_test);
-        end        
-
 
     end
 

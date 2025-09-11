@@ -100,55 +100,52 @@ classdef dp_node_core_run_fun < ...
             1; 
         end
        
-        function pop = manage_po(~, pop)
-            if (~msf_isfield(pop, 'id')), error('id field missing'); end
-        end
-
-        % compute input to this node from previous output
-        function input = run_po2i(obj, pop, varargin)
-            
-            input = obj.po2i(pop);
-
-            % transfer id, output path, base path, if they exist
-            f = {'id', 'op', 'bp'};
-            for c = 1:numel(f)
-                if (isfield(pop, f{c}) && ~isfield(input, f{c}))
-                    input.(f{c}) = pop.(f{c});
-                end
-            end
-
-        end
-
-        % compile output
-        function output = run_i2o(obj, input)
-
-            % check quality of input
-            f = {'id', 'bp'}; % op not needed at all times
-
-            for c = 1:numel(f)
-                if (~isfield(input, f{c}))
-                    % xxx: better solution needed
-                    obj.log(0, 'Mandatory input field missing (%s)', f{c});
-                    error('Mandatory input field missing (%s)', f{c});
-                end
-            end
-
-            output = obj.i2o(input);
-
-            % check quality of input
-            f = {'id', 'op', 'bp'};            
-
-            if (obj.do_i2o_pass) % pass all inputs to outputs
-                f = cat(2, fieldnames(input));
-            end
-
-            for c = 1:numel(f)
-                if (isfield(input, f{c}) && ~isfield(output, f{c}))
-                    output.(f{c}) = input.(f{c});
-                end
-            end
-            
-        end
+        % these were duplicated, also in dp_node_base... 
+        % % compute input to this node from previous output
+        % function input = run_po2i(obj, pop, varargin)
+        % 
+        %     input = obj.po2i(pop);
+        % 
+        %     % transfer id, output path, base path, if they exist
+        %     f = {'id', 'op', 'bp'};
+        %     for c = 1:numel(f)
+        %         if (isfield(pop, f{c}) && ~isfield(input, f{c}))
+        %             input.(f{c}) = pop.(f{c});
+        %         end
+        %     end
+        % 
+        % end
+        % 
+        % % compile output
+        % function output = run_i2o(obj, input)
+        % 
+        %     % check quality of input
+        %     f = {'id', 'bp'}; % op not needed at all times
+        % 
+        %     for c = 1:numel(f)
+        %         if (~isfield(input, f{c}))
+        %             % xxx: better solution needed
+        %             obj.log(0, 'Mandatory input field missing (%s)', f{c});
+        %             error('Mandatory input field missing (%s)', f{c});
+        %         end
+        %     end
+        % 
+        %     output = obj.i2o(input);
+        % 
+        %     % check quality of input
+        %     f = {'id', 'op', 'bp'};            
+        % 
+        %     if (obj.do_i2o_pass) % pass all inputs to outputs
+        %         f = cat(2, fieldnames(input));
+        %     end
+        % 
+        %     for c = 1:numel(f)
+        %         if (isfield(input, f{c}) && ~isfield(output, f{c}))
+        %             output.(f{c}) = input.(f{c});
+        %         end
+        %     end
+        % 
+        % end
 
     end
 
