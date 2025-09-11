@@ -1,6 +1,7 @@
 classdef dp_node_dmri_powder_average < dp_node_dmri
 
-    % powder average data (average across diffusion encoding directions)
+    % Computes powder-averaged diffusion data by averaging signal across all diffusion encoding
+    % directions. Creates rotationally invariant diffusion measurements for analysis.
 
     methods
 

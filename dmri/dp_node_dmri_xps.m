@@ -1,5 +1,8 @@
 classdef dp_node_dmri_xps < dp_node
 
+    % Base class for diffusion MRI experimental parameter set (XPS) handling. Provides
+    % framework for creating and managing acquisition parameter files from various sources.
+
     methods
 
         function obj = dp_node_dmri_xps()

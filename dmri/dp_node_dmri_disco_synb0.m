@@ -1,5 +1,8 @@
 classdef dp_node_dmri_disco_synb0 < dp_node
 
+    % Generates synthetic b0 images using DISCO (Deep Image Synthesis for Contrast Optimization).
+    % Creates artificial reverse phase-encoding b0 images for topup distortion correction when only single-direction data is available. 
+    
     % Potential problems: 
     % Memory limits in docker. Make sure you have 20 Gb or above. 
     

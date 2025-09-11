@@ -1,6 +1,7 @@
 classdef dp_node_dmri_topup2 < dp_node_workflow
 
-    % version 2 of our implementation, uses the standard FSL topup
+    % Enhanced TOPUP workflow (version 2) using standard FSL tools. Improved implementation
+    % for susceptibility distortion correction with better parameter handling and processing stability.
 
     methods
 

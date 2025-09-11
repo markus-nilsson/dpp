@@ -1,6 +1,7 @@
 classdef dp_node_dmri_subsample < dp_node
 
-    % subsamples a dmri sequence given an xps function
+    % Subsamples diffusion MRI sequences based on user-defined criteria. Extracts specific
+    % volumes or directions from the dataset using custom selection functions.
 
     properties
         xps_fun;

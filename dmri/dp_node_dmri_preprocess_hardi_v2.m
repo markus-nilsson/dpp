@@ -1,6 +1,7 @@
 classdef dp_node_dmri_preprocess_hardi_v2 < dp_node_workflow
 
-    % holder of biofinder2 standard workflow, version 2
+    % Enhanced HARDI preprocessing pipeline (version 2) for BioFinder2 workflows. Improved
+    % processing order with updated topup integration for better distortion correction performance.
 
 
     methods

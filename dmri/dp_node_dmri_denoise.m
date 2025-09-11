@@ -1,6 +1,7 @@
 classdef dp_node_dmri_denoise < dp_node_dmri
 
-    % runs dwidenosie from mrtix
+    % Denoises diffusion MRI data using MRtrix's dwidenoise tool. Reduces noise
+    % while preserving signal integrity using principal component analysis.
 
     methods
 

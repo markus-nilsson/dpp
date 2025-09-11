@@ -1,6 +1,7 @@
 classdef dp_node_dmri_xps_force < dp_node_dmri_xps
 
-    % Forces an xps onto the corresponding nii file
+    % Forces a specific experimental parameter set (XPS) onto a diffusion dataset. Overwrites
+    % existing acquisition parameters with user-defined values for custom analysis workflows.
 
     properties
         xps;

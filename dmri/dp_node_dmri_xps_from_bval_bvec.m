@@ -1,5 +1,8 @@
 classdef dp_node_dmri_xps_from_bval_bvec < dp_node_dmri_xps
 
+    % Creates experimental parameter sets (XPS) from separate bval and bvec files. Combines
+    % b-value and gradient direction information into unified acquisition parameter format.
+
     properties
         b_delta = 1;
     end

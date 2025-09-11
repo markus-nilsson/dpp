@@ -1,6 +1,7 @@
 classdef dp_node_dmri_normalise_seq < dp_node_dmri
 
-    % normalize b0 across sequences
+    % Normalizes b0 signal intensity across different sequences or acquisitions. Ensures
+    % consistent signal scaling when combining data from multiple scanning sessions.
 
     methods
     

@@ -1,5 +1,8 @@
 classdef dp_node_dmri_topup < dp_node_workflow
 
+    % Complete FSL TOPUP workflow for correcting susceptibility-induced distortions in diffusion MRI.
+    % Combines b0 extraction, parameter preparation, distortion estimation, and correction application.
+
     methods
 
         function obj = dp_node_dmri_topup()

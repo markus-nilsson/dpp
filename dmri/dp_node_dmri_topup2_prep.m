@@ -1,6 +1,7 @@
 classdef dp_node_dmri_topup2_prep < dp_node
 
-    % pulls out data and saves it in ap pa order
+    % Prepares data for TOPUP2 distortion correction with enhanced organization and parameter
+    % handling. Formats AP/PA acquisitions for the improved TOPUP processing pipeline.
 
     methods
 

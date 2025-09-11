@@ -1,6 +1,7 @@
 classdef dp_node_dmri_flirt_apply < dp_node_fsl_flirt_apply
 
-    % coregistration of fa using flirt
+    % Applies pre-computed FLIRT transformation matrices to diffusion MRI data. Performs
+    % spatial transformation of diffusion datasets using previously calculated registration parameters.
     %
     % expected outputs from previous node
     % - dmri_fn 

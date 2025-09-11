@@ -1,5 +1,8 @@
 classdef dp_node_dmri_preprocess_set_defaults < dp_node_workflow
 
+    % Builds an input structure with default parameters for diffusion MRI operations. Sets up
+    % standardized file paths and acquisition parameters for consistent processing workflows.
+    %
     % Builds an input structure suitable for dmri operations
     % with outputs as follows
     %

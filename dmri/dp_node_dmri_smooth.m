@@ -1,6 +1,7 @@
 classdef dp_node_dmri_smooth < dp_node_dmri
 
-    % gaussian smoothing
+    % Applies Gaussian smoothing to diffusion MRI data. Reduces noise by spatial
+    % filtering while preserving tissue boundaries and diffusion signal characteristics.
 
     properties
         filter_sigma = 0.6;

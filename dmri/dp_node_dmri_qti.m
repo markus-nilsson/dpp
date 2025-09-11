@@ -1,5 +1,8 @@
 classdef dp_node_dmri_qti < dp_node
 
+    % Performs Q-space Trajectory Imaging (QTI) analysis for advanced diffusion modeling.
+    % Computes kurtosis metrics including mean kurtosis isotropic (MKi) and anisotropic (MKa) components.
+
     methods
 
         function obj = dp_node_dmri_qti()

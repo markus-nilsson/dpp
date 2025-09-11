@@ -1,5 +1,9 @@
 classdef dp_node_dmri_mec_eb < dp_node_dmri
 
+    % Extrapolation-based motion and eddy current correction for diffusion MRI data. 
+    % Uses registration to b0 images to correct motion, then computes high b-value references 
+    % by extrapolating from low b-value data for improved motion correction performance.
+
     methods
 
         function input = po2i(obj, po)
