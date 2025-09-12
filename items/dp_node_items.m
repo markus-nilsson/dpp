@@ -138,13 +138,14 @@ classdef dp_node_items < dp_node_base
 
                 obj.log(2, '%s: Item %i %s', input_items{c}.id, c, strtrim(formattedDisplayText(f)));
 
-                % Note that this does not implement a try-catch: 
-                % a failure of one item causes a cascading error
-                % that should be caught in an outer stage
-                output_items{c} = obj.run_fun(...
-                    @() g(input_items{c}, output_items{c}),...
-                    @(me, id) err_log(me, input_items{c}.id), ...
-                    obj.opt.do_try_catch);
+                try
+                    output_items{c} = obj.run_fun(...
+                        @() g(input_items{c}, output_items{c}),...
+                        @(me, id) err_log(me, input_items{c}.id), ...
+                        obj.opt.do_try_catch);
+                catch me
+                    obj.log(0, '%s: Item %i: Err: %s', input_items{c}.id, c, me.message);
+                end
 
             end            
         end
