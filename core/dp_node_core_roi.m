@@ -30,7 +30,7 @@ classdef dp_node_core_roi < handle
 
         function obj = dp_node_core_roi()
             obj.roi_names = {'Temporary'};
-            obj.roi_bp = msf_tmp_path(1);
+            obj.roi_bp = msf_tmp_path(0);
         end
 
         function roi_fn = roi_get_fn(obj, output, f, c_roi)

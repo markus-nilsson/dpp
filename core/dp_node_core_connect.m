@@ -35,6 +35,10 @@ classdef dp_node_core_connect < handle
 
         end
 
+        function obj = set(obj, field, value)
+            obj.(field) = value;
+        end
+
         function obj = set_name(obj, name)
             obj.name = name;
         end

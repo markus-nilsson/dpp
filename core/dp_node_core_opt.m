@@ -24,7 +24,8 @@ classdef dp_node_core_opt < ...
     end
 
     properties (Access = private) % default runtime opts
-        opt_runtime_hidden = struct(...
+        opt_runtime_hidden = struct()
+        opt_runtime_default = struct(...
             'c_level', 0, ...
             'verbose', 0, ...
             'do_try_catch', 1, ...
@@ -33,7 +34,7 @@ classdef dp_node_core_opt < ...
             'do_overwrite', 0, ...
             'id_filter', [], ...
             'do_log_early_stop', true, ... % internal use only
-            'run_id', []);
+            'run_id', []);        
     end
 
     methods
@@ -51,7 +52,17 @@ classdef dp_node_core_opt < ...
         end
 
         function opt = get.opt_runtime(obj)
-            opt = obj.get_primary_node().opt_runtime_hidden;
+            primary_node = obj.get_primary_node();
+            if (numel(fieldnames(primary_node.opt_runtime_hidden)) == 0)
+                opt = primary_node.opt_runtime_default;
+            else
+                opt = primary_node.opt_runtime_hidden;
+            end
+        end
+
+        function obj = reset_opt_runtime(obj)
+            obj.get_primary_node().opt_runtime_hidden = ...
+                obj.get_primary_node().opt_runtime_default;
         end
         
         % Keep track of how deeply we have recursed
