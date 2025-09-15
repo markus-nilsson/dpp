@@ -20,7 +20,7 @@ classdef dp_node_base < dp_node_core
             s.add('id', 'string', 1, 0, 'Subject/session identifier');
             obj.input_spec = s;
 
-            obj.output_spec = dp_io_spec(obj);
+            obj.output_spec = dp_io_spec(obj, 'output');
         end
 
         function input_print(obj)

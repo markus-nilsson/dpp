@@ -28,13 +28,17 @@ classdef dp_node_io_files_to_items < dp_node
 
         function output = i2o(obj, input)
 
-            if (~exist(input.ip, 'dir')), error('missing input folder %s', input.ip); end
+            output.items = {};
+           
+            if (~exist(input.ip, 'dir'))
+                obj.log(1, 'missing input folder %s', input.ip); 
+                return;
+            end
 
             di = dir(fullfile(input.ip, obj.ext));
 
-            obj.log(1, 'Searcing in %s with extension %s gave %i outputs\n', input.ip, obj.ext, numel(di));
+            obj.log(1, 'Searching in %s with extension %s gave %i outputs\n', input.ip, obj.ext, numel(di));
 
-            output.items = {};
             for c = 1:numel(di)
 
                 if (di(c).name(1) == '.')
@@ -46,19 +50,14 @@ classdef dp_node_io_files_to_items < dp_node
                     case 'exclude'
 
                         if (obj.do_filter(di(c).name))
-                            if (obj.do_print_filter)
-                                obj.log('Skipping: %s:%s\n', input.id, di(c).name);
-                            end
-          
-                  continue;
+                            obj.log(2, 'Skipping: %s:%s\n', input.id, di(c).name);
+                            continue;
                         end
 
                     case 'include'
 
                         if (~obj.do_filter(di(c).name))
-                            if (obj.do_print_filter)
-                                obj.log('Not including: %s:%s\n', input.id, di(c).name);
-                            end
+                            obj.log(2, 'Not including: %s:%s\n', input.id, di(c).name);
                             continue;
                         end
                         

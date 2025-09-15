@@ -36,6 +36,10 @@ classdef dp_node_primary_list_lund < dp_node_primary
 
             % find folders
             for c = 1:numel(d)
+                
+                if (d(c).name(1) == '_')
+                    continue; % exclude folders starting with _
+                end
 
                 d2 = dir(fullfile(obj.bp, d(c).name, '20*'));
 

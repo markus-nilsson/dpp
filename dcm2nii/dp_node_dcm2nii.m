@@ -44,7 +44,7 @@ classdef dp_node_dcm2nii < dp_node
             output.bvec_fn = f('bvec');
 
             % convert in temporary folder
-            output.tmp.bp = msf_tmp_path();
+            output.tmp.bp = msf_tmp_path(0);
             output.tmp.do_delete = 1;
 
         end        
@@ -53,9 +53,10 @@ classdef dp_node_dcm2nii < dp_node
 
             % working path
             wp = output.tmp.bp; 
+            msf_mkdir(wp);
 
             % dicom to nifti
-            cmd = sprintf('%s -z i -o ''%s'' ''%s''', obj.dcm2niix_path, ...
+            cmd = sprintf('%s -z i -o ''%s'' ''%s'' ', obj.dcm2niix_path, ...
                 wp, input.dcm_folder);
             system(cmd);
 

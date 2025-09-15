@@ -50,11 +50,13 @@ classdef dp_node_dmri_topup_apply < dp_node
             output.xps_fn = mdm_xps_fn_from_nii_fn(output.dmri_fn);
 
             % add a temporary path
-            output.tmp.bp = msf_tmp_path();
+            output.tmp.bp = msf_tmp_path(0);
             output.tmp.do_delete = 1;
         end
 
         function output = execute(obj, input, output)
+
+            msf_mkdir(output.tmp.bp); % put into tmp core (xxx)
 
             % Connect to data
             if (~isempty(input.nii_ap_fn))

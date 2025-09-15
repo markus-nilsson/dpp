@@ -143,7 +143,8 @@ classdef dp_node_items < dp_node_base
                 % that should be caught in an outer stage
                 output_items{c} = obj.run_fun(...
                     @() g(input_items{c}, output_items{c}),...
-                    @(me, id) err_log(me, input_items{c}.id), 0);
+                    @(me, id) err_log(me, input_items{c}.id), ...
+                    obj.opt.do_try_catch);
 
             end            
         end
