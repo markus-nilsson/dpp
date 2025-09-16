@@ -8,18 +8,18 @@ id2 = dp_node_io_append({...
     {'dmri_fn', @(x) fullfile(x.bp, x.id, 'DWI', 'DTI_dn_mc.nii.gz')}, ...
     {'xps_fn', @(x) fullfile(x.bp, x.id, 'DWI', 'DTI_dn_mc_xps.mat')}}).connect(id1);
 
-id3 = dp_node_io('op', @(x) fullfile(x.bp, x.id, 'tractseg')); 
+id3 = dp_node_io('op', @(x) fullfile(x.bp, x.id, 'tractseg')).connect(id2); 
 
 % id2.run('report'); % checks which subjects have their files are present
 
 
 % Mask the b0
 m0 = dp_node_dmri_subsample_b0().connect(id3);
-m1 = dp_node_segm_hd_bet().connect(m0, 'm1');
+m1 = dp_node_segm_hd_bet().connect(m0).set_name('m1');
 
 
 % Run tractseg
-t0 = dp_node_dmri_io_xps_to_bval_bvec().connect(id3, 't0');
+t0 = dp_node_dmri_io_xps_to_bval_bvec().connect(id3).set_name('t0');
 
 t1 = dp_node_mrtrix_dwigradcheck().connect(t0);
 
