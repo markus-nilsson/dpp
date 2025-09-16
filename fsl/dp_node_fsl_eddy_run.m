@@ -26,12 +26,18 @@ classdef dp_node_fsl_eddy_run < dp_node
             else
                 obj.eddy_binary = 'eddy_cuda10.2';
             end
+
+            obj.output_spec.add('dmri_fn', 'file', 1, 1, 'Eddy corrected dMRI file');
+            obj.output_spec.add('xps_fn',  'file', 1, 1, 'Experimental parameter structure');
+            obj.output_spec.add('parameters_fn', 'file', 1, 0, 'Eddy parameter file');
+
         end
 
         function output = i2o(obj, input)
 
             output.dmri_fn = dp.new_fn(input.op, input.dmri_fn, '_eddy');
             output.xps_fn = mdm_xps_fn_from_nii_fn(output.dmri_fn);
+            output.parameters_fn = dp.new_fn(input.op, input.dmri_fn, '_eddy', '.eddy_parameters');
 
         end
 

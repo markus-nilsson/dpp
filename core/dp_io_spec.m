@@ -106,7 +106,7 @@ classdef dp_io_spec < handle
 
             % fields to test
             f = obj.get_mandatory_fields();
-            f = cat(1, f, obj.get_legacy_fields());            
+            f = cat(2, f, obj.get_legacy_fields());            
 
             % test if the fields are in place
             tmp = {};

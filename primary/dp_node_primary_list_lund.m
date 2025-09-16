@@ -8,6 +8,7 @@ classdef dp_node_primary_list_lund < dp_node_primary
     properties
         bp;
         project_prefix
+        n_per_subject = inf;
     end
     
     methods
@@ -43,7 +44,7 @@ classdef dp_node_primary_list_lund < dp_node_primary
 
                 d2 = dir(fullfile(obj.bp, d(c).name, '20*'));
 
-                for c2 = 1:numel(d2)
+                for c2 = 1:min(obj.n_per_subject, numel(d2))
 
                     output.bp = obj.bp;
                     output.id = fullfile(d(c).name, d2(c2).name);
