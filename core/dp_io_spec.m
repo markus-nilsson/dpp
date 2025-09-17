@@ -54,7 +54,7 @@ classdef dp_io_spec < handle
                 end
 
                 if (c_fields == 0)
-                    disp('None');
+                    disp(' None');
                 end
 
                 disp(' ');

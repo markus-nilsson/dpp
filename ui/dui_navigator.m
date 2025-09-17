@@ -19,7 +19,6 @@ classdef dui_navigator < handle
             input_node = node.get_primary_node();
             output_node = node;
 
-
             % Define the figure container
             hf = uifigure(...
                 'Name', 'Pipeline Navigator', ...
@@ -34,7 +33,7 @@ classdef dui_navigator < handle
 
             obj.dui_log = dui_show_log(h_log);
 
-            node.log_fn = @(l,s) obj.dui_log.add_log_message(l, s); 
+            node.log_fn = @(l,s,v) obj.dui_log.add_log_message(l, s, v); 
 
 
             % Inputs panel

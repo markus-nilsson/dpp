@@ -119,11 +119,11 @@ classdef dui_show_log < handle
                 'Position', [margin, margin, parent_width - 2*margin, parent_height - control_panel_height - 2*margin - 15]);
         end
         
-        function add_log_message(obj, level, text)
+        function add_log_message(obj, level, text, verbose)
             % add_log_message - Append a new log message.
             %
             % Usage:
-            %   obj.add_log_message(level, text)
+            %   obj.add_log_message(level, text, verbose)
             %
             % level: numeric value (1-4 for normal messages; use 0 for errors)
             % text: log message string

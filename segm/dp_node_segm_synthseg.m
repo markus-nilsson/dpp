@@ -33,10 +33,11 @@ classdef dp_node_segm_synthseg < dp_node_segm
         end
 
         function output = i2o(obj, input)
-            %output.resampled_fn    = dp.new_fn(input.op, input.nii_fn, '_rs');
-            output.labels_fn = dp.new_fn(input.op, input.nii_fn, '_labels1mm');
+            output.resampled_fn = dp.new_fn(input.op, input.nii_fn, '_resampled');
+            output.labels_fn    = dp.new_fn(input.op, input.nii_fn, '_labels1mm');
             output.qc_fn        = dp.new_fn(input.op, input.nii_fn, '_qc', '.csv');
             output.vol_fn       = dp.new_fn(input.op, input.nii_fn, '_vol', '.csv');
+            output.op           = input.op;
         end
 
         function output = execute(obj, input, output)
@@ -53,12 +54,10 @@ classdef dp_node_segm_synthseg < dp_node_segm
                 sprintf('--threads %i ', obj.n_threads), ...
                 sprintf('--qc %s ', output.qc_fn), ...
                 sprintf('--vol %s ', output.vol_fn), ...
+                '--cpu ', ...
                 '--parc ', ...
-                '--cpu', ...
+                sprintf('--resample %s', output.op), ...
                 '');
-
-                %sprintf('--resample %s ', output.resampled_fn), ...
-
 
             msf_mkdir(fileparts(output.labels_fn));
             [status, result] = msf_system(synthseg_cmd); % Execute the command
