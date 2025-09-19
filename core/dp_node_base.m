@@ -53,6 +53,7 @@ classdef dp_node_base < dp_node_core
             obj.reset_opt_runtime();
             opt.run_id = datetime('now'); 
             obj.opt_runtime = opt;     
+            obj.log_fn_reset();
 
             % Run it using internal function!
             outputs = obj.i_run(mode);

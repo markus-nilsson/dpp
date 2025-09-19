@@ -174,6 +174,10 @@ classdef dui_show_io < handle
                 
                 output = output{1};
 
+                % Hide workflow info
+                output = msf_rmfield(output, 'wf_input');
+                output = msf_rmfield(output, 'wf_output');
+
                 f = fieldnames(output);
 
                 data = cell(numel(f), 2);
@@ -181,7 +185,7 @@ classdef dui_show_io < handle
                     data{c,1} = f{c};
                     data{c,2} = output.(f{c});
                 end
-                
+
                 % Update table
                 obj.h_output.Data = data;
                 obj.h_output.RowName = [];

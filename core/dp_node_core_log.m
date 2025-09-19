@@ -12,7 +12,6 @@ classdef dp_node_core_log < dp_node_core_opt & handle
     methods
 
         function obj = dp_node_core_log()
-            obj.h_log_fn = @(lvl, str, verbose) obj.print_log(lvl, str, verbose);
         end
 
         function log_fn = get.log_fn(obj)
@@ -21,6 +20,10 @@ classdef dp_node_core_log < dp_node_core_opt & handle
 
         function set.log_fn(obj, val)
             obj.get_primary_node().h_log_fn = val;
+        end
+
+        function obj = log_fn_reset(obj)
+            obj.log_fn = @(lvl, str, verbose) obj.print_log(lvl, str, verbose);
         end
 
         function log(obj, varargin)
