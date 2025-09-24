@@ -5,6 +5,7 @@ classdef dp_io_spec < handle
         node;
         type; % input or output
         enabled = true;
+        do_pass_empty = true;
     end
 
     methods
@@ -149,9 +150,10 @@ classdef dp_io_spec < handle
                 end
 
                 % allow empties to pass
-                if (isempty(io.(f{c}))) && (do_pass_empty)
+                if (isempty(io.(f{c}))) && (obj.do_pass_empty)
                     status(c) = 1; 
                 end
+                
             end
 
         end        

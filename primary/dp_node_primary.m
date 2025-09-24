@@ -15,19 +15,6 @@ classdef dp_node_primary < dp_node_base
 
         end
 
-        %  not implemented yet
-        function [status, f, age] = input_exist(obj, input)
-            status = [];
-            f = [];
-            age = [];
-        end
-
-        function [status, f, age] = output_exist(obj, input)
-            status = [];
-            f = [];
-            age = [];
-        end
-
     end
 
 end

@@ -18,10 +18,10 @@ classdef dp_node_elastix_apply < dp_node
 
         function obj = dp_node_elastix_apply(mio_opt)
             if (nargin > 0), obj.mio_opt = mio_opt; end
-
-            obj.input_spec.add('nii_fn', 'file', 1, 1, 'The nifti file to be transformed');
-            obj.input_spec.add('elastix_t_fn', 'file', 1, 1, 'Transform specification');
-
+             
+            obj.input_spec.add('nii_fn', 'file', 1, 1, 'File to transform (nii)');
+            obj.input_spec.add('elastix_t_fn', 'file', 1, 1, 'Transform parameter file (txt)');
+            
         end
 
         function output = i2o(obj, input, output)

@@ -17,7 +17,7 @@ classdef dpm_report < dpm
             [output_status, output_f] = obj.node.output_exist(output);
 
             % build and print string
-            str = input.id;
+            str = '';
 
             for c = 1:numel(input_status)
                 str = sprintf('%s\t%s', str, 'N' + input_status(c) * ('Y' - 'N'));

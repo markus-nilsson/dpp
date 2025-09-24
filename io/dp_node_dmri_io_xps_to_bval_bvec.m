@@ -11,6 +11,9 @@ classdef dp_node_dmri_io_xps_to_bval_bvec < dp_node_dmri
             output.bval_fn = dp.new_fn(input.op, input.dmri_fn, '', '.bval');
             output.bvec_fn = dp.new_fn(input.op, input.dmri_fn, '', '.bvec');
 
+            obj.output_spec.add('bval_fn', 'file', 1, 1, 'B-value file (fsl style)');
+            obj.output_spec.add('bvec_fn', 'file', 1, 1, 'B-vec file (fsl style)');
+
         end
 
         function output = execute(obj, input, output)

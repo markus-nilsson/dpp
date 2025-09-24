@@ -14,6 +14,10 @@ classdef dp_node_primary_feed < dp_node_primary
             end
             
             obj.outputs = outputs;
+
+            for c = 1:numel(outputs)
+                obj.input_spec.test(outputs{c});
+            end
         end
 
         function previous_outputs = get_iterable(obj)
