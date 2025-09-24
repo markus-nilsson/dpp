@@ -3,6 +3,7 @@ classdef dp_node_roi_from_label < dp_node_roi & dp_node_core_roi
     properties (Hidden)
         last_labels_fn = [];
         roi_cache;
+        roi_erode = 0;
     end
 
     methods
@@ -72,6 +73,11 @@ classdef dp_node_roi_from_label < dp_node_roi & dp_node_core_roi
                     R = R(:, :, :, obj.roi_ids{c_roi});
                 otherwise
                     error('strange dimension of ROI file');
+            end
+
+            % manipulate ROI if asked for
+            if (obj.roi_erode > 0)
+                R = mio_mask_erode(R, obj.roi_erode);
             end
 
         end

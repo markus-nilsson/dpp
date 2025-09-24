@@ -36,8 +36,19 @@ classdef dp_node_elastix_apply < dp_node
 
             t = elastix_p_read(input.elastix_t_fn);
 
-            [I_out, h_out] = mio_transform(I_in, t, h, obj.opt);
-            mdm_nii_write(I_out, output.nii_fn, h_out);
+            % May need to build this one out
+            switch (t.ResultImagePixelType)
+                case '"float"'
+                    f = @(x) single(x); 
+                otherwise
+                    f = @(x) x;
+            end
+
+            [I_out, h_out] = mio_transform(f(I_in), t, h, obj.opt);
+
+            h_out.data_type =  h.data_type;
+            h_out.bitpix = h.bitpix;
+            mdm_nii_write(cast(I_out, 'like', I_in), output.nii_fn, h_out);
 
         end
 

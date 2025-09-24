@@ -139,11 +139,18 @@ classdef dp_node_identify_sequences < dp_node
 
                     if (~isempty(me))
 
-                        [~,~,ext] = msf_fileparts(f{c}{2});
+                        ext = f{c}{2};
+                        ext = ext(find(ext == '.', 1, 'first'):end);
+                        
+                        if (isempty(ext))
+                            ext = '.nii*';
+                        end
+                        
 
                         obj.log(1, '%s:   Search error: %s', input.id, me.message);   
-                        obj.log(1, '%s:   Listing %s files in %s', ext, input.id, input.ip);
-                        d2 = dir(fullfile(input.ip, sprintf('*%s*', ext)));
+                        obj.log(1, '%s:   Listing %s files in %s', input.id, ext, input.nii_path);
+                        d2 = dir(fullfile(input.nii_path, ext));
+
                         for c2 = 1:numel(d2)
                             obj.log(1, '%s:     %s', input.id, d2(c2).name);
                         end
