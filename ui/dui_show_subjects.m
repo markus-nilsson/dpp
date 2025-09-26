@@ -92,16 +92,26 @@ classdef dui_show_subjects < handle
 
         end
 
+
         function obj = item_change(obj, varargin)
 
-            input = obj.inputs{obj.h_items.ValueIndex};
+            % robust selection that works on older MATLAB and with empty lists
+            if isempty(obj.inputs) || isempty(obj.h_items.Items)
+                obj.selected_input = [];
+                return;  % nothing to select
+            end
 
+            % find the selected row index from the value
+            val = obj.h_items.Value;
+            idx = find(strcmp(obj.h_items.Items, val), 1);
+            if isempty(idx), idx = 1; end
+
+            input = obj.inputs{idx};
             obj.selected_input = input;
-
             obj.fn_item_change(input);
-
-
         end
+
+
 
     end
 
