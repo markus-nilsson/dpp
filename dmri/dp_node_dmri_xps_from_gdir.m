@@ -7,6 +7,9 @@ classdef dp_node_dmri_xps_from_gdir < dp_node_dmri_xps
 
         function obj = dp_node_dmri_xps_from_gdir()
             obj.input_test = {'dmri_fn'};
+            
+            obj.input_spec.add('dmri_fn', 'file', 1, 1, 'Diffusion MRI nifti file');
+            obj.input_spec.add('gdir_fn', 'file', 0, 1, 'Gradient direction file (auto-detected if not provided)');
         end
 
         function po = po2i(~, po)

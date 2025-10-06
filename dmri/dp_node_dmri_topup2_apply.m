@@ -5,6 +5,13 @@ classdef dp_node_dmri_topup2_apply < dp_node
 
     methods
         
+        function obj = dp_node_dmri_topup2_apply()
+            obj.input_spec.add('ap_dmri_fn', 'file', 1, 1, 'Anterior-posterior diffusion MRI nifti file');
+            obj.input_spec.add('pa_dmri_fn', 'file', 1, 1, 'Posterior-anterior diffusion MRI nifti file');
+            obj.input_spec.add('topup_data_path', 'path', 1, 1, 'Path to TOPUP data files');
+            obj.input_spec.add('topup_spec_fn', 'file', 1, 1, 'TOPUP specification file');
+        end
+        
         % construct names of output files
         function output = i2o(obj, input)
 

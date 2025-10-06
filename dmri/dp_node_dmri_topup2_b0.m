@@ -7,6 +7,11 @@ classdef dp_node_dmri_topup2_b0 < dp_node
 
         function obj = dp_node_dmri_topup2_b0()
             obj.output_test = {'fieldmap_fn'};
+            
+            obj.input_spec.add('topup_nii_fn', 'file', 1, 1, 'TOPUP input nifti file');
+            obj.input_spec.add('topup_spec_fn', 'file', 1, 1, 'TOPUP specification file');
+            obj.input_spec.add('topup_cnf', 'string', 0, 0, 'TOPUP configuration name (optional)');
+            obj.input_spec.add('topup_opt', 'struct', 0, 0, 'TOPUP options structure (optional)');
         end
         
         % construct names of output files

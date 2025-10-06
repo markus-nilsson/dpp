@@ -7,6 +7,10 @@ classdef dp_node_dmri_normalise_seq < dp_node_dmri
     
         function obj = dp_node_dmri_normalise_seq()
             obj.output_test = {'dmri_fn', 'xps_fn'};
+            
+            obj.input_spec.add('dmri_fn', 'file', 1, 1, 'Diffusion MRI nifti file');
+            obj.input_spec.add('xps_fn', 'file', 1, 1, 'Experimental parameter set file');
+            obj.input_spec.add('mask_fn', 'file', 1, 1, 'Brain mask file');
         end
 
         function output = i2o(obj, input)
