@@ -10,6 +10,8 @@ classdef dp_node_dmri_io_bval_bvec < dp_node_io_append
     methods
 
         function obj = dp_node_dmri_io_bval_bvec(input_field_name)
+
+            if (nargin < 1), input_field_name = 'dmri_fn'; end
             
             obj = obj@dp_node_io_append({...
                 {'dmri_fn', input_field_name}, ...

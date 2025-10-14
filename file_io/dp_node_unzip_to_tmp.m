@@ -5,8 +5,7 @@ classdef dp_node_unzip_to_tmp < dp_node_unzip
         function output = i2o(obj, input)
 
             % Put the unzipped files in a temporary folder
-            tmp.bp = msf_tmp_path(0);
-            tmp.do_delete = 1;
+            tmp = obj.make_tmp(); 
 
             tmp_input = input;
             tmp_input.op = tmp.bp;
