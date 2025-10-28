@@ -18,6 +18,13 @@ classdef dp_node_dmri_disco < dp_node_workflow
 
             obj = obj@dp_node_workflow(nodes);
 
+            obj.input_spec.add('dmri_fn', 'file', 1, 1, 'dMRI data');
+            obj.input_spec.add('xps_fn', 'file', 1, 1, 'xps file (.mat)');
+            obj.input_spec.add('t1_fn', 'file', 1, 1, 'T1-weighted volume');
+
+            obj.output_spec.add('dmri_fn', 'file', 1, 1, 'dMRI data (corrected)');            
+            obj.output_spec.add('xps_fn', 'file', 1, 1, 'xps file (.mat)');
+
         end
 
     end

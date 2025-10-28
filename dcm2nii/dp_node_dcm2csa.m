@@ -36,6 +36,7 @@ classdef dp_node_dcm2csa < dp_node
                 return;
             end
             
+            msf_mkdir(fileparts(output.csa_fn));
             mdm_txt_write({char(txt(ind_start:ind_end))}, output.csa_fn);
 
         end

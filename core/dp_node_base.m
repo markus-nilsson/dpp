@@ -88,7 +88,6 @@ classdef dp_node_base < dp_node_core
             % Loop over all previous outputs
             if (obj.opt.c_level == 1)
                 obj.log(0, '\nStarting iterations for mode: %s\n', obj.mode);
-                tic;
             end
 
             outputs = cell(size(previous_outputs));
@@ -102,6 +101,7 @@ classdef dp_node_base < dp_node_core
                 obj.log(tmp_level, '%t%s:     %s', id, me.message);
             end
 
+            t_run = zeros(size(previous_outputs));
             for c = 1:numel(previous_outputs)
 
                 obj.log(2, '%t-------------------');
@@ -115,6 +115,7 @@ classdef dp_node_base < dp_node_core
                     obj.opt.do_try_catch);
 
                 obj.log(1, ' ');
+
             end
 
             % Trim by eliminating empty outputs
@@ -128,19 +129,6 @@ classdef dp_node_base < dp_node_core
             % Wrap up with some reporting (including from the dpm)
             obj.analyze_output(previous_outputs, outputs, err_list);
             outputs = obj.get_dpm().process_outputs(outputs);
-
-            if (obj.opt.c_level == 1)
-                t = toc;
-                if (toc < 60)
-                    obj.log(0, '\nOperation took %1.1f seconds\n', t);
-                elseif (toc < 3600)
-                    obj.log(0, '\nOperation took %1.1f minutes\n', t/60);
-                elseif (toc < 3600*24)
-                    obj.log(0, '\nOperation took %1.1f hours\n', t/60/60);
-                else
-                    obj.log(0, '\nOperation took %1.1f days\n', t/60/60/24);
-                end
-            end
 
             obj.c_level_minus();           
             

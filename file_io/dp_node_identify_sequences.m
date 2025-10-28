@@ -1,6 +1,6 @@
 classdef dp_node_identify_sequences < dp_node
 
-    % searches for files according to pattern in input.nii_path
+    % searches for files according to pattern in input.ip
     %
     % pattern is given as { {field_name, this_pattern} } where
     % this_pattern is an expression going into 'dir'
@@ -41,12 +41,17 @@ classdef dp_node_identify_sequences < dp_node
             % make a pass-through to keep all info
             output = input;
 
-            if (~exist(input.nii_path, 'dir'))
-                error('nii path does not exist (%s) in node %s', input.nii_path, obj.name);
+            % Correction of stupid mistake
+            if (isfield(input, 'nii_path'))
+                input.ip = input.nii_path;
+            end
+
+            if (~exist(input.ip, 'dir'))
+                error('input path does not exist (%s) in node %s', input.ip, obj.name);
             end
 
             % save all nii files to a db in this node
-            d = dir(fullfile(input.nii_path, '*.nii.gz'));
+            d = dir(fullfile(input.ip, '*.nii.gz'));
 
             for c = 1:numel(d)
                 obj.name_db{end+1} = d(c).name;
@@ -57,7 +62,7 @@ classdef dp_node_identify_sequences < dp_node
 
                 me = [];
                 try 
-                    tmp = msf_find_fns(input.nii_path, f{c}{2}, 1);
+                    tmp = msf_find_fns(input.ip, f{c}{2}, 1);
 
                     % Eliminate files starting with '.'
                     ind = zeros(size(tmp));
@@ -109,12 +114,12 @@ classdef dp_node_identify_sequences < dp_node
                         input.id, ...
                         f{c}{1}, formattedDisplayText(f{c}{2}));
 
-                    obj.log(1, '%s:   Was searching in: %s', input.id, input.nii_path);
+                    obj.log(1, '%s:   Was searching in: %s', input.id, input.ip);
 
                     if (~isempty(me))
                         obj.log(1, '%s:   Search error: %s', input.id, me.message);   
-                        obj.log(1, '%s:   Listing nii files in %s', input.id, input.nii_path);
-                        d2 = dir(fullfile(input.nii_path, '*.nii*'));
+                        obj.log(1, '%s:   Listing nii files in %s', input.id, input.ip);
+                        d2 = dir(fullfile(input.ip, '*.nii*'));
                         for c2 = 1:numel(d2)
                             obj.log(1, '%s:     %s', input.id, d2(c2).name);
                         end

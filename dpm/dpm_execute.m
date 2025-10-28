@@ -96,6 +96,7 @@ classdef dpm_execute < dpm
         function output = run_on_one(obj, input, output)
 
             obj.node.log(0, '%s: Starting mode ''execute'' on node %s', input.id, obj.node.name);
+            output.execute.status = 'Skip';
 
             if (~obj.do_run_execute)
                 obj.node.log(1, '%s:   No action needed', input.id); 
@@ -106,7 +107,11 @@ classdef dpm_execute < dpm
 
             if (obj.do_run_node(input, output))                
                 obj.node.log(1, '%s:   Starting execution...', input.id);
+                output.execute.status = 'Error';
+                t0 = tic;
                 output = obj.node.execute(input, output);            
+                output.execute.status = 'Executed';
+                output.execute.t = toc(t0);
                 obj.node.log(0, '%s:   Done executing %s', input.id, obj.node.name);
             else
                 obj.node.log(0, '%s:   Found no reason to execute', input.id);
@@ -116,6 +121,58 @@ classdef dpm_execute < dpm
 
         function outputs = process_outputs(obj, outputs)
             outputs = obj.node.execute_on_outputs(outputs);
+
+
+            % Find those which were executed
+            f = @(s) cellfun(@(x) strcmp(x.execute.status, s), outputs);
+            ind_exe = f('Executed');
+            ind_err = f('Error');
+            ind_skip = f('Skip');
+
+            % Compute times and numbers
+            n_errors   = sum(ind_err);
+            n_skipped  = sum(ind_skip);
+            n_executed = sum(ind_exe);
+
+            t_total = sum(cellfun(@(x) x.execute.t, outputs(ind_exe)));
+            t_per_item = t_total / n_executed;
+
+            % Log it
+            f = @(t) dpm_execute.time2str(t);
+
+            if (n_executed == 0) && (n_errors == 0)
+
+                obj.log(0, '\nAll done (%i items already done)', n_skipped);
+
+            elseif (n_executed == 0) && (n_error > 0)
+
+                obj.log(0, '\nAll done (%i items done already, %i errors)', ...
+                    n_skipped, n_errors);
+
+            else
+
+                obj.log(0, '\nOperation took %s in total, %s per item (%i items done, %i skipped, %i errors)', ...
+                    f(t_total), f(t_per_item), n_executed, n_skipped, n_errors);
+
+            end
+
+            
+        end
+
+    end
+
+    methods (Static)
+
+        function s = time2str(t)
+            if (t < 60)
+                s = sprintf('%1.1f seconds', t);
+            elseif (t < 3600)
+                s = sprintf('%1.1f minutes', t/60);
+            elseif (t < 3600*24)
+                s = sprintf('%1.1f hours', t/60/60);
+            else
+                s = sprintf('%1.1f days', t/60/60/24);
+            end
         end
 
     end

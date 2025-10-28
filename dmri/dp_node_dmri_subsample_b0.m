@@ -3,16 +3,14 @@ classdef dp_node_dmri_subsample_b0 < dp_node_dmri
     % Extracts and subsamples b0 (non-diffusion-weighted) images from diffusion MRI data.
     % Creates a reduced dataset containing only the reference images for processing workflows.
 
-    % subsamples the b0 of a dmri sequence 
-
-    % input
-    % dmri_fn
-    % xps_fn
-
-    % output
-    % nii_fn
-
     methods
+
+        function obj = dp_node_dmri_subsample_b0()
+
+            obj.input_spec.add('dmri_fn', 'file', 1, 1, 'dMRI file');
+            obj.output_spec.add('nii_fn', 'file', 1, 1, 'b=0 volume');
+
+        end
 
         function output = i2o(obj, input)
 
