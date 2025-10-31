@@ -8,6 +8,11 @@ classdef dp_node_dmri_flirt < dp_node_fsl_flirt
         function obj = dp_node_dmri_flirt()
             obj.input_test = {'nii_fn'};
             obj.output_test = {'nii_fn'};
+            
+            obj.input_spec.add('fa_fn', 'file', 1, 1, 'Fractional anisotropy map nifti file');
+            obj.input_spec.add('target_fn', 'file', 0, 1, 'Target registration template file (optional)');
+            obj.input_spec.add('dmri_fn', 'file', 0, 0, 'Diffusion MRI file (optional, passed through)');
+            obj.input_spec.add('mask_fn', 'file', 0, 0, 'Brain mask file (optional, passed through)');
         end
 
         function input = po2i(obj, po)

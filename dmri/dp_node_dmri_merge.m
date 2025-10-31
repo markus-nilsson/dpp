@@ -13,6 +13,11 @@ classdef dp_node_dmri_merge < dp_node
         function obj = dp_node_dmri_merge(fields, output_fn)
             obj.merge_fields = fields;
             obj.output_fn = output_fn;
+            
+            % Add input_spec for the dynamic merge fields
+            for i = 1:length(fields)
+                obj.input_spec.add(fields{i}, 'file', 1, 1, sprintf('Input diffusion MRI file %d', i));
+            end
         end
 
         function output = i2o(obj, input)

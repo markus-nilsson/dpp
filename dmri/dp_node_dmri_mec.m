@@ -4,6 +4,11 @@ classdef dp_node_dmri_mec < dp_node
     % Corrects for subject motion and scanner-related distortions during diffusion acquisition.
 
     methods
+        
+        function obj = dp_node_dmri_mec()
+            obj.input_spec.add('dmri_fn', 'file', 1, 1, 'Diffusion MRI nifti file');
+            obj.input_spec.add('elastix_p', 'struct', 0, 0, 'ELASTIX parameters structure (optional)');
+        end
 
         function input = po2i(obj, po)
             input = po;

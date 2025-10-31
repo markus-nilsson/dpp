@@ -5,6 +5,10 @@ classdef dp_node_dmri_topup_prep_collect < dp_node
 
     
     methods
+        
+        function obj = dp_node_dmri_topup_prep_collect()
+            obj.input_spec.add('nii', 'struct', 0, 0, 'Nifti structure (optional)');
+        end
 
         function output = i2o(~, input)           
             output.topup_nii_fn = fullfile(input.op, 'topupinput.nii.gz');

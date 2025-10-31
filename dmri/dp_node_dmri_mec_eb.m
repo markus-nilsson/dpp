@@ -5,6 +5,12 @@ classdef dp_node_dmri_mec_eb < dp_node_dmri
     % by extrapolating from low b-value data for improved motion correction performance.
 
     methods
+        
+        function obj = dp_node_dmri_mec_eb()
+            obj.input_spec.add('dmri_fn', 'file', 1, 1, 'Diffusion MRI nifti file');
+            obj.input_spec.add('elastix_p', 'struct', 0, 0, 'ELASTIX parameters structure (optional)');
+            obj.input_spec.add('mdm_opt', 'struct', 0, 0, 'MDM options structure (optional)');
+        end
 
         function input = po2i(obj, po)
             input = po2i@dp_node_dmri(obj, po);
