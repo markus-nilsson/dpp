@@ -70,64 +70,61 @@ classdef dp_node_workflow < dp_node % assume this is for nifti files
 
 
 
-        function output = run_on_one(obj, input, output)
+        % function output = run_on_one(obj, input, output)
+        % 
+        %     % some dpm's (like mgui start) should not be executed on 
+        %     % all nodes in the workflow, just the last one
+        %     if (~obj.get_dpm().do_run_on_all_in_workflow)
+        % 
+        %         % this is a difficult one, try a new thing
+        %         output = run_on_one@dp_node(obj, input, output);
+        % 
+        %         return;
+        %     end
+        % 
+        %     % input not used here, must use a well-formatted output
+        %     if (obj.get_dpm().do_run_node(input, output))
+        % 
+        %         obj.log(0, '%s: Running workflow (%s)', input.id, obj.name);
+        % 
+        %         for c = 1:numel(obj.nodes)
+        % 
+        %             obj.nodes{c}.mode = obj.mode;
+        % 
+        %             this_input  = output.wf_input{c};
+        %             this_output = output.wf_output{c};
+        % 
+        %             this_output = obj.nodes{c}.run_on_one(this_input, this_output);
+        %         end
+        % 
+        %     else
+        %         obj.log(0, '%s: Skipping workflow, outputs done (%s)', input.id, obj.name);
+        %         this_output = output.wf_output{end};
+        %     end
+        % 
+        %     % later steps need this
+        %     this_output.wf_output = output.wf_output;
+        %     this_output.wf_input = output.wf_input;
+        % 
+        %     output = this_output;
+        % 
+        % end 
 
-            % some dpm's (like mgui start) should not be executed on 
-            % all nodes in the workflow, just the last one
-            if (~obj.get_dpm().do_run_on_all_in_workflow)
 
-                % this is a difficult one, try a new thing
-                output = run_on_one@dp_node(obj, input, output);
+        function output = execute(obj, ~, output)
 
-                % obj.nodes{end}.opt = obj.opt;
-                % obj.nodes{end}.mode = obj.mode;
-                % 
-                % % warning('does input check on wrong thing');
-                % %
-                % % this is a broken part of the machinery - here we
-                % % do not get the expected behaviour of e.g. report
-                % %
-                % output.wf_output{end} = obj.nodes{end}.get_dpm().run_on_one(...
-                %     output.wf_input{end}, output.wf_output{end});
-                % 
-                % % hack to get reporting to work
-                % if (isfield(output.wf_output{end}, 'status'))
-                %     output.status = output.wf_output{end}.status;
-                % end
+            for c = 1:numel(obj.nodes)
 
-                return;
+                i = output.wf_input{c};
+                o = output.wf_output{c};
+
+                % Calling back on the dpm here. Unconventional. Bad.
+                % But I do not see another solution now. 
+                output.wf_output{c} = obj.nodes{c}.get_dpm('execute').run_on_one(i, o);
             end
 
-            % input not used here, must use a well-formatted output
-            if (obj.get_dpm().do_run_node(input, output))
+        end
 
-                obj.log(0, '%s: Running workflow (%s)', input.id, obj.name);
-
-                for c = 1:numel(obj.nodes)
-
-                    % Transfer the options to the node
-                    %obj.nodes{c}.opt = obj.opt; % should not be necessary
-                    %now
-                    obj.nodes{c}.mode = obj.mode;
-
-                    this_input  = output.wf_input{c};
-                    this_output = output.wf_output{c};
-
-                    this_output = obj.nodes{c}.run_on_one(this_input, this_output);
-                end
-
-            else
-                obj.log(0, '%s: Skipping workflow, outputs done (%s)', input.id, obj.name);
-                this_output = output.wf_output{end};
-            end
-
-            % later steps need this
-            this_output.wf_output = output.wf_output;
-            this_output.wf_input = output.wf_input;
-
-            output = this_output;
-
-        end 
 
         function [status, f, age] = input_exist(obj, input)
             [status, f, age] = obj.nodes{1}.input_exist(input);

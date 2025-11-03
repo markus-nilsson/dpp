@@ -56,7 +56,6 @@ classdef dpm_execute < dpm
                     strjoin(f_input, ', '), obj.node.name);
             end
             
-
             % output missing?
             if (~isempty(outputs_exist)) && ~(all(outputs_exist))
                 obj.node.log(1, '%s:   Outputs missing', input.id);                
@@ -68,7 +67,6 @@ classdef dpm_execute < dpm
                 obj.node.log(1, '%s:   Empty outputs, assuming non-file node', input.id);                
                 return;
             end
-
             
             % check ages
             if (~isempty(input_age) && ~isempty(output_age)) && (obj.do_date_check)
@@ -105,22 +103,32 @@ classdef dpm_execute < dpm
 
             obj.node.log(1, '%s:   Testing execute conditions', input.id);
 
-            if (obj.do_run_node(input, output))                
-                obj.node.log(1, '%s:   Starting execution...', input.id);
-                output.execute.status = 'Error';
-                t0 = tic;
-                output = obj.node.execute(input, output);            
-                output.execute.status = 'Executed';
-                output.execute.t = toc(t0);
-                obj.node.log(0, '%s:   Done executing %s', input.id, obj.node.name);
-            else
+            if (~obj.do_run_node(input, output))                
                 obj.node.log(0, '%s:   Found no reason to execute', input.id);
+                return;
             end
+
+            obj.node.log(1, '%s:   Starting execution...', input.id);
+            
+            output.execute.status = 'Error'; % assume error
+            t0 = tic;
+
+            output = obj.node.execute(input, output);
+            
+            output.execute.status = 'Executed';
+            output.execute.t = toc(t0);
+            
+            obj.node.log(0, '%s:   Done executing %s (took %s)', ...
+                input.id, obj.node.name, dpm_execute.time2str(toc(t0)));
                         
         end
 
         function outputs = process_outputs(obj, outputs)
             outputs = obj.node.execute_on_outputs(outputs);
+
+            % Safety test
+            ind_ok = cellfun(@(x) isfield(x, 'execute'), outputs);
+            outputs = outputs(ind_ok);
 
 
             % Find those which were executed
@@ -130,7 +138,7 @@ classdef dpm_execute < dpm
             ind_skip = f('Skip');
 
             % Compute times and numbers
-            n_errors   = sum(ind_err);
+            n_errors   = sum(ind_err) + sum(~ind_ok);
             n_skipped  = sum(ind_skip);
             n_executed = sum(ind_exe);
 
@@ -144,7 +152,7 @@ classdef dpm_execute < dpm
 
                 obj.log(0, '\nAll done (%i items already done)', n_skipped);
 
-            elseif (n_executed == 0) && (n_error > 0)
+            elseif (n_executed == 0) && (n_errors > 0)
 
                 obj.log(0, '\nAll done (%i items done already, %i errors)', ...
                     n_skipped, n_errors);
