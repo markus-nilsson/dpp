@@ -14,6 +14,9 @@ classdef dp_node_dmri_divide < dp_node
             obj.suffix = suffix;
 
             if (suffix(1) ~= '_'), warning('probably want _suffix'); end
+            
+            obj.input_spec.add('dmri_fn', 'file', 1, 1, 'Diffusion MRI nifti file');
+            obj.input_spec.add('divisor_fn', 'file', 1, 1, 'Divisor volume nifti file');
         end
 
         function output = i2o(obj, input)

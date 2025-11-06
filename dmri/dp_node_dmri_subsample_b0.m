@@ -4,6 +4,10 @@ classdef dp_node_dmri_subsample_b0 < dp_node_dmri
     % Creates a reduced dataset containing only the reference images for processing workflows.
 
     methods
+        
+        function obj = dp_node_dmri_subsample_b0()
+            obj.input_spec.add('dmri_fn', 'file', 1, 1, 'Diffusion MRI nifti file');
+        end
 
         function obj = dp_node_dmri_subsample_b0()
 

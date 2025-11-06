@@ -15,6 +15,8 @@ classdef dp_node_dmri_xps_from_json < dp_node
 
         function obj = dp_node_dmri_xps_from_json()
             obj.output_test = {'xps_fn', 'status_file_fn'};
+            
+            obj.input_spec.add('dmri_fn', 'file', 1, 1, 'Diffusion MRI nifti file (with associated JSON file)');
         end
 
         function output = i2o(obj, input)

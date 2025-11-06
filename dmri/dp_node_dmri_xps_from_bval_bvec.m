@@ -11,6 +11,9 @@ classdef dp_node_dmri_xps_from_bval_bvec < dp_node_dmri_xps
 
         function obj = dp_node_dmri_xps_from_bval_bvec(b_delta)
             obj.b_delta = b_delta;
+            
+            obj.input_spec.add('bval_fn', 'file', 1, 1, 'B-value file');
+            obj.input_spec.add('bvec_fn', 'file', 1, 1, 'B-vector file');
         end
 
         function output = execute(obj, input, output)

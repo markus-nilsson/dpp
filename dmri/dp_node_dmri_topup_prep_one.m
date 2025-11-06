@@ -32,6 +32,9 @@ classdef dp_node_dmri_topup_prep_one < dp_node
             obj.epi_time = time;
 
             obj.input_test = {'nii_fn','xps_fn'};
+            
+            obj.input_spec.add('nii_fn', 'file', 1, 1, 'Nifti file');
+            obj.input_spec.add('xps_fn', 'file', 1, 1, 'Experimental parameter set file');
 
         end
 
