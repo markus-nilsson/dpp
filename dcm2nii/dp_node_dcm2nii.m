@@ -8,7 +8,7 @@ classdef dp_node_dcm2nii < dp_node
 
         function obj = dp_node_dcm2nii()
 
-            obj.output_test = {'nii_fn'};
+            obj.output_test = {'nii_fn', 'json_fn'};
 
             % Path to dcm2niix
             if (ismac)
@@ -56,13 +56,18 @@ classdef dp_node_dcm2nii < dp_node
             msf_mkdir(wp);
 
             % dicom to nifti
-            cmd = sprintf('%s -z i -o ''%s'' ''%s'' ', obj.dcm2niix_path, ...
+            cmd = sprintf('%s -z i -f Serie_%%s_%%p -o ''%s'' ''%s'' ', obj.dcm2niix_path, ...
                 wp, input.dcm_folder);
-            system(cmd);
+            [s,m] = system(cmd);
+
+            if (s ~= 0)
+                disp(m);
+                return; % graceful exit, should help with cleaning
+            end
 
             % Alternative options structure, consider changing
             % '-z i -f Serie%%s_%%p -o %s %s'
-            
+
 
             % copy output
             f = {'nii_fn', 'json_fn' , 'bval_fn', 'bvec_fn'};
@@ -78,7 +83,7 @@ classdef dp_node_dcm2nii < dp_node
 
                 d2 = dir(fullfile(wp, sprintf('*%s', t_ext)));
 
-                if (numel(d2) ~= 1)
+                if (numel(d2) < 1)
                     switch (f{c})
                         case 'nii_fn'
                             error('nii file missing');
@@ -102,6 +107,21 @@ classdef dp_node_dcm2nii < dp_node
                 target_fn = output.(f{c});
                 msf_mkdir(fileparts(target_fn));
                 copyfile(source_fn, target_fn);
+
+                % if there are more files, like for gradient echo, copy
+                % these too, but these are not declared outputs...
+                for c2 = 2:numel(d2)
+
+                    % just pull the source file name now
+                    source_fn = fullfile(wp, d2(c2).name);
+                    
+                    % auto build target
+                    [~,name,ext] = msf_fileparts(source_fn);
+                    target_fn = fullfile(input.op, cat(2, name, ext));
+                    
+                    % copy!
+                    copyfile(source_fn, target_fn);
+                end
                 
             end
 

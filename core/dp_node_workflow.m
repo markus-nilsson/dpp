@@ -23,6 +23,10 @@ classdef dp_node_workflow < dp_node % assume this is for nifti files
                 obj.nodes{c}.connect(obj.nodes{c-1});
             end
 
+            % xxx: do this for the new structure too
+            obj.output_test = obj.nodes{end}.output_test;
+            obj.input_test = obj.nodes{1}.input_test;
+
             % (connecting the first node to allow an unbroken chain to the
             %  first primary node, but this is more of a fix than a feature)
             
