@@ -14,13 +14,16 @@ classdef dp_node_items_from_fields < dp_node
     properties
         field_names;
         general_fields;
+        target_field_name = 'nii_fn';
     end
 
     methods
 
-        function obj = dp_node_items_from_fields(field_names, general_fields)
+        function obj = dp_node_items_from_fields(field_names, general_fields, target_field_name)
             obj.field_names = field_names;
             obj.general_fields = general_fields;
+
+            if (nargin > 2), obj.target_field_name = target_field_name; end
         end
 
         function output = i2o(obj, input)
@@ -34,7 +37,7 @@ classdef dp_node_items_from_fields < dp_node
                 tmp.id = input.id;
 
                 % xxx: generalize this
-                tmp.nii_fn = input.(obj.field_names{c}); 
+                tmp.(obj.target_field_name) = input.(obj.field_names{c}); 
 
                 for c2 = 1:numel(obj.general_fields)
                     tmp.(obj.general_fields{c2}) = input.(obj.general_fields{c2});

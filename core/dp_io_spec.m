@@ -125,6 +125,10 @@ classdef dp_io_spec < handle
 
 
         function [status, f, age] = exist(obj, io)
+            % status - true/false
+            % f - fieldnames
+            % age - d.datenum, d is result of dir
+
 
             status = []; f = []; age = [];
 

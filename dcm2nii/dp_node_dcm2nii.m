@@ -27,11 +27,11 @@ classdef dp_node_dcm2nii < dp_node
 
         end
 
-        % expecing this to be overloaded
-        function input = po2i(obj, po)
-            input.dcm_folder = po.dcm_folder;
-            input.dcm_name = po.dcm_name;
-        end
+        % % expecing this to be overloaded
+        % function input = po2i(obj, po)            
+        %     input.dcm_folder = po.dcm_folder;
+        %     input.dcm_name = po.dcm_name;
+        % end
 
         function output = i2o(obj, input)
 
@@ -64,10 +64,6 @@ classdef dp_node_dcm2nii < dp_node
                 disp(m);
                 return; % graceful exit, should help with cleaning
             end
-
-            % Alternative options structure, consider changing
-            % '-z i -f Serie%%s_%%p -o %s %s'
-
 
             % copy output
             f = {'nii_fn', 'json_fn' , 'bval_fn', 'bvec_fn'};
