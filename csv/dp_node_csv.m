@@ -80,7 +80,11 @@ classdef dp_node_csv < dp_node
                         h_str = cat(2, h_str, tmp, ', ');
 
                         % construct data string
-                        tmp = sprintf('%1.4f', roi_stat.(f{c_field}).(obj.vars{c_var}));
+                        try
+                            tmp = sprintf('%1.4f', roi_stat.(f{c_field}).(obj.vars{c_var}));
+                        catch me
+                            tmp = 'NaN';
+                        end
                         d_str = cat(2, d_str, tmp, ', ');
 
                     end

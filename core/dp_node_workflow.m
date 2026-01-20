@@ -29,12 +29,19 @@ classdef dp_node_workflow < dp_node % assume this is for nifti files
 
             % (connecting the first node to allow an unbroken chain to the
             %  first primary node, but this is more of a fix than a feature)
+            %
+            % new: trying to connect first node directly to the right prev
             
             % enable passthrough, so that nodes in the workflow can 
             % be used with any of the dpm's supported by the class
             for c = 1:numel(nodes)
                 obj.nodes{c}.do_dpm_passthrough = 1; 
             end
+        end
+
+        function obj = connect(obj, varargin)
+            obj = connect@dp_node(obj, varargin{:});
+            obj.nodes{1}.connect(varargin{:});
         end
     
         function output = i2o(obj, input)

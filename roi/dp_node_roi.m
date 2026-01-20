@@ -52,10 +52,21 @@ classdef dp_node_roi < dp_node & dp_node_core_roi
             % For each file
             for c = 1:numel(f)
 
+                [~,~,ext] = msf_fileparts(input.(f{c}));
+
+                switch (lower(ext))
+                    case {'.nii', '.nii.gz'}
+                        1; % all good
+                    otherwise
+                        obj.log(1, '%s not supported, only nii', ext);
+                        continue;
+                end
+
                 [I,h_I] = mdm_nii_read(input.(f{c}));
 
                 if (size(I,4) > 1)
-                    error('Cannot deal with 4D volumes at present');
+                    obj.log(1, '4D volumes not supported by now');
+                    continue;
                 end
 
                 % For each ROI

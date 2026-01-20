@@ -79,7 +79,11 @@ classdef dp_node_core_log < dp_node_core_opt & handle
 
 
             % Send to log (replace with dynamic log management)
-            obj.log_fn(log_level, log_str, obj.opt.verbose);
+            try
+                obj.log_fn(log_level, log_str, obj.opt.verbose);
+            catch
+                disp('Log error, dp_node_core_log.m'); % xxx: improve log
+            end
 
         end
 

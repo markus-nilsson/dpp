@@ -15,7 +15,7 @@ classdef dp_node_dmri_xps < dp_node
         end
 
         function output = execute(~,~,~)
-            error('this is just a placeholder for subclasses') 
+            1;
         end
     end
 end

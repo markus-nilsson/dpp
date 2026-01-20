@@ -23,7 +23,7 @@ classdef dp_node_io_split_merge < dp_node_io_merge
             % grab previous output from a single input
             outputs = cell(size(obj.previous_nodes));
             for c = 1:numel(obj.previous_nodes)
-                outputs{c} = obj.previous_nodes{c}.i2o(input);
+                [~,outputs{c}] = obj.previous_nodes{c}.run_po2io(input);
             end
 
             output = obj.split_merge_outputs(outputs);
@@ -59,6 +59,7 @@ classdef dp_node_io_split_merge < dp_node_io_merge
         end
 
         function obj = connect(obj, varargin)
+
             obj = connect@dp_node_io_merge(obj, varargin{:});
 
             % connect nodes part of the split merge
@@ -66,8 +67,27 @@ classdef dp_node_io_split_merge < dp_node_io_merge
                 obj.previous_nodes{c}.connect(varargin{1});
             end
 
-        end        
+        end     
 
+
+        function output = execute(obj, input, output)
+
+
+            % Bad name here, should be just 'nodes'
+            nodes = obj.previous_nodes; 
+
+            outputs = cell(size(nodes));
+            for c = 1:numel(nodes)
+                outputs{c} = nodes{c}.execute(input, output.outputs{c});
+            end
+
+            output = obj.split_merge_outputs(outputs);
+           
+
+        end
+        
+
+       
     end
 
     methods (Hidden)
