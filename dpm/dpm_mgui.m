@@ -56,7 +56,7 @@ classdef dpm_mgui < dpm_iter
                     try 
                         if (~contains(f{c2}, '_fn')), continue; end
                         if (contains(f{c2}, '_fns')), continue; end % xxx
-                        if (~contains(output.(f{c2}), '.nii.gz')), continue; end
+                        if (~contains(output.(f{c2}), '.nii')), continue; end
                     catch me
                         disp(me.message);
                     end
