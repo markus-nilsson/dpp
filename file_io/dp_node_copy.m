@@ -13,7 +13,11 @@ classdef dp_node_copy < dp_node
 
         function obj = dp_node_copy(field_names)
             if (nargin > 0)
-                obj.field_names = field_names;
+                if (~iscell(field_names))
+                    obj.field_names = {field_names};
+                else
+                    obj.field_names = field_names;
+                end
             end
         end
 

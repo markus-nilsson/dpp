@@ -20,11 +20,17 @@ classdef dpm_report_items < dpm
             ostr = {}; tmp = {};
             for c = 1:numel(output.items)
 
-                input_status = obj.node.inner_node.input_exist(input.items{c});
+                if (isfield(input, 'items'))
+                    input_status = obj.node.inner_node.input_exist(input.items{c});
+                    id = input.items{c}.id;
+                else
+                    input_status = obj.node.inner_node.input_exist(input);
+                    id = input.id;
+                end
                 output_status = obj.node.inner_node.output_exist(output.items{c});
 
                 % build and print string
-                tmp{1} = cat(2, input.id, ': ', input.items{c}.id);
+                tmp{1} = cat(2, input.id, ': ', id);
 
                 str = '';
                 for c2 = 1:numel(input_status)

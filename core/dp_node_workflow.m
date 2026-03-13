@@ -131,7 +131,13 @@ classdef dp_node_workflow < dp_node % assume this is for nifti files
 
                 % Calling back on the dpm here. Unconventional. Bad.
                 % But I do not see another solution now. 
-                output.wf_output{c} = obj.nodes{c}.get_dpm('execute').run_on_one(i, o);
+                % output.wf_output{c} = obj.nodes{c}.get_dpm('execute').run_on_one(i, o);
+
+                % The previous solution caused problems with items. Try
+                % this.
+                obj.nodes{c}.mode = obj.mode;
+                output.wf_output{c} = obj.nodes{c}.run_on_one(i, o);
+                
             end
 
         end

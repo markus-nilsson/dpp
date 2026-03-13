@@ -84,9 +84,9 @@ classdef dp_node_items < dp_node_base
             status = []; f = {}; age = [];
             for c = 1:numel(input.items)
                 [tmp_status, tmp_f, tmp_age] = obj.inner_node.input_exist(input.items{c});
-                status = cat(1, status, tmp_status);
-                f = cat(1, f, tmp_f);
-                age = cat(1, age, tmp_age);
+                status = cat(2, status, tmp_status);
+                f = cat(2, f, tmp_f);
+                age = cat(2, age, tmp_age);
             end
 
         end
@@ -96,9 +96,9 @@ classdef dp_node_items < dp_node_base
             status = []; f = {}; age = [];
             for c = 1:numel(output.items)
                 [tmp_status, tmp_f, tmp_age] = obj.inner_node.output_exist(output.items{c});
-                status = cat(1, status, tmp_status);
-                f = cat(1, f, tmp_f);
-                age = cat(1, age, tmp_age);
+                status = cat(2, status, tmp_status);
+                f = cat(2, f, tmp_f);
+                age = cat(2, age, tmp_age);
             end
 
         end

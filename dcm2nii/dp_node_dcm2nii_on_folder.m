@@ -19,7 +19,7 @@ classdef dp_node_dcm2nii_on_folder < dp_node_items
         function input = po2i(obj, po)
 
             % expect:
-            % po.ip (input folder with zips)
+            % po.ip (input folder with folders of dicoms)
             % po.op (output folder with zips)
 
             if (~exist(po.ip, 'dir'))
