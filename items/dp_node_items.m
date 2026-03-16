@@ -138,11 +138,16 @@ classdef dp_node_items < dp_node_base
 
             for c = 1:numel(input_items)
 
+                if (isempty(input_items{c}))
+                    continue;
+                end
+
                 obj.log(2, '%s: Item %i %s', input_items{c}.id, c, strtrim(formattedDisplayText(f)));
 
                 try
                     output_items{c} = obj.run_fun(...
                         @() g(input_items{c}, output_items{c}),...
+                        @() obj.force_clean(g(input_items{c}, output_items{c})), ...
                         @(me, id) err_log(me, input_items{c}.id), ...
                         obj.opt.do_try_catch);
                 catch me

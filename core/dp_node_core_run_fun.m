@@ -17,7 +17,7 @@ classdef dp_node_core_run_fun < ...
 
     methods
 
-        function [output, err] = run_fun(~, fun, err_log_fun, do_try_catch)
+        function [output, err] = run_fun(~, fun, clean_fun, err_log_fun, do_try_catch)
 
             if (~do_try_catch) % normal run
 
@@ -34,6 +34,12 @@ classdef dp_node_core_run_fun < ...
                     return;
 
                 catch me
+
+                    try 
+                        clean_fun();
+                    catch me
+                        obj.log(1, 'Could not forcefully run cleaning after an error.');
+                    end
 
                     err_log_fun(me);
                     output = [];

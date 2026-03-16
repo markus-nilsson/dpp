@@ -63,6 +63,16 @@ classdef dp_node_base < dp_node_core
 
     methods (Hidden) % internal functions
 
+        function err_log_fun(obj, me, id)
+
+            % Define error logging (xxx: not sure this is how we should do it)
+            tmp_level = obj.get_dpm().err_log_level; 
+
+            obj.log(tmp_level, '%t%s:   Error in node %s (mode: %s)', id, obj.name, obj.mode);
+            obj.log(tmp_level, '%t%s:     %s', id, me.message);
+        end
+        
+
         % run on all outputs from the previous node
         function outputs = i_run(obj, mode)
 
@@ -93,14 +103,6 @@ classdef dp_node_base < dp_node_core
             outputs = cell(size(previous_outputs));
             err_list = cell(size(previous_outputs));
 
-            % Define error logging (xxx: not sure this is how we should do it)
-            tmp_level = obj.get_dpm().err_log_level; 
-
-            function err_log_fun(me, id)
-                obj.log(tmp_level, '%t%s:   Error in node %s (mode: %s)', id, obj.name, obj.mode);
-                obj.log(tmp_level, '%t%s:     %s', id, me.message);
-            end
-
             t_run = zeros(size(previous_outputs));
             for c = 1:numel(previous_outputs)
 
@@ -111,7 +113,8 @@ classdef dp_node_base < dp_node_core
                 % Run in a try-catch environment, if asked for
                 [outputs{c}, err_list{c}] = obj.run_fun(...
                     @() obj.run_inner(previous_outputs{c}), ...
-                    @(me) err_log_fun(me, previous_outputs{c}.id), ...
+                    @() obj.force_clean(previous_outputs{c}), ...
+                    @(me) obj.err_log_fun(me, previous_outputs{c}.id), ...
                     obj.opt.do_try_catch);
 
                 obj.log(1, ' ');
@@ -182,6 +185,20 @@ classdef dp_node_base < dp_node_core
             output = obj.run_clean(output);
             
             obj.log(2, '\noutput (after clean):\n%s', output);
+
+        end
+
+        function output = force_clean(obj, previous_output)
+
+            % experimental code, not sure where overloading will kill this
+
+            obj.log(1, '\nRunning forceful cleaning');
+            
+            [input, output] = obj.run_po2io(previous_output);
+
+            obj.run_clean(output);
+
+            output = [];
 
         end
 

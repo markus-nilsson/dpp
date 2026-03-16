@@ -136,7 +136,12 @@ classdef dp_node_workflow < dp_node % assume this is for nifti files
                 % The previous solution caused problems with items. Try
                 % this.
                 obj.nodes{c}.mode = obj.mode;
-                output.wf_output{c} = obj.nodes{c}.run_on_one(i, o);
+
+                output.wf_output{c} = obj.run_fun(...
+                    @() obj.nodes{c}.run_on_one(i, o), ...
+                    @() obj.nodes{c}.force_clean(i), ...
+                    @(me) obj.err_log_fun(me, i.id), ...
+                    obj.opt.do_try_catch);
                 
             end
 
