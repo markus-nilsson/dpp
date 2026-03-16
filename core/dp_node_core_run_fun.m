@@ -17,7 +17,7 @@ classdef dp_node_core_run_fun < ...
 
     methods
 
-        function [output, err] = run_fun(~, fun, clean_fun, err_log_fun, do_try_catch)
+        function [output, err] = run_fun(obj, fun, clean_fun, err_log_fun, do_try_catch)
 
             if (~do_try_catch) % normal run
 
