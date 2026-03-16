@@ -39,9 +39,11 @@ classdef dp_node_items < dp_node_base
             f = @(input) obj.inner_node.i2o(input);
             output.items = obj.items_fun(f, input.items);
 
-            % transfer id to inner nodes
+            % transfer id and op to inner nodes
             for c = 1:numel(output.items)
                 output.items{c} = msf_ensure_field(output.items{c}, 'id', input.id);
+                output.items{c} = msf_ensure_field(output.items{c}, 'bp', input.bp);
+                output.items{c} = msf_ensure_field(output.items{c}, 'op', input.op);
             end
             
         end

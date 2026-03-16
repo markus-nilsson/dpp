@@ -58,7 +58,10 @@ classdef dp_node_dcm2nii < dp_node
             % dicom to nifti
             cmd = sprintf('%s -z i -f Serie_%%s_%%p -o ''%s'' ''%s'' ', obj.dcm2niix_path, ...
                 wp, input.dcm_folder);
-            [s,m] = system(cmd);
+
+            obj.log(0, '%s: Running dcm2nii on %s', input.id, input.dcm_folder);
+
+            [s,m] = msf_system(cmd);
 
             if (s ~= 0)
                 disp(m);

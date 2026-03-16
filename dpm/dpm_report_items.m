@@ -84,6 +84,8 @@ classdef dpm_report_items < dpm
                 disp('Example of output structure');
                 disp(outputs{end});
 
+                disp('Example of output item structure');
+                
                 if (isfield(outputs{end}, 'items') && numel(outputs{end}.items) > 0)
                     disp(' ');
                     disp('Example of output structure');
