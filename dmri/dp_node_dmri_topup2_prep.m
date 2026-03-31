@@ -69,6 +69,7 @@ classdef dp_node_dmri_topup2_prep < dp_node
                 error('Not Siemens data, code not validated');
             end
 
+            % Verify phase encoding directions
             if (~strcmp(ap_json.PhaseEncodingDirection, 'j-'))
                 error('Unexpected ap encoding direction');
             end
@@ -80,7 +81,7 @@ classdef dp_node_dmri_topup2_prep < dp_node
             end
 
             ap_ro_time = ap_json.TotalReadoutTime;
-            pa_ro_time = ap_json.TotalReadoutTime;
+            pa_ro_time = pa_json.TotalReadoutTime;
 
             % Save to file
             tmp = {...

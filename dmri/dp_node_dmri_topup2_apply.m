@@ -22,14 +22,20 @@ classdef dp_node_dmri_topup2_apply < dp_node
 
             % connect to data
             s_ap = mdm_s_from_nii(input.ap_dmri_fn);
-            s_pa = mdm_s_from_nii(input.pa_dmri_fn);
+
+            if (~isempty(input.pa_dmri_fn))
+                s_pa = mdm_s_from_nii(input.pa_dmri_fn);
+            else
+                s_pa.xps.n = 0;
+            end
+
 
             % we may need to build a volume of zeros, if 
             % we did not acquire all data both directions
             if (s_ap.xps.n ~= s_pa.xps.n)
 
                 % assert that pa is the one with few directions
-                assert(s_pa.xps.n < s_ap.xps.n, 'assumption invalid');
+                assert(s_pa.xps.n <= s_ap.xps.n, 'assumption invalid');
 
                 [I,h] = mdm_nii_read(s_ap.nii_fn);
                 tmp_nii_fn = fullfile(output.tmp.bp, 'DMRI_PA_zeros.nii.gz');
