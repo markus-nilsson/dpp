@@ -241,7 +241,16 @@ classdef dp_node_base < dp_node_core
             end
 
             output = dp_io.copy(output, input, f);
+
+            % also transfer memory
+            output = i2o_transfer_mem(obj, input, output);
             
+        end
+
+        function output = i2o_transfer_mem(obj, input, output)
+            if (isfield(input, 'mem'))
+                output.mem = input.mem;
+            end
         end
 
         % run the data processing mode's function here
