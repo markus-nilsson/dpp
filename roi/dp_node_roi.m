@@ -62,47 +62,53 @@ classdef dp_node_roi < dp_node & dp_node_core_roi
                         continue;
                 end
 
-                [I,h_I] = mdm_nii_read(input.(f{c}));
+                try 
 
-                if (size(I,4) > 1)
-                    obj.log(1, '4D volumes not supported by now');
-                    continue;
-                end
+                    [I,h_I] = mdm_nii_read(input.(f{c}));
 
-                % For each ROI
-                for c_roi = 1:numel(obj.roi_names)
+                    if (size(I,4) > 1)
+                        disp('Cannot deal with 4D volumes at present');
+                        continue;
+                    end
 
-                    % now we use input not output here... which is 
-                    % a bit nasty...
-                    [R, h_R] = obj.roi_get_volume(input, f{c}, c_roi);
+                    % For each ROI
+                    for c_roi = 1:numel(obj.roi_names)
 
-                    % check that h_I and h_R are similar
+                        % now we use input not output here... which is
+                        % a bit nasty...
+                        [R, h_R] = obj.roi_get_volume(input, f{c}, c_roi);
 
-                    % extract values
-                    V = I(R(:) > 0);
+                        % check that h_I and h_R are similar
 
-                    % This allows the ROI size to be different across 
-                    % contrasts
-                    tmp.n = sum(R(:) > 0);
+                        % extract values
+                        V = double(I(R(:) > 0));
 
-                    tmp.mean = mean(V);
-                    tmp.std = std(V, 1);
+                        % This allows the ROI size to be different across
+                        % contrasts
+                        tmp.n = sum(R(:) > 0);
 
-                    tmp.median = median(V);
-                    tmp.mad    = mad(V, 1);
+                        tmp.mean = mean(V);
+                        tmp.std = std(V, 1);
 
-                    tmp.quantile_1st = quantile(V, 0.01);
-                    tmp.quantile_5th = quantile(V, 0.05);
-                    tmp.quantile_10th = quantile(V, 0.10);
-                    tmp.quantile_25th = quantile(V, 0.25);
-                    tmp.quantile_50th = quantile(V, 0.50);
-                    tmp.quantile_75th = quantile(V, 0.75);
-                    tmp.quantile_90th = quantile(V, 0.90);
-                    tmp.quantile_95th = quantile(V, 0.95);
-                    tmp.quantile_99th = quantile(V, 0.99);
+                        tmp.median = median(V);
+                        tmp.mad    = mad(V, 1);
 
-                    info.roi_stats(c_roi).(f{c}) = tmp;
+                        tmp.quantile_1st = quantile(V, 0.01);
+                        tmp.quantile_5th = quantile(V, 0.05);
+                        tmp.quantile_10th = quantile(V, 0.10);
+                        tmp.quantile_25th = quantile(V, 0.25);
+                        tmp.quantile_50th = quantile(V, 0.50);
+                        tmp.quantile_75th = quantile(V, 0.75);
+                        tmp.quantile_90th = quantile(V, 0.90);
+                        tmp.quantile_95th = quantile(V, 0.95);
+                        tmp.quantile_99th = quantile(V, 0.99);
 
+                        info.roi_stats(c_roi).(f{c}) = tmp;
+
+                    end
+
+                catch me
+                    1;
                 end
 
             end
