@@ -103,7 +103,6 @@ classdef dp_node_roi < dp_node & dp_node_core_roi
                         tmp.quantile_95th = quantile(V, 0.95);
                         tmp.quantile_99th = quantile(V, 0.99);
 
-
                         info.roi_stats(c_roi).(f{c}) = tmp;
 
                     end
