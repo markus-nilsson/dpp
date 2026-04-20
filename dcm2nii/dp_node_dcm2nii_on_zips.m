@@ -9,7 +9,7 @@ classdef dp_node_dcm2nii_on_zips < dp_node_workflow
             if (nargin < 1), filter_list = {}; end
             if (nargin < 2), filter_mode = 'exclude'; end
 
-            if (nargin < 1)
+            if (nargin < 1) || (isempty(filter_list))
                 filter_list = {'.*localizer\.zip$'};
                 filter_mode = 'exclude';
             end

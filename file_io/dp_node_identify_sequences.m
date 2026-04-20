@@ -51,7 +51,7 @@ classdef dp_node_identify_sequences < dp_node
             end
 
             % save all nii files to a db in this node
-            d = dir(fullfile(input.ip, '*.nii.gz'));
+            d = dir(fullfile(input.ip, '*.*'));
 
             for c = 1:numel(d)
                 obj.name_db{end+1} = d(c).name;

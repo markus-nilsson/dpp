@@ -210,16 +210,16 @@ classdef dp_node_dmri_xps_from_mwf < dp_node_dmri_xps
                     q4 = (1/b^2)*resex_mc_correlate(q.^2, q.^2, obj.dt);
 
                     if b == 0
-                        xps.b(c)      = 0;
-                        xps.Gamma(c)  = 0;
-                        xps.Vomega(c) = 0;
+                        xps.b(c,1)      = 0;
+                        xps.Gamma(c,1)  = 0;
+                        xps.Vomega(c,1) = 0;
                         xps.q4(c, :)  = zeros(size(q));
                         xps.q(c,:)    = q;
                         xps.gwf(c,:)  = g;
                     else
-                        xps.b(c)      = b;
-                        xps.Gamma(c)  = 2*trapz(t, t.*q4);
-                        xps.Vomega(c) = (1/b)*msf_const_gamma()^2*trapz(t, g.^2);
+                        xps.b(c,1)      = b;
+                        xps.Gamma(c,1)  = 2*trapz(t, t.*q4);
+                        xps.Vomega(c,1) = (1/b)*msf_const_gamma()^2*trapz(t, g.^2);
                         xps.q4(c, :)  = (1/b^2) * resex_mc_correlate(q.^2, q.^2, obj.dt);
                         xps.q(c,:)    = q;
                         xps.gwf(c,:)  = g;
