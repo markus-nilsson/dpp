@@ -2,7 +2,12 @@ classdef dp_node_copy_and_rename < dp_node_copy
 
     % this node will copy files and rename files to input.op
     %
-    % translation table as { {field_name, new_filename}, ... }
+    % translation table as { {field_name, new_filename*}, ... }
+    %
+    % *) if new_filename is a...
+    % 
+    %    ...char then the file (named new_filename) will be placed in input.op
+    %    ...function_handle (fun) then the output filename will be fun(input)
     
     properties
         translation_table;        
@@ -25,9 +30,19 @@ classdef dp_node_copy_and_rename < dp_node_copy
 
             for c = 1:numel(f)
 
-                tmp = f{c};
+                tmp1 = f{c};
 
-                output.(tmp) = dp.new_fn(input.op, obj.translation_table{c}{2});
+                tmp2 = obj.translation_table{c}{2};
+                switch (class(tmp2))
+                    case 'char'
+                        tmp2 = dp.new_fn(input.op, tmp2);
+                    case 'function_handle'
+                        tmp2 = tmp2(input);
+                    otherwise
+                        error('second part of translation table must be char or function_handle');
+                end
+            
+                output.(tmp1) = tmp2;
 
             end
             
