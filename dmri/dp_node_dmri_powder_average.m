@@ -6,6 +6,7 @@ classdef dp_node_dmri_powder_average < dp_node_dmri
     methods
 
         function obj = dp_node_dmri_powder_average()
+            obj.input_test = {'dmri_fn'};
             obj.output_test = {'dmri_fn'};
         end
 

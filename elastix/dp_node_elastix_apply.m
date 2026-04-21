@@ -21,6 +21,8 @@ classdef dp_node_elastix_apply < dp_node
              
             obj.input_spec.add('nii_fn', 'file', 1, 1, 'File to transform (nii)');
             obj.input_spec.add('elastix_t_fn', 'file', 1, 1, 'Transform parameter file (txt)');
+
+            obj.output_spec.add('nii_fn', 'file', 1, 1, 'Transformed file (nii)');
             
         end
 
