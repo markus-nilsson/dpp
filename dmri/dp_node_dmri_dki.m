@@ -5,26 +5,26 @@ classdef dp_node_dmri_dki < dp_node
 
     properties
         filter_sigma = 0;
+        prefix = '';
     end
 
     methods
 
-        function obj = dp_node_dmri_dki(filter_sigma)
+        function obj = dp_node_dmri_dki(filter_sigma, prefix)
             obj.input_test = {'dmri_fn'};
             obj.output_test = {'md_fn', 'fa_fn', 's0_fn', 'fa_col_fn', 'mk_fn'};
             
-            if (nargin > 0)
-                obj.filter_sigma = filter_sigma;
-            end
+            if (nargin > 0), obj.filter_sigma = filter_sigma; end
+            if (nargin > 1), obj.prefix = prefix; end
         end
 
         function output = i2o(obj, input)
             
-            output.md_fn = fullfile(input.op, 'dki_lls_MD.nii.gz');
-            output.mk_fn = fullfile(input.op, 'dki_lls_MK.nii.gz');
-            output.fa_fn = fullfile(input.op, 'dki_lls_FA.nii.gz');
-            output.fa_col_fn = fullfile(input.op, 'dki_lls_FA_u_rgb.nii.gz');
-            output.s0_fn = fullfile(input.op, 'dki_lls_s0.nii.gz');
+            output.md_fn = fullfile(input.op, cat(2, obj.prefix, 'dki_lls_MD.nii.gz'));
+            output.mk_fn = fullfile(input.op, cat(2, obj.prefix, 'dki_lls_MK.nii.gz'));
+            output.fa_fn = fullfile(input.op, cat(2, obj.prefix, 'dki_lls_FA.nii.gz'));
+            output.fa_col_fn = fullfile(input.op, cat(2, obj.prefix, 'dki_lls_FA_u_rgb.nii.gz'));
+            output.s0_fn = fullfile(input.op, cat(2, obj.prefix, 'dki_lls_s0.nii.gz'));
 
             % pass info about the dmri fn, and mask_fn if existent
             output.dmri_fn = input.dmri_fn;

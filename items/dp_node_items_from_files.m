@@ -43,6 +43,8 @@ classdef dp_node_items_from_files < dp_node_items
 
             di = dir(fullfile(input.ip, obj.ext));
 
+            obj.log(1, 'Found %i potential items in %s', numel(di), input.ip);
+            
             output = input;
             output.items = {};
             for c = 1:numel(di)

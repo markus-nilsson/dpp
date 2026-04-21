@@ -20,11 +20,25 @@ classdef dpm_report_items < dpm
             ostr = {}; tmp = {};
             for c = 1:numel(output.items)
 
-                input_status = obj.node.inner_node.input_exist(input.items{c});
+                % not good way of testing
+                if (isfield(input, 'items')) 
+                    
+                    % previous node had items, assume we processed these
+                    input_status = obj.node.inner_node.input_exist(input.items{c});
+
+                    id_str = cat(2, input.id, ': ', input.items{c}.id);
+
+                else % assume previous not did not have items
+
+                    input_status = obj.node.inner_node.input_exist(input);
+                    id_str = cat(2, input.id, ' # ', num2str(c));
+
+                end
+
                 output_status = obj.node.inner_node.output_exist(output.items{c});
 
                 % build and print string
-                tmp{1} = cat(2, input.id, ': ', input.items{c}.id);
+                tmp{1} = id_str;
 
                 str = '';
                 for c2 = 1:numel(input_status)
@@ -78,6 +92,8 @@ classdef dpm_report_items < dpm
                 disp('Example of output structure');
                 disp(outputs{end});
 
+                disp('Example of output item structure');
+                
                 if (isfield(outputs{end}, 'items') && numel(outputs{end}.items) > 0)
                     disp(' ');
                     disp('Example of output structure');
