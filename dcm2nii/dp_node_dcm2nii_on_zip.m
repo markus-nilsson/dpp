@@ -16,7 +16,7 @@ classdef dp_node_dcm2nii_on_zip < dp_node_workflow
 
             obj = obj@dp_node_workflow({a,b,c,d});
 
-            obj.output_test = c.output_test;            
+            obj.output_test = d.output_test;            
 
         end
     end

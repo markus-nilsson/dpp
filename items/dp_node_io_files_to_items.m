@@ -19,10 +19,10 @@ classdef dp_node_io_files_to_items < dp_node
         function obj = dp_node_io_files_to_items(ext, field_name, ...
                 filter_list, filter_mode)
 
+            if (nargin >= 1), obj.ext         = ext; end
             if (nargin >= 2), obj.field_name  = field_name; end
-            if (nargin >= 3), obj.ext         = ext; end
-            if (nargin >= 4), obj.filter_list = filter_list; end
-            if (nargin >= 5), obj.filter_mode = filter_mode; end
+            if (nargin >= 3), obj.filter_list = filter_list; end
+            if (nargin >= 4), obj.filter_mode = filter_mode; end
 
         end
 

@@ -66,7 +66,7 @@ classdef dp_node_core_syscmd < dp_node_core_log & handle
         % windows call
         % may be improvd to use linux subsystem when called for
         function [status, result, cmd] = win_cmd(obj, cmd)
-            [status, result] = system(cmd_full);
+            [status, result] = system(cmd);
         end
 
         % mac call

@@ -15,6 +15,9 @@ classdef dp_node_dmri_subsample < dp_node
             obj.suffix = suffix;
 
             if (suffix(1) ~= '_'), warning('probably want _suffix'); end
+
+            obj.input_spec.add('dmri_fn', 'file', 1, 1, 'Input diffusion volumes (nii)');
+            obj.input_spec.add('xps_fn', 'file', 0, 0 , 'Experimental parameter structure (may be inferred from dmri_fn)');
         end
 
         function output = i2o(obj, input)
@@ -24,8 +27,12 @@ classdef dp_node_dmri_subsample < dp_node
 
         function output = execute(obj, input, output)
 
+            if (~isfield(input, 'xps_fn'))
+                input.xps_fn = mdm_xps_fn_from_nii_fn(input.dmri_fn);
+            end
+
             [I,h] = mdm_nii_read(input.dmri_fn);
-            xps = mdm_xps_load(mdm_xps_fn_from_nii_fn(input.dmri_fn));
+            xps = mdm_xps_load(input.xps_fn); 
 
             ind = obj.xps_fun(xps);
 

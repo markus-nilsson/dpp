@@ -28,6 +28,10 @@ classdef dp_io
 
         function o = copy(o, i, f)
 
+            if (nargin < 3)
+                f = fieldnames(i);
+            end
+
             for c = 1:numel(f)
                 if (~isfield(o, f{c}) && isfield(i, f{c}))
                     o.(f{c}) = i.(f{c});

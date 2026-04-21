@@ -97,6 +97,8 @@ classdef dp_node_core_opt < ...
                 opt.id_filter = {opt.id_filter};
             end
 
+            opt = obj.merge_opt(opt, obj.opt_node);
+
         end
 
     end

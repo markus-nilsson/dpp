@@ -86,9 +86,9 @@ classdef dp_node_items < dp_node_base
             status = []; f = {}; age = [];
             for c = 1:numel(input.items)
                 [tmp_status, tmp_f, tmp_age] = obj.inner_node.input_exist(input.items{c});
-                status = cat(1, status, tmp_status);
-                f = cat(1, f, tmp_f);
-                age = cat(1, age, tmp_age);
+                status = cat(2, status, tmp_status);
+                f = cat(2, f, tmp_f);
+                age = cat(2, age, tmp_age);
             end
 
         end
@@ -98,9 +98,9 @@ classdef dp_node_items < dp_node_base
             status = []; f = {}; age = [];
             for c = 1:numel(output.items)
                 [tmp_status, tmp_f, tmp_age] = obj.inner_node.output_exist(output.items{c});
-                status = cat(1, status, tmp_status);
-                f = cat(1, f, tmp_f);
-                age = cat(1, age, tmp_age);
+                status = cat(2, status, tmp_status);
+                f = cat(2, f, tmp_f);
+                age = cat(2, age, tmp_age);
             end
 
         end
@@ -138,11 +138,16 @@ classdef dp_node_items < dp_node_base
 
             for c = 1:numel(input_items)
 
+                if (isempty(input_items{c}))
+                    continue;
+                end
+
                 obj.log(2, '%s: Item %i %s', input_items{c}.id, c, strtrim(formattedDisplayText(f)));
 
                 try
                     output_items{c} = obj.run_fun(...
                         @() g(input_items{c}, output_items{c}),...
+                        @() obj.force_clean(g(input_items{c}, output_items{c})), ...
                         @(me, id) err_log(me, input_items{c}.id), ...
                         obj.opt.do_try_catch);
                 catch me

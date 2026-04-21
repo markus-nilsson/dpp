@@ -19,6 +19,10 @@ classdef dp_node_unzip_to_tmp < dp_node_unzip
 
         end
 
+        function output = run_clean(obj, output)
+            output = run_clean@dp_node_unzip(obj, output);
+        end
+
     end
 
 end

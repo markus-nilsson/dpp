@@ -10,7 +10,7 @@ classdef dp_node_dmri_dti < dp_node
     methods
 
         function obj = dp_node_dmri_dti(filter_sigma)
-            obj.input_test = {'dmri_fn'};
+            obj.input_test = {'dmri_fn', 'xps_fn'};
             obj.output_test = {'md_fn', 'fa_fn', 's0_fn', 'fa_col_fn'};
             
             if (nargin > 0)
@@ -24,6 +24,9 @@ classdef dp_node_dmri_dti < dp_node
             output.fa_fn = fullfile(input.op, 'dti_lls_fa.nii.gz');
             output.fa_col_fn = fullfile(input.op, 'dti_lls_fa_u_rgb.nii.gz');
             output.s0_fn = fullfile(input.op, 'dti_lls_s0.nii.gz');
+
+            % model fit structure
+            output.mfs_fn = fullfile(input.op, 'dti_lls_mfs.mat');
 
             % pass info about the dmri fn, and mask_fn if existent
             output.dmri_fn = input.dmri_fn;

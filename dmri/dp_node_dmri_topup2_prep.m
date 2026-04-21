@@ -56,6 +56,34 @@ classdef dp_node_dmri_topup2_prep < dp_node
             % Merge
             s = mdm_s_merge({s_ap_b0, s_pa_b0}, wp, 'topup', opt);
 
+            
+            % Check and if necessary correct for differences in intensity
+            %    (normalize all to 100)
+            [I,h] = mdm_nii_read(s.nii_fn);
+            do_save = 0;
+
+            S = squeeze(mean(I,[1 2 3]));
+            
+            if (mad(S) / mean(S) > 0.2) % if we detect large difference
+                obj.log(1, '%s:   Large difference in intensity observed, normalizing', input.id);
+                for c = 1:size(I,4)
+                    I(:,:,:,c) = single(I(:,:,:,c)) / S(c) * 100;
+                end
+                do_save = 1;
+            end             
+            
+            % (now solved in topup_b0, therefore commented this one out)
+            % % If odd number of slices, pad one 
+            % if (mod(size(I,3),2) ~= 0)
+            %     I = cat(3, I(:,:,1,:), I);
+            %     do_save = 1;
+            % end
+
+            if (do_save)
+                mdm_nii_write(I, s.nii_fn, h);
+            end
+
+
             % Copy file
             copyfile(s.nii_fn, output.topup_nii_fn);
             mdm_xps_save(s.xps, output.topup_xps_fn);
@@ -69,6 +97,7 @@ classdef dp_node_dmri_topup2_prep < dp_node
                 error('Not Siemens data, code not validated');
             end
 
+            % Verify phase encoding directions
             if (~strcmp(ap_json.PhaseEncodingDirection, 'j-'))
                 error('Unexpected ap encoding direction');
             end
@@ -80,7 +109,7 @@ classdef dp_node_dmri_topup2_prep < dp_node
             end
 
             ap_ro_time = ap_json.TotalReadoutTime;
-            pa_ro_time = ap_json.TotalReadoutTime;
+            pa_ro_time = pa_json.TotalReadoutTime;
 
             % Save to file
             tmp = {...

@@ -23,14 +23,25 @@ classdef dp_node_workflow < dp_node % assume this is for nifti files
                 obj.nodes{c}.connect(obj.nodes{c-1});
             end
 
+            % xxx: do this for the new structure too
+            obj.output_test = obj.nodes{end}.output_test;
+            obj.input_test = obj.nodes{1}.input_test;
+
             % (connecting the first node to allow an unbroken chain to the
             %  first primary node, but this is more of a fix than a feature)
+            %
+            % new: trying to connect first node directly to the right prev
             
             % enable passthrough, so that nodes in the workflow can 
             % be used with any of the dpm's supported by the class
             for c = 1:numel(nodes)
                 obj.nodes{c}.do_dpm_passthrough = 1; 
             end
+        end
+
+        function obj = connect(obj, varargin)
+            obj = connect@dp_node(obj, varargin{:});
+            obj.nodes{1}.connect(varargin{:});
         end
     
         function output = i2o(obj, input)
@@ -120,7 +131,18 @@ classdef dp_node_workflow < dp_node % assume this is for nifti files
 
                 % Calling back on the dpm here. Unconventional. Bad.
                 % But I do not see another solution now. 
-                output.wf_output{c} = obj.nodes{c}.get_dpm('execute').run_on_one(i, o);
+                % output.wf_output{c} = obj.nodes{c}.get_dpm('execute').run_on_one(i, o);
+
+                % The previous solution caused problems with items. Try
+                % this.
+                obj.nodes{c}.mode = obj.mode;
+
+                output.wf_output{c} = obj.run_fun(...
+                    @() obj.nodes{c}.run_on_one(i, o), ...
+                    @() obj.nodes{c}.force_clean(i), ...
+                    @(me) obj.err_log_fun(me, i.id), ...
+                    obj.opt.do_try_catch);
+                
             end
 
         end

@@ -62,9 +62,24 @@ classdef dp_node_csv < dp_node
                 
                 f = fieldnames(roi_stat);
 
+                if (isempty(f))
+                    error('No fields in input ROI file, check previous node');
+                end
+
                 % select only some fields
                 if (~isempty(obj.fields))
-                    f = intersect(f, obj.fields);
+                    f_new = intersect(f, obj.fields);
+
+                    if (isempty(f_new))
+                        disp('-------------------- ')
+                        disp(obj.fields);
+                        disp('');
+                        disp('Expected these to be, for example, md_fn et c');
+                        disp('-------------------- ')
+                        error('No fields selected, check input arguments');
+                    end
+
+
                 end
 
                 for c_field = 1:numel(f) % contrast, e.g. md, fa
@@ -80,7 +95,11 @@ classdef dp_node_csv < dp_node
                         h_str = cat(2, h_str, tmp, ', ');
 
                         % construct data string
-                        tmp = sprintf('%1.4f', roi_stat.(f{c_field}).(obj.vars{c_var}));
+                        try
+                            tmp = sprintf('%1.4f', roi_stat.(f{c_field}).(obj.vars{c_var}));
+                        catch me
+                            tmp = 'NaN';
+                        end
                         d_str = cat(2, d_str, tmp, ', ');
 
                     end

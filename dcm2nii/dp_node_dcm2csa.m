@@ -18,6 +18,7 @@ classdef dp_node_dcm2csa < dp_node
             d = dir(fullfile(input.dcm_folder, '*.dcm'));
 
             if (numel(d) == 0)
+                obj.log(0, '%s: No dicom files found', input.id);
                 return;
             end
 

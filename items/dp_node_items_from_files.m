@@ -85,6 +85,9 @@ classdef dp_node_items_from_files < dp_node_items
 
                 output.items{end+1} = item;
             end
+
+            1;
+
         end
     
         function yes_no = do_filter(obj, fn)

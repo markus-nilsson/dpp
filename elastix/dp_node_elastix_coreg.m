@@ -34,6 +34,7 @@ classdef dp_node_elastix_coreg < dp_node
 
             output.nii_fn = dp.new_fn(input.op, input.nii_fn, '_ecoreg');
             output.elastix_t_fn = dp.new_fn(input.op, input.nii_fn, '_ecoreg', '.txt');
+            output.elastix_p_fn = dp.new_fn(input.op, input.nii_fn, '_p', '.txt');
 
             % target passthrough
             output.target_fn = input.target_fn;
@@ -46,12 +47,18 @@ classdef dp_node_elastix_coreg < dp_node
             [I_mov, h_mov] = mdm_nii_read(input.nii_fn);
             [I_ref, h_ref] = mdm_nii_read(input.target_fn);
 
+
             [I_res,tp,h_res,elastix_t] = mio_coreg(I_mov, I_ref, obj.p, ...
                 obj.mio_opt, h_mov, h_ref);
+
+            % Store also nifti header info in the transform parameters
+            elastix_t.A_mov = [h_mov.srow_x; h_mov.srow_y; h_mov.srow_z]';
+            elastix_t.A_ref = [h_ref.srow_x; h_ref.srow_y; h_ref.srow_z]';
 
             mdm_nii_write(I_res, output.nii_fn, h_res);
 
             elastix_p_write(elastix_t, output.elastix_t_fn);
+            elastix_p_write(obj.p, output.elastix_p_fn);
 
         end
 

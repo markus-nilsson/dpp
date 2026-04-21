@@ -3,14 +3,20 @@ classdef dp_node_dmri_topup2_b0 < dp_node
     % Estimates distortion field maps from b0 images using the enhanced TOPUP implementation.
     % Computes susceptibility-induced distortion parameters with improved accuracy and stability.
 
+    properties
+        topup_cnf = 'b02b0'; % b02b0, b02b0_no_subsamp (for odd number of slices) 
+                             %   none, custom (input.topup_opt)
+    end
+
     methods
 
-        function obj = dp_node_dmri_topup2_b0()
+        function obj = dp_node_dmri_topup2_b0(topup_cnf)
+            if (nargin > 0), obj.topup_cnf = topup_cnf; end
             obj.output_test = {'fieldmap_fn'};
         end
         
         % construct names of output files
-        function output = i2o(~, input)
+        function output = i2o(obj, input)
 
             % pass on the input
             output = input;
@@ -18,20 +24,12 @@ classdef dp_node_dmri_topup2_b0 < dp_node
             % other files
             output.topup_data_path = fullfile(input.op, 'topup_data');
             output.fieldmap_fn   = fullfile(input.op, 'fieldmap.nii.gz');
-            
+            output.fieldcoef_fn   = cat(2, output.topup_data_path, '_fieldcoef.nii.gz');
 
-            % input management of options
-            if (~isfield(input, 'topup_cnf'))
-                input.topup_cnf = 'b02bo'; 
-            end
+            % topup option selection
+            switch (obj.topup_cnf)
 
-            if (isfield(input, 'topup_opt'))
-                input.topup_cnf = 'custom';
-            end
-
-            switch (input.topup_cnf)
-
-                case 'b02bo' % replicating b02bo.cnf
+                case 'b02b0' % replicating b02bo.cnf
                     % https://github.com/ahheckel/FSL-scripts/blob/master/rsc/fsl/fsl4/topup/b02b0.cnf
                     topt.warpres = [20,16,14,12,10,6,4,4,4];
                     topt.subsamp = [2,2,2,2,2,1,1,1,1];
@@ -41,11 +39,25 @@ classdef dp_node_dmri_topup2_b0 < dp_node
                     topt.estmov  = [1,1,1,1,1,0,0,0,0];
                     topt.minmet  = [0,0,0,0,0,1,1,1,1];
 
+
+                case 'b02b0_no_subsamp' % replicating b02bo.cnf
+                    % https://github.com/ahheckel/FSL-scripts/blob/master/rsc/fsl/fsl4/topup/b02b0.cnf
+                    topt.warpres = [20,16,14,12,10,6,4,4,4];
+                    topt.subsamp = [1,1,1,1,1,1,1,1,1];
+                    topt.fwhm    = [8,6,4,3,3,2,1,0,0];
+                    topt.miter   = [5,5,5,5,5,10,10,20,20];
+                    topt.lambda  = [0.005,0.001,0.0001,0.000015,0.000005,0.0000005,0.00000005,0.0000000005,0.00000000001];                    
+                    topt.estmov  = [1,1,1,1,1,0,0,0,0];
+                    topt.minmet  = [0,0,0,0,0,1,1,1,1];                    
+
                 case 'none'
                     topt = struct();
 
                 case 'custom'
                     topt = input.topup_opt;
+
+                otherwise
+                    error('topup config method not defined');
             end
 
             output.topt = topt;            
