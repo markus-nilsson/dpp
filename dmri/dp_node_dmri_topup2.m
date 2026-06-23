@@ -22,6 +22,9 @@ classdef dp_node_dmri_topup2 < dp_node_workflow
             end
 
             obj = obj@dp_node_workflow(nodes);
+
+            obj.output_test = {'dmri_fn', 'xps_fn'};
+
             
         end
         

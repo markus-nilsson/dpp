@@ -16,7 +16,20 @@ classdef dp_node_identify_sequences < dp_node
 
     methods 
 
-        function obj = dp_node_identify_sequences(patterns)
+        function obj = dp_node_identify_sequences(varargin)
+
+            if (numel(varargin) == 1)
+                patterns = varargin{1};
+            elseif (numel(varargin) == 2)
+                patterns = cell(1,1);
+                for c = 1:2:numel(varargin)
+                    patterns{c}{1} = varargin{c};
+                    patterns{c}{2} = varargin{c+1};
+                end
+            else
+                error('need a pair: field name + id string')
+            end
+
 
             if (~iscell(patterns)) || (~iscell(patterns{1}))
                 error('expected input: {{field_name, pattern}_i}'); 

@@ -9,6 +9,8 @@ classdef dp_node_io_mem_retrieve < dp_node_io_parent
 
         function obj = dp_node_io_mem_retrieve(varargin)
             obj.fields_to_retrieve = varargin(:);
+            obj.input_test = {};
+            obj.output_test = {};
         end        
 
         function output = i2o_transfer_mem(obj, input, output)

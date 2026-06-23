@@ -5,6 +5,13 @@ classdef dp_node_dmri_topup2_prep < dp_node
 
     methods
 
+        function obj = dp_node_dmri_topup2_prep()
+
+
+            obj.output_test = {'topup_nii_fn', 'topup_spec_fn', 'topup_xps_fn'};
+
+        end
+
         function output = i2o(~, input)
 
             % Pass on input to next node

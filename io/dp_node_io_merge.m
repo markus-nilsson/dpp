@@ -197,6 +197,19 @@ classdef dp_node_io_merge < dp_node
                         break;
                     end
                 end
+
+
+                % merge memories too
+                for k = 1:numel(inputs{i}.output)
+                    if (~isfield(inputs{i}.output{k}, 'mem'))
+                        continue;
+                    end                    
+                    f = fieldnames(inputs{i}.output{k}.mem);
+                    for c_mem = 1:numel(f)
+                        outputs{i}.mem.(f{c_mem}) = inputs{i}.output{k}.mem.(f{c_mem});
+                    end
+                end
+                1;
                 
             end
 

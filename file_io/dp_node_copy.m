@@ -52,6 +52,7 @@ classdef dp_node_copy < dp_node
                 msf_mkdir(fileparts(output.(tmp)));
                 msf_delete(output.(tmp));
                 copyfile(input.(tmp), output.(tmp));
+                system('sync');
 
             end
 

@@ -1,4 +1,4 @@
-classdef dp_node_core_roi < handle
+classdef dp_node_core_roi < dp_node_core_connect & handle 
 
     % implements methods to attach regions of interests to nodes
 
@@ -11,6 +11,7 @@ classdef dp_node_core_roi < handle
     properties
 
         roi_use_single = false; % True - all have the same resolution
+        roi_suffix_fun = [];
 
         roi_bp; % base path for the roi's
 
@@ -35,13 +36,25 @@ classdef dp_node_core_roi < handle
 
         function roi_fn = roi_get_fn(obj, output, f, c_roi)
 
+            if isempty(obj.name)
+                error('node must have a name');
+            end
+
             bp = fullfile(obj.roi_bp, output.id, obj.name);
 
             if (obj.roi_use_single)
-                roi_fn = fullfile(bp, cat(2, obj.roi_names{c_roi}, '.nii.gz'));
+                suffix = '';
+            elseif ~isempty(obj.roi_suffix_fun)
+                suffix = obj.roi_suffix_fun(f); 
             else
-                roi_fn = fullfile(bp, cat(2, obj.roi_names{c_roi}, '_', f, '.nii.gz'));
+                suffix = f;
             end
+
+            if numel(suffix) > 0
+                suffix = cat(2, '_', suffix);
+            end
+
+            roi_fn = fullfile(bp, cat(2, obj.roi_names{c_roi}, suffix, '.nii.gz'));
 
         end
 

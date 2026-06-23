@@ -9,8 +9,8 @@ classdef dp_node_elastix_rotate_bvec < dp_node
 
         function obj = dp_node_elastix_rotate_bvec(do_tmp)
 
-            if (nargin > 0), obj.do_tmp = do_tmp; end
-             
+            if (nargin > 1), obj.do_tmp = do_tmp; end
+            
             obj.input_spec.add('dmri_fn', 'file', 1, 1, 'Target dMRI file');
             obj.input_spec.add('xps_fn', 'file', 1, 1, 'File to transform (xps)');
             obj.input_spec.add('elastix_t_fn', 'file', 1, 1, 'Transform parameter file (txt)');
@@ -23,7 +23,11 @@ classdef dp_node_elastix_rotate_bvec < dp_node
 
             xps_fn = mdm_xps_fn_from_nii_fn(input.dmri_fn);
             output.xps_fn = dp.new_fn(input.op, xps_fn);
+            output.dmri_fn = input.dmri_fn;
             
+            if (strcmp(input.xps_fn, output.xps_fn))
+                error('input and output file names identical');
+            end
         end
 
         function output = execute(obj, input, output)
@@ -31,10 +35,12 @@ classdef dp_node_elastix_rotate_bvec < dp_node
             xps = mdm_xps_load(input.xps_fn);
 
             % First check that affine dti transform was used
-            p = elastix_p_read(input.elastix_p_fn);
+            if (0)
+                p = elastix_p_read(input.elastix_p_fn);
 
-            if (~strcmp(p.Transform, '"AffineDTITransform"'))
-                error('Expected AffineDTITransform to be used');
+                if (~strcmp(p.Transform, '"AffineDTITransform"'))
+                    error('Expected AffineDTITransform to be used');
+                end
             end
 
             % Get the transform parameters

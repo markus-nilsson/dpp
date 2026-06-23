@@ -1,5 +1,8 @@
 classdef dp_node_copy_files < dp_node_files_to_items
 
+    % look in input.ip for files following filter_list and filter_mode
+    % copy these to input.op
+
     methods
 
         function obj = dp_node_copy_files(ext, filter_list, filter_mode)          

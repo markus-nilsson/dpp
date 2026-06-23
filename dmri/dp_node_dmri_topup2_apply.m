@@ -4,6 +4,10 @@ classdef dp_node_dmri_topup2_apply < dp_node
     % Corrects susceptibility-induced distortions in diffusion data using computed field maps.
 
     methods
+
+        function obj = dp_node_dmri_topup2_apply()
+            obj.output_test = {'dmri_fn', 'xps_fn'};
+        end
         
         % construct names of output files
         function output = i2o(obj, input)

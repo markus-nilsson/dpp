@@ -26,7 +26,7 @@ classdef dp_node_segm_synthseg < dp_node_segm
 
         function obj = dp_node_segm_synthseg(n_threads)
             obj.input_test = {'nii_fn'};
-            obj.output_test = {'labels_fn'};
+            obj.output_test = {'labels_fn', 'resampled_fn'};
 
             if (nargin > 0), obj.n_threads = n_threads; end
 
@@ -43,6 +43,9 @@ classdef dp_node_segm_synthseg < dp_node_segm
         function output = execute(obj, input, output)
 
             synthseg_ex = fullfile(obj.synthseg_path, 'scripts/commands/SynthSeg_predict.py');
+
+            % Remove the resampled fn (ensures it is created anew)
+            msf_delete(output.resampled_fn)
 
             % Build the flirt command
             synthseg_cmd = cat(2, ...
@@ -64,6 +67,21 @@ classdef dp_node_segm_synthseg < dp_node_segm
 
             if (status > 0)
                 error(result);
+            end
+
+            % If input file is already 1 mm iso, it is not
+            % resampled. If so, we copy it, creating a new
+            % modified date at the same time
+            if (~exist(output.resampled_fn, 'file'))
+
+                fid = fopen(input.nii_fn);
+                data = fread(fid, inf, "uint8");
+                fclose(fid);
+
+                fid = fopen(output.resampled_fn, 'w');
+                fwrite(fid, data);
+                fclose(fid);
+
             end
 
         end
