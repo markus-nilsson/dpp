@@ -3,6 +3,7 @@ classdef dp_node_dcm2csa < dp_node
     methods
 
         function obj = dp_node_dcm2csa()
+            obj.output_test = {};
         end
 
         function output = i2o(obj, input)
@@ -29,6 +30,9 @@ classdef dp_node_dcm2csa < dp_node
             ind_start = strfind(txt, 'ASCCONV BEGIN');
             ind_end = strfind(txt, '### ASCCONV END') + 14;
 
+            msf_mkdir(fileparts(output.csa_fn));
+            mdm_txt_write({'no csa found'}, output.csa_fn);
+
             if (isempty(ind_start))
                 return;
             end
@@ -37,7 +41,6 @@ classdef dp_node_dcm2csa < dp_node
                 return;
             end
             
-            msf_mkdir(fileparts(output.csa_fn));
             mdm_txt_write({char(txt(ind_start:ind_end))}, output.csa_fn);
 
         end

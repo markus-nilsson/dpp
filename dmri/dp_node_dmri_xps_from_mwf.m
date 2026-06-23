@@ -61,12 +61,14 @@ classdef dp_node_dmri_xps_from_mwf < dp_node_dmri_xps
             end
 
             if (obj.n_rf == -1) % load from csa
-                obj.n_rf = k('sWipMemBlock.alFree[5]') / 10;
+                n_rf = k('sWipMemBlock.alFree[5]') / 10;
+            else
+                n_rf = obj.n_rf;
             end
 
             % Look for the dvs file
 
-            dvs_path = fullfile(obj.resource_path, 'dvs');
+            dvs_path = fullfile(obj.resource_path, 'DiffusionVectorSets');
             dvs_fn = fullfile(dvs_path, ...
                 cell2mat(cellfun(@(x) x(strfind(x, '#') + 3), f('sDiffusion.sFreeDiffusionData.sComment'), 'UniformOutput', false)));
 
@@ -78,7 +80,7 @@ classdef dp_node_dmri_xps_from_mwf < dp_node_dmri_xps
             dvs_txt = mdm_txt_read(dvs_fn);
 
             f = @(x) x{1};
-            gwf_path = fullfile(obj.resource_path, 'fwf');
+            gwf_path = fullfile(obj.resource_path, 'FWF_LIBRARY');
             gwf_fn = f(dvs_txt(cellfun(@(x) contains(x, 'FWF_LIBRARY'), dvs_txt)));
             gwf_fn = strtrim(gwf_fn(2:end));
             gwf_fn = strrep(gwf_fn, 'FWF_LIBRARY', gwf_path);
@@ -97,7 +99,7 @@ classdef dp_node_dmri_xps_from_mwf < dp_node_dmri_xps
             % sequence
             gwf_bin = fwf_bin_read_siemens(gwf_fn);
 
-            gwf_rf = zeros(obj.n_rf, 3); % check the in the asc conv file
+            gwf_rf = zeros(n_rf, 3); % check the in the asc conv file
 
             % load b-values from .bval file
             xps_tmp = mdm_xps_from_bval_bvec(input.bval_fn, input.bvec_fn, 1);

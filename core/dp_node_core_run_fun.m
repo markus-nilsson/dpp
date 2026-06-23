@@ -37,7 +37,7 @@ classdef dp_node_core_run_fun < ...
 
                     try 
                         clean_fun();
-                    catch me
+                    catch me2
                         obj.log(1, 'Could not forcefully run cleaning after an error.');
                     end
 

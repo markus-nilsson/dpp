@@ -13,6 +13,12 @@ classdef dp_node_dmri_xps_make_v2 < dp_node_dmri_xps
 
         function obj = dp_node_dmri_xps_make_v2()
             obj.input_test = {'dmri_fn', 'csa_fn', 'json_fn'};
+            obj.output_test = {'xps_fn'};
+        end
+
+        function output = i2o(obj, input)
+            output = input;
+            output.xps_fn = mdm_xps_fn_from_nii_fn(input.dmri_fn);
         end
 
 
@@ -25,24 +31,34 @@ classdef dp_node_dmri_xps_make_v2 < dp_node_dmri_xps
             f = @(y) csa(cell2mat(cellfun(@(x) ~isempty(strfind(x, y)), csa, 'UniformOutput', false)));
             g = @(x) strrep(strtrim(extractAfter(x{1}, '=')), '""', '');
 
+            switch (json.json.ProtocolName)
+                case 'Localizer'
+                    return;
+            end
+
             seq_name = g(f('tSequenceFileName'));
 
             switch (seq_name)
                 case '%CustomerSeq%\cmrr_mbep2d_diff'
                     xps = mdm_xps_from_bval_bvec(input.bval_fn, input.bvec_fn, 1);
+                    mdm_xps_save(xps, output.xps_fn);
                 case '%SiemensSeq%\ep2d_diff'
                     xps = mdm_xps_from_bval_bvec(input.bval_fn, input.bvec_fn, 1);
+                    mdm_xps_save(xps, output.xps_fn);
                 case '%CustomerSeq%\ep2d_diff_mwf'
 
                     % Risky move, using another node's execute without
                     % verification - think about another solution                    
                     output = dp_node_dmri_xps_from_mwf.static_execute([], input, output);
                     return;
+                case '%CustomerSeq%\wip_AdvDiff_V05_ep2d_diff'
+                    disp('  Not yet implemented');
+                    return;
                 otherwise
                     disp(seq_name);
             end
 
-            mdm_xps_save(xps, output.xps_fn);
+            
 
         end
     end

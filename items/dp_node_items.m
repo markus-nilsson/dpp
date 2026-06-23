@@ -131,8 +131,14 @@ classdef dp_node_items < dp_node_base
                     obj.log(1, '%s --> %s\n', id, me.message);
                 end
 
-                obj.log(2, '%s: Error in dp_node_items (%s)', id, obj.name);
-                obj.log(2, '%s:   %s', id, me.message);
+                if (contains(me.message, 'Input files missing'))
+                    level = 2;
+                else
+                    level = 0;
+                end
+
+                obj.log(level, '%s: Error in dp_node_items (%s)', id, obj.name);
+                obj.log(level, '%s:   %s', id, me.message);
 
             end
 
@@ -144,15 +150,15 @@ classdef dp_node_items < dp_node_base
 
                 obj.log(2, '%s: Item %i %s', input_items{c}.id, c, strtrim(formattedDisplayText(f)));
 
-                try
+                % try
                     output_items{c} = obj.run_fun(...
                         @() g(input_items{c}, output_items{c}),...
-                        @() obj.force_clean(g(input_items{c}, output_items{c})), ...
+                        @() obj.force_clean(input_items{c}), ...
                         @(me, id) err_log(me, input_items{c}.id), ...
                         obj.opt.do_try_catch);
-                catch me
-                    obj.log(0, '%s: Item %i: Err: %s', input_items{c}.id, c, me.message);
-                end
+                % catch me
+                %     obj.log(0, '%s: Item %i: Err: %s', input_items{c}.id, c, me.message);
+                % end
 
             end            
         end
