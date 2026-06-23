@@ -15,7 +15,7 @@ classdef nn_datastore_nii_mem_2d < matlab.io.Datastore & ...
         function ds = nn_datastore_nii_mem_2d(fileList, orientation)
             arguments
                 fileList cell
-                orientation (1,:) char {mustBeMember(orientation, {'tra','sag','cor'})} = 'tra'
+                orientation (1,:) char {mustBeMember(orientation, {'tra','sag','cor','all'})} = 'tra'
             end
 
             ds.CurrentIdx = 1;
@@ -29,11 +29,11 @@ classdef nn_datastore_nii_mem_2d < matlab.io.Datastore & ...
 
                 % if (sum(vol(:)) > 10)
                 % 
-                % % Normalize
-                % vol = vol / quantile(vol(:), 0.99);
-                % vol(vol < 0) = 0;
-                % vol(isnan(vol)) = 0;
-                % vol(isinf(vol)) = 0;
+                % Normalize
+                vol = vol / quantile(vol(:), 0.99);
+                vol(vol < 0) = 0;
+                vol(isnan(vol)) = 0;
+                vol(isinf(vol)) = 0;
                 % 
                 % end
 
@@ -56,6 +56,16 @@ classdef nn_datastore_nii_mem_2d < matlab.io.Datastore & ...
                     case 'sag' % sagittal
                         for x = 1:size(vol, 1)
                             ds.Slices{end+1} = f(vol(x, :, :, :));
+                        end
+                    case 'all'
+                        for x = 1:size(vol, 1)
+                            ds.Slices{end+1} = f(vol(x, :, :, :));
+                        end
+                        for y = 1:size(vol, 2)
+                            ds.Slices{end+1} = f(vol(:, y, :, :));
+                        end
+                        for z = 1:size(vol, 3)
+                            ds.Slices{end+1} = f(vol(:, :, z, :));
                         end
                 end
             end

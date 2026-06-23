@@ -5,10 +5,35 @@ classdef nn_gradfuns
         function [loss, gradients, components] = mse(net, X, Y)
 
             YPred = forward(net, X);
-            loss = mse(YPred, Y) / numel(Y);
+            loss = mse(YPred, Y);
 
             gradients = dlgradient(loss, net.Learnables);
 
+            components = {loss};
+
+        end
+
+        function [loss, gradients, components] = mae(net, X, Y)
+
+            % Forward pass
+            YPred = forward(net, X);
+
+            % Residual
+            R = YPred - Y;
+
+            % Add residual filter: do not take into account regions where 
+            % incoming data is zero
+            if (1)
+                R = R .* (Y > 0); 
+            end
+
+            % MAE / L1 loss
+            loss = mean(abs(R), 'all');
+
+            % Backpropagation
+            gradients = dlgradient(loss, net.Learnables);
+
+            % Logging
             components = {loss};
 
         end
