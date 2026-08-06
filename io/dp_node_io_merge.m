@@ -199,7 +199,7 @@ classdef dp_node_io_merge < dp_node
                 end
 
 
-                % merge memories too
+                % merge memories too (a bit wild here for now)
                 for k = 1:numel(inputs{i}.output)
                     if (~isfield(inputs{i}.output{k}, 'mem'))
                         continue;

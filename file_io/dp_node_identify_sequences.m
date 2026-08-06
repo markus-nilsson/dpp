@@ -107,6 +107,10 @@ classdef dp_node_identify_sequences < dp_node
                                 tmp = tmp{1};
                             case 'last'
                                 tmp = tmp{end};
+                            case 'second'
+                                tmp = tmp{2};
+                            case 'second_last'
+                                tmp = tmp{end-1};
                             otherwise
                                 error('Undefined multiple hit strategy');
 

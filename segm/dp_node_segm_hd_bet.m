@@ -2,6 +2,9 @@ classdef dp_node_segm_hd_bet < dp_node
 
     % brain extraction HD BET
     % https://github.com/MIC-DKFZ/HD-BET
+    %
+    % make sure the installation is such that it can be called
+    % from in a regular system call
     
     methods
 

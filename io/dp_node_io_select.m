@@ -9,6 +9,11 @@ classdef dp_node_io_select < dp_node_io_parent
     methods
 
         function obj = dp_node_io_select(fields)
+            
+            if ~iscell(fields)
+                fields = {fields};
+            end
+
             obj.fields = fields;
         end        
 
