@@ -1,7 +1,7 @@
 classdef dpm_execute < dpm
 
     properties
-        do_run_execute = 1;
+        do_run_execute = 1; % legacy
         do_date_check = 1;
     end
 
@@ -96,7 +96,7 @@ classdef dpm_execute < dpm
             obj.node.log(0, '%s: Starting mode ''execute'' on node %s', input.id, obj.node.name);
             output.execute.status = 'Skip';
 
-            if (~obj.do_run_execute)
+            if (~obj.do_run_execute) || (~obj.do_run)
                 obj.node.log(1, '%s:   No action needed', input.id); 
                 return;
             end

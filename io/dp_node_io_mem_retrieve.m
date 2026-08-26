@@ -12,6 +12,9 @@ classdef dp_node_io_mem_retrieve < dp_node_io_parent
             obj.fields_to_retrieve = varargin(:);
             obj.input_test = {};
             obj.output_test = {};
+
+            obj.get_dpm('execute').do_run = 0;
+
         end        
 
         function output = i2o_transfer_mem(obj, input, output)

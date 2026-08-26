@@ -20,7 +20,7 @@ classdef dp_node_io_rename < dp_node_io_parent
             obj.translation_table = translation_table;
 
             % We do not need to run the execute method of these io objects
-            obj.get_dpm('execute').do_run_execute = 0;
+            obj.get_dpm('execute').do_run = 0;
 
             % check input
             x = translation_table;

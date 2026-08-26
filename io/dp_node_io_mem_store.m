@@ -15,8 +15,12 @@ classdef dp_node_io_mem_store < dp_node_io_parent
                 obj.fields_to_store = varargin{1};
             end
 
+            obj.get_dpm('execute').do_run = 0;
+
             obj.input_test = {};
             obj.output_test = {};
+
+
         end        
 
         function output = i2o_transfer_mem(obj, input, output)
