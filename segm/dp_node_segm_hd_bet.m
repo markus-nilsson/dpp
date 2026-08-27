@@ -5,11 +5,22 @@ classdef dp_node_segm_hd_bet < dp_node
     %
     % make sure the installation is such that it can be called
     % from in a regular system call
+
+    properties
+        device
+    end
     
     methods
 
         function obj = dp_node_segm_hd_bet()
             obj.output_test = {'nii_fn', 'mask_fn'};
+
+            if (ismac)
+                obj.device = 'cpu';
+            else
+                obj.device = 'gpu'; % develop some tests for this! 
+            end
+
         end
     
         function output = i2o(obj, input)
@@ -20,9 +31,10 @@ classdef dp_node_segm_hd_bet < dp_node
         function output = execute(obj, input, output)
 
             % Build the flirt command 
-            hd_bet_cmd = sprintf('hd-bet -i "%s" -o "%s"', ...
+            hd_bet_cmd = sprintf('hd-bet -i "%s" -o "%s" -device %s', ...
                 input.nii_fn, ...
-                output.nii_fn);
+                output.nii_fn, ...
+                obj.device);
 
             msf_mkdir(fileparts(output.nii_fn));
             obj.syscmd(hd_bet_cmd); % Execute the command

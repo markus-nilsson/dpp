@@ -54,26 +54,19 @@ classdef dp_node_dmri_topup2_apply < dp_node
             % Define command
             msf_mkdir(fileparts(output.dmri_fn));
 
-            % xxx: this is not windows safe
-            %      furthermore, use obj.syscmd instead of system
-            if (ispc)
-                error('Not built for windows/wsl at present')
-            end
-
-            cmd = sprintf(['bash --login -c ''applytopup ' ...
+            cmd = sprintf(['applytopup ' ...
                 '--imain="%s","%s" ' ...
                 '--inindex=1,2 ' ...
                 '--topup="%s" ' ...
                 '--datain="%s" ' ...
-                '--out="%s"', ...
-                ''''], ...
+                '--out="%s"'], ...
                 s_ap.nii_fn, ...        % imain_1 (acquired data first)
                 s_tmp_pa.nii_fn, ...    % imain_2
                 input.topup_data_path, ...    % topup
                 input.topup_spec_fn, ...      % spec
                 output.dmri_fn);         % output_fn
             
-            system(cmd);
+            obj.syscmd(cmd);
 
             % save the xps too
             mdm_xps_save(s_ap.xps, output.xps_fn);

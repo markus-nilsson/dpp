@@ -23,7 +23,9 @@ classdef dp_node_dmri_denoise < dp_node_dmri
             cmd = sprintf('dwidenoise %s %s &> /dev/null', input.dmri_fn, output.dmri_fn);
             msf_delete(output.dmri_fn);
             msf_mkdir(fileparts(output.dmri_fn));
-            msf_system(cmd);
+            [a,b] = msf_system(cmd);
+
+            if (a ~= 0), error('command unsuccessful'); end
 
             % copy the xps from the original data 
             xps = mdm_xps_load(input.xps_fn);

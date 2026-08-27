@@ -128,16 +128,8 @@ classdef dp_node_dmri_topup2_b0 < dp_node
                 cmd{end+1} = '--verbose ';
             end
 
-            % xxx: this is not windows friendly
-            %      use obj.syscmd instead
-            if (ispc)
-                error('not build for windows/wsl yet');
-            end
-
             % now run it
-            cmd = sprintf('bash --login -c ''%s'' ', [cmd{:}]);
-
-            [status,cmdout] = system(cmd);
+            [status,cmdout] = obj.syscmd([cmd{:}]);
 
             if (status > 0)
                 disp(cmd);
