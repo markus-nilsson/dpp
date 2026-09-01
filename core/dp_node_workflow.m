@@ -6,20 +6,28 @@ classdef dp_node_workflow < dp_node % assume this is for nifti files
 
     methods
 
-        function obj = dp_node_workflow(nodes, name)
+        function obj = dp_node_workflow(nodes, name, output_fields)
             
-            obj.nodes = nodes;
+            if (nargin > 1)
+                if (~all(ischar(name))), error('name must be a string'); end
+                obj.name = name; 
+            end
 
-            if (nargin > 1), obj.name = name; end
+            if (nargin < 3), output_fields = {}; end 
 
             % Basic checking
             if (numel(nodes) <= 1)
                 error('need at least two nodes for this to make sense');
             end
 
+            if (~isempty(output_fields))
+                obj.nodes{end+1} = dp_node_io_select(output_fields);
+            end
+
             % set previous nodes
+            obj.nodes = nodes;
             obj.nodes{1}.connect(obj); % xxx: see note below
-            for c = 2:numel(nodes)
+            for c = 2:numel(obj.nodes)
                 obj.nodes{c}.connect(obj.nodes{c-1});
             end
 
@@ -34,7 +42,7 @@ classdef dp_node_workflow < dp_node % assume this is for nifti files
             
             % enable passthrough, so that nodes in the workflow can 
             % be used with any of the dpm's supported by the class
-            for c = 1:numel(nodes)
+            for c = 1:numel(obj.nodes)
                 obj.nodes{c}.do_dpm_passthrough = 1; 
             end
         end
@@ -78,48 +86,6 @@ classdef dp_node_workflow < dp_node % assume this is for nifti files
                 obj.name, formattedDisplayText(output));            
             
         end
-
-
-
-        % function output = run_on_one(obj, input, output)
-        % 
-        %     % some dpm's (like mgui start) should not be executed on 
-        %     % all nodes in the workflow, just the last one
-        %     if (~obj.get_dpm().do_run_on_all_in_workflow)
-        % 
-        %         % this is a difficult one, try a new thing
-        %         output = run_on_one@dp_node(obj, input, output);
-        % 
-        %         return;
-        %     end
-        % 
-        %     % input not used here, must use a well-formatted output
-        %     if (obj.get_dpm().do_run_node(input, output))
-        % 
-        %         obj.log(0, '%s: Running workflow (%s)', input.id, obj.name);
-        % 
-        %         for c = 1:numel(obj.nodes)
-        % 
-        %             obj.nodes{c}.mode = obj.mode;
-        % 
-        %             this_input  = output.wf_input{c};
-        %             this_output = output.wf_output{c};
-        % 
-        %             this_output = obj.nodes{c}.run_on_one(this_input, this_output);
-        %         end
-        % 
-        %     else
-        %         obj.log(0, '%s: Skipping workflow, outputs done (%s)', input.id, obj.name);
-        %         this_output = output.wf_output{end};
-        %     end
-        % 
-        %     % later steps need this
-        %     this_output.wf_output = output.wf_output;
-        %     this_output.wf_input = output.wf_input;
-        % 
-        %     output = this_output;
-        % 
-        % end 
 
 
         function output = execute(obj, ~, output)

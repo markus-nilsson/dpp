@@ -120,7 +120,7 @@ classdef dpm_execute < dpm
             
             obj.node.log(0, '%s:   Done executing %s (took %s)', ...
                 input.id, obj.node.name, dpm_execute.time2str(toc(t0)));
-                        
+
         end
 
         function outputs = process_outputs(obj, outputs)
@@ -163,6 +163,10 @@ classdef dpm_execute < dpm
                     f(t_total), f(t_per_item), n_executed, n_skipped, n_errors);
 
             end
+
+            obj.log(0, '');
+            obj.log(0, '');
+
 
             
         end

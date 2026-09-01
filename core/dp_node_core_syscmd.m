@@ -72,6 +72,14 @@ classdef dp_node_core_syscmd < dp_node_core_log & handle
         % mac call
         function [status, result, cmd] = mac_cmd(obj, cmd)
 
+            if (~isempty(obj.conda_env))
+
+                cmd = cat(2, sprintf('conda run -n %s ', obj.conda_env), ...
+                    sprintf('--cwd %s ', pwd), cmd);
+
+            end
+
+
             cmd_full = [getenv('SHELL') ' --login -c '' ' cmd ' '' '];
 
             [status, result] = system(cmd_full);

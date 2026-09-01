@@ -2,11 +2,22 @@ classdef dp_node_workflow_tmp < dp_node_workflow
 
     % switches processing to temporary folder, deletes intermediaries,
     % copies selected fields to op
+    %
 
+    % fields = these will be copied from tmp to op
+    % io_fields = field info is copied, files are not (e.g. for identified
+    % files)
 
     methods
 
-        function obj = dp_node_workflow_tmp(nodes, fields, name)
+        function obj = dp_node_workflow_tmp(nodes, name, fields, io_fields, do_mem_store)
+
+            if (nargin < 4), io_fields = {}; end
+            if (nargin < 5), do_mem_store = 0; end % store fields in mem
+
+            if (iscell(name))
+                error('second argument should be name');
+            end
 
             % warning: generates a non-deterministic pipeline
             tmp_name = cat(2, 'tmp', num2str(keyHash(randi(2^16, 10))));
@@ -26,8 +37,11 @@ classdef dp_node_workflow_tmp < dp_node_workflow
                     {'op', @(x) x.(tmp_name).op}}), ...
                 dp_node_copy(fields).set('do_i2o_pass', 1), ...
                 dp_node_io('tmp', @(x) x.(tmp_name).tmp), ...
-                dp_node_io_select(fields)}; %#ok<CCAT>
+                dp_node_io_select(cat(2, fields, io_fields))}; %#ok<CCAT>
 
+            if (do_mem_store)
+                nodes{end+1} = dp_node_io_mem_store(fields);
+            end
 
             obj = obj@dp_node_workflow(nodes, name);
             
@@ -35,6 +49,7 @@ classdef dp_node_workflow_tmp < dp_node_workflow
             obj.output_test = fields; 
 
         end
+
 
     end
 

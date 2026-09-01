@@ -39,6 +39,10 @@ classdef dp_node_io_mem_retrieve < dp_node_io_parent
             for c = 1:numel(fields)
                 f = obj.fields_to_retrieve{c};
 
+                if (~isfield(input.mem, f))
+                    error('Field %s not stored in memory (io_mem_retrieve)', f);
+                end
+
                 output.(f) = input.mem.(f);
 
             end

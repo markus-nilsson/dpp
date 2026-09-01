@@ -1,6 +1,7 @@
 classdef dp_node_copy_and_rename < dp_node_copy
 
-    % this node will copy files and rename files to input.op
+    % this node will copy files and rename files to input.op or by function
+    % handle
     %
     % translation table as { {field_name, new_filename*}, ... }
     %

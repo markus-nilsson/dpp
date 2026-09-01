@@ -1,6 +1,6 @@
 classdef dp_node_io_append < dp_node_io_rename
 
-    % Appends output with relabeld or computed fields
+    % Appends output with relabeled or computed fields
 
     properties
         do_overwrite_fields = 0;
@@ -20,7 +20,7 @@ classdef dp_node_io_append < dp_node_io_rename
 
             output = i2o@dp_node_io_rename(obj, input);
 
-            % do not write over fields, but apppend if they haven't been
+            % do not write over fields, but append if they haven't been
             % written already
             f = fieldnames(input);
             for c = 1:numel(f)

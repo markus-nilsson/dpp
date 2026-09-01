@@ -75,7 +75,7 @@ classdef dp_node_io_rename < dp_node_io_parent
 
                 % Set the new field also to the input, allowing it to be
                 % used in later translations (somewhat dangerous, use with
-                % carefullness)
+                % carefulness)
                 if (obj.do_rename_immediately)
                     input.(f{c}{1}) = output.(f{c}{1});
                 end

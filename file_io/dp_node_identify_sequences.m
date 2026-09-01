@@ -37,6 +37,8 @@ classdef dp_node_identify_sequences < dp_node
 
             obj.patterns = patterns;
 
+            obj.get_dpm('execute').do_run = 0;
+
             obj.input_spec.remove('op');
             
         end
@@ -74,6 +76,8 @@ classdef dp_node_identify_sequences < dp_node
             for c = 1:numel(f)
 
                 me = [];
+                pattern = formattedDisplayText(f{c}{2});
+
                 try 
                     tmp = msf_find_fns(input.ip, f{c}{2}, 1);
 
@@ -87,7 +91,7 @@ classdef dp_node_identify_sequences < dp_node
                     tmp = tmp(ind == 1);
 
                     if (numel(tmp) == 0)
-                        error('No file found');
+                        error('No file found (pattern: %s)', pattern);
                     elseif (numel(tmp) == 1) %#ok<ISCL>
                         tmp = tmp{1};
                     else
@@ -101,7 +105,7 @@ classdef dp_node_identify_sequences < dp_node
                                     obj.log(1, '%s:     %s', input.id, tmp{c2});
                                 end
                                 
-                                error('Multiple files found');
+                                error('Multiple files found (pattern: %s)', pattern);
 
                             case 'first'
                                 tmp = tmp{1};
@@ -124,12 +128,12 @@ classdef dp_node_identify_sequences < dp_node
 
                 output.(f{c}{1}) = tmp;
 
+
                 % Report helpful information if nothing was found
                 if (isempty(output.(f{c}{1})))
 
                     obj.log(1, '\n%s: File not found for field %s pattern %s', ...
-                        input.id, ...
-                        f{c}{1}, formattedDisplayText(f{c}{2}));
+                        input.id, f{c}{1}, pattern);
 
                     obj.log(1, '%s:   Was searching in: %s', input.id, input.ip);
 
@@ -147,7 +151,7 @@ classdef dp_node_identify_sequences < dp_node
                     
                     % allow some granularity here, sometimes ok not to
                     % find data
-                    error('file not found');
+                    error('file not found (pattern: %s)', pattern);
                 end
 
             end

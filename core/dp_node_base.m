@@ -16,7 +16,7 @@ classdef dp_node_base < dp_node_core
         function obj = dp_node_base()
             s = dp_io_spec(obj);
             s.add('bp', 'path', 1, 0, 'Base path');
-            s.add('op', 'path', 1, 0, 'Output path');
+            s.add('op', 'path', 0, 0, 'Output path'); % not mandatory
             s.add('id', 'string', 1, 0, 'Subject/session identifier');
             obj.input_spec = s;
 
@@ -249,7 +249,12 @@ classdef dp_node_base < dp_node_core
 
         function output = i2o_transfer_mem(obj, input, output)
             if (isfield(input, 'mem'))
-                output.mem = input.mem;
+                f = fieldnames(input.mem);
+                for c = 1:numel(f)
+                    if (~isfield(output, f{c}))
+                        output.mem.(f{c}) = input.mem.(f{c});
+                    end
+                end
             end
         end
 

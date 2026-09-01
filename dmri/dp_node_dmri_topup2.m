@@ -5,7 +5,7 @@ classdef dp_node_dmri_topup2 < dp_node_workflow
 
     methods
 
-        function obj = dp_node_dmri_topup2(do_apply)
+        function obj = dp_node_dmri_topup2(do_apply, topup_conf)
 
             if (nargin < 1), do_apply = 1; end
 
@@ -13,6 +13,10 @@ classdef dp_node_dmri_topup2 < dp_node_workflow
             b = dp_node_dmri_topup2_prep();
             c = dp_node_dmri_topup2_b0();
             d = dp_node_dmri_topup2_apply();
+
+            if (nargin > 1)
+                c.topup_cnf = topup_conf;
+            end
 
             nodes = {a,b,c,d};
 

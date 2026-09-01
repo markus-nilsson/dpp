@@ -6,6 +6,19 @@ classdef dp_node_mrtrix < dp_node
 
         function obj = dp_node_mrtrix()
             obj.conda_env = 'mrtrix-env';
+
+            % xps pass through
+            obj.input_spec.add('xps_fn', 'file', 0, 0, 'bval-file');
+            obj.output_spec.add('xps_fn', 'file', 0, 0, 'bval-file');
+
+        end
+
+        function output = i2o(obj, input)
+
+            if (isfield(input, 'xps_fn'))
+                output.xps_fn = input.xps_fn;
+            end
+
         end
 
     end
