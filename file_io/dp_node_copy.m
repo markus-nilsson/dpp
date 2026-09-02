@@ -29,6 +29,10 @@ classdef dp_node_copy < dp_node
 
                 tmp = f{c};
 
+                if (~isfield(input, tmp))
+                    error('input missing field "%s"', tmp);
+                end
+                
                 output.(tmp) = msf_fn_new_path(input.op, input.(tmp));
 
             end

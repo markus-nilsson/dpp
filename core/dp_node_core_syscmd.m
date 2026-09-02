@@ -8,7 +8,7 @@ classdef dp_node_core_syscmd < dp_node_core_log & handle
 
         function obj = dp_node_core_syscmd()
 
-            % test if the convda environment exists
+            % test if the conda environment exists
             if (~isempty(obj.conda_env))
                 1;
             end

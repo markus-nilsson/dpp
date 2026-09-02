@@ -11,7 +11,7 @@ classdef dp_node_io_mem_store < dp_node_io_parent
         function obj = dp_node_io_mem_store(varargin)
             obj.fields_to_store = varargin(:);
 
-            if (numel(varargin) == 1) && (iscell(varargin{1})) 
+            if (numel(varargin) == 1) && (iscell(varargin{1})) %#ok<ISCL>
                 obj.fields_to_store = varargin{1};
             end
 

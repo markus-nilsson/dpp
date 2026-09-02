@@ -4,6 +4,7 @@ classdef dp_node_io_mem_retrieve < dp_node_io_parent
     properties
         fields_to_retrieve = {}
         do_select = 0; % 0 - fields are added, 1 - fields selected, other fields discarded
+        do_delete = 0;
     end
     
     methods
@@ -44,6 +45,11 @@ classdef dp_node_io_mem_retrieve < dp_node_io_parent
                 end
 
                 output.(f) = input.mem.(f);
+
+                % remove the field from memory
+                if (obj.do_delete)
+                    output.mem = rmfield(output.mem, f);
+                end
 
             end
 

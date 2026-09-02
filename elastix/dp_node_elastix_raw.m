@@ -39,14 +39,13 @@ classdef dp_node_elastix_raw < dp_node
             output.target_fn = input.target_fn;
 
             % add a temporary path
-            output.tmp.bp = msf_tmp_path();
-            output.tmp.do_delete = 1;
+            output.tmp = obj.make_tmp(); 
             
         end
 
         function output = execute(obj, input, output)
 
-            % Setup structur
+            % Setup structure
             input.p_fn = elastix_p_write(obj.p, fullfile(output.tmp.bp, 'p.txt'));
             
             if ~isfield(input, 't0_fn'), input.t0_fn = ''; end

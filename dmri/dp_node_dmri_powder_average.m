@@ -3,9 +3,13 @@ classdef dp_node_dmri_powder_average < dp_node_dmri
     % Computes powder-averaged diffusion data by averaging signal across all diffusion encoding
     % directions. Creates rotationally invariant diffusion measurements for analysis.
 
+    properties
+        do_std = 1;
+    end
+
     methods
 
-        function obj = dp_node_dmri_powder_average()
+        function obj = dp_node_dmri_powder_average(do_std)
             obj.input_test = {'dmri_fn'};
             obj.output_test = {'dmri_fn'};
         end
@@ -15,6 +19,10 @@ classdef dp_node_dmri_powder_average < dp_node_dmri
 
             output.dmri_fn = dp.new_fn(input.op, input.dmri_fn, '_pa');
             output.xps_fn = mdm_xps_fn_from_nii_fn(output.dmri_fn);
+
+            if (obj.do_std)
+                output.std_fn = dp.new_fn(input.op, input.dmri_fn, '_pa_std');
+            end
 
             % preserve mask, if it exists
             if (isfield(input, 'mask_fn')), output.mask_fn = input.mask_fn; end
@@ -26,7 +34,8 @@ classdef dp_node_dmri_powder_average < dp_node_dmri
             s.nii_fn = input.dmri_fn;
             s.xps = mdm_xps_load(input.xps_fn);
 
-            mdm_s_powder_average(s, input.op);
+            opt.mdm.pa_std = obj.do_std;
+            mdm_s_powder_average(s, input.op, opt);
 
         end
 

@@ -251,7 +251,7 @@ classdef dp_node_base < dp_node_core
             if (isfield(input, 'mem'))
                 f = fieldnames(input.mem);
                 for c = 1:numel(f)
-                    if (~isfield(output, f{c}))
+                    if (~isfield(output, 'mem')) || (~isfield(output.mem, f{c}))
                         output.mem.(f{c}) = input.mem.(f{c});
                     end
                 end
