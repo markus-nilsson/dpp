@@ -1,6 +1,6 @@
 classdef dp_node_dmri_dki < dp_node
 
-    % Performs Diffusion Kuirtosis Imaging (DKI) analysis using linear least squares fitting.
+    % Performs Diffusion Kurtosis Imaging (DKI) analysis using linear least squares fitting.
     % Computes standard DKI metrics 
 
     properties

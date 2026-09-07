@@ -17,8 +17,10 @@ classdef dp_node_segm_synthseg < dp_node_segm
 
     properties
 
-        n_threads = 3;
+        n_threads = 8;
         synthseg_path = '/usr/local/SynthSeg';
+
+        execute_method = 'docker';
 
     end
 
@@ -38,14 +40,45 @@ classdef dp_node_segm_synthseg < dp_node_segm
             output.qc_fn        = dp.new_fn(input.op, input.nii_fn, '_qc', '.csv');
             output.vol_fn       = dp.new_fn(input.op, input.nii_fn, '_vol', '.csv');
             output.op           = input.op;
+
+            output.tmp = obj.make_tmp();
         end
 
         function output = execute(obj, input, output)
 
-            synthseg_ex = fullfile(obj.synthseg_path, 'scripts/commands/SynthSeg_predict.py');
-
             % Remove the resampled fn (ensures it is created anew)
             msf_delete(output.resampled_fn)
+
+            switch (obj.execute_method)
+                case 'docker'
+                    output = obj.execute_w_docker(input, output);
+                case 'syscmd'
+                    output = obj.execute_w_syscmd(input, output);
+                otherwise
+                    error('invalid execute method')
+            end
+
+            % If input file is already 1 mm iso, it is not
+            % resampled. If so, we copy it, creating a new
+            % modified date at the same time
+            if (~exist(output.resampled_fn, 'file'))
+
+                fid = fopen(input.nii_fn);
+                data = fread(fid, inf, "uint8");
+                fclose(fid);
+
+                fid = fopen(output.resampled_fn, 'w');
+                fwrite(fid, data);
+                fclose(fid);
+
+            end
+
+        end
+
+
+        function output = execute_w_syscmd(obj, input, output)
+
+            synthseg_ex = fullfile(obj.synthseg_path, 'scripts/commands/SynthSeg_predict.py');
 
             % Build the flirt command
             synthseg_cmd = cat(2, ...
@@ -69,19 +102,59 @@ classdef dp_node_segm_synthseg < dp_node_segm
                 error(result);
             end
 
-            % If input file is already 1 mm iso, it is not
-            % resampled. If so, we copy it, creating a new
-            % modified date at the same time
-            if (~exist(output.resampled_fn, 'file'))
 
-                fid = fopen(input.nii_fn);
-                data = fread(fid, inf, "uint8");
-                fclose(fid);
+        end
 
-                fid = fopen(output.resampled_fn, 'w');
-                fwrite(fid, data);
-                fclose(fid);
 
+        function output = execute_w_docker(obj, input, output)
+
+            function new_fn = my_fn(fn)
+                [~,name,ext] = msf_fileparts(fn);
+                new_fn = [name ext];
+            end
+
+            function tmp_fn = my_copy(fn)
+                tmp_fn = my_fn(fn);
+                copyfile(fn, fullfile(output.tmp.bp, tmp_fn));
+            end
+
+
+            % Run SynthSeg through Docker
+            synthseg_cmd = cat(2, ...
+                'docker run --rm --platform linux/amd64 ', ...
+                sprintf('-v "%s:/data" ', output.tmp.bp), ...
+                'pwesp/synthseg:py38 ', ...
+                'python scripts/commands/SynthSeg_predict.py ', ...
+                sprintf('--i "/data/%s" ', my_copy(input.nii_fn)), ...
+                sprintf('--o "/data/%s" ', my_fn(output.labels_fn)), ...
+                sprintf('--threads %i ', obj.n_threads), ...
+                sprintf('--qc "/data/%s" ', my_fn(output.qc_fn)), ...
+                sprintf('--vol "/data/%s" ', my_fn(output.vol_fn)), ...
+                '--cpu ', ...
+                '--parc ', ...
+                sprintf('--resample "/data/%s"', '.'));
+
+            [status, result] = obj.syscmd(synthseg_cmd);
+
+            if (status > 0)
+                error(result);
+            end
+
+
+            % copy output from docker
+            function my_copy_out(fn)
+                copyfile(fullfile(output.tmp.bp, my_fn(fn)), fn);
+            end
+
+
+            my_copy_out(output.labels_fn);
+            my_copy_out(output.qc_fn);
+            my_copy_out(output.vol_fn);
+
+            try
+                my_copy_out(output.resampled_fn);
+            catch exception
+                1;
             end
 
         end

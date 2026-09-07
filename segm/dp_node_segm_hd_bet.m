@@ -16,7 +16,7 @@ classdef dp_node_segm_hd_bet < dp_node
             obj.output_test = {'nii_fn', 'mask_fn'};
 
             if (ismac)
-                obj.device = 'cpu';
+                obj.device = 'mps';
             else
                 obj.device = 'gpu'; % develop some tests for this! 
             end
@@ -26,6 +26,7 @@ classdef dp_node_segm_hd_bet < dp_node
         function output = i2o(obj, input)
             output.mask_fn = dp.new_fn(input.op, input.nii_fn, '_mask');
             output.nii_fn  = dp.new_fn(input.op, input.nii_fn, '_hdbet');
+            output.input_fn = input.nii_fn;
         end
 
         function output = execute(obj, input, output)
