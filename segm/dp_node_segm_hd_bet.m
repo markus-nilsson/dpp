@@ -18,7 +18,7 @@ classdef dp_node_segm_hd_bet < dp_node
             if (ismac)
                 obj.device = 'mps';
             else
-                obj.device = 'gpu'; % develop some tests for this! 
+                obj.device = 'cuda'; % develop some tests for this! 
             end
 
         end

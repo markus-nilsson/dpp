@@ -52,9 +52,14 @@ classdef dp_node_copy < dp_node
                     error('bad output structure');
                 end
 
+                if (strcmp(input.(tmp), output.(tmp)))
+                    obj.log(1, 'Input=output for file %s', output.(tmp));                    
+                    continue;
+                end
+
                 obj.log(3, 'Copying file %s', output.(tmp));
-                msf_mkdir(fileparts(output.(tmp)));
                 msf_delete(output.(tmp));
+                mkdir(fileparts(output.(tmp)));
                 copyfile(input.(tmp), output.(tmp));
                 system('sync');
 
