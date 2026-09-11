@@ -29,8 +29,14 @@ classdef dp_node_dmri_io_xps_to_bval_bvec < dp_node_dmri
             mdm_txt_write({num2str(b')}, output.bval_fn);
 
             % fudge a bvec for STE
-            if (~isfield(xps, 'u')) && (all(abs(xps.b_delta) < 0.02))
-                xps.u = repmat([1 0 0], xps.n, 1);
+            if (~isfield(xps, 'u')) 
+                
+                if all(xps.b_delta.^2 < 0.01)
+                    xps.u = repmat([1 0 0], xps.n, 1);
+                else
+                    error('cannot decide what to do, xps.u is missing, b_delta not zero');
+                end
+
             end
 
             f = @(x) round(x * 1e5) / 1e5;

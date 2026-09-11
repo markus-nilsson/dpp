@@ -10,8 +10,19 @@ classdef dp_node_dmri_powder_average < dp_node_dmri
     methods
 
         function obj = dp_node_dmri_powder_average(do_std)
+
+            if (nargin > 0)
+                obj.do_std = do_std;
+            end
+
             obj.input_test = {'dmri_fn'};
             obj.output_test = {'dmri_fn'};
+
+            if (obj.do_std)
+                obj.output_test{end+1} = 'std_fn';
+            end
+
+            
         end
 
 
