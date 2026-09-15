@@ -8,9 +8,12 @@ classdef dp_node_segm_tractseg < dp_node_segm
 
     % to do: flow management, e.g. deleting files and more
 
+    % origin: https://github.com/mic-dkfz/tractseg
+
     methods
 
         function obj = dp_node_segm_tractseg()
+            obj.input_test = {'dmri_fn', 'bval_fn', 'bvec_fn'};
             obj.output_test = {'labels_fn'};
         end
 
@@ -30,8 +33,6 @@ classdef dp_node_segm_tractseg < dp_node_segm
             output.bval_fn = f('x.bvals');
             output.bvec_fn = f('x.bvecs');
 
-            
-
             output.labels_fn = f('bundles.nii.gz');
 
             output.tmp.bp = msf_tmp_path();
@@ -49,16 +50,17 @@ classdef dp_node_segm_tractseg < dp_node_segm
             copyfile(input.bval_fn, output.bval_fn);
             copyfile(input.bvec_fn, output.bvec_fn);
 
-            % Preliminary implementation
-            if (~isempty(input.mask_fn))
+            % Preliminary implementation (xxx: does this affect TractSeg? 
+            %   Why is this code here? Update!)
+            if (isfield(input, 'mask_fn')) && (~isempty(input.mask_fn))
                 copyfile(input.mask_fn, output.mask_fn);
             end
-            
 
             % convert relative to absolute path
             [~,tmp] = fileattrib(output.op);
             op = tmp.Name;
 
+            % setup docker command to run
             cmd = sprintf(...
                 'docker run -v "%s":/data -t "%s" TractSeg -i "%s" -o /data %s --bvals "%s" --bvecs "%s" %s', ...
                 op, ...
