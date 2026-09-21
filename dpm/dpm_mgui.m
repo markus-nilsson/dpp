@@ -65,6 +65,14 @@ classdef dpm_mgui < dpm_iter
                         continue;
                     end
 
+                    % No need to display labels_fn 
+                    if (isa(node, 'dp_node_roi'))
+                        if (strcmp(f{c2}, 'labels_fn'))
+                            continue;
+                        end
+                    end
+                    
+
                     % Take the ROI list from the node
                     EG.data.roi_list = node.roi_names;
                     
