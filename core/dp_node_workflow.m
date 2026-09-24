@@ -29,6 +29,7 @@ classdef dp_node_workflow < dp_node % assume this is for nifti files
             obj.nodes{1}.connect(obj); % xxx: see note below
             for c = 2:numel(obj.nodes)
                 obj.nodes{c}.connect(obj.nodes{c-1});
+                obj.nodes{c}.n_indent = obj.n_indent + 2;
             end
 
             % Add input and output specs from the nodes

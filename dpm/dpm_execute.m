@@ -39,7 +39,7 @@ classdef dpm_execute < dpm
             do_run = 1; 
 
             if (obj.node.opt.do_overwrite)
-                obj.node.log(1, '%s:   opt.do_overwrite is true', input.id);
+                obj.node.log(1, '%s:%T   opt.do_overwrite is true', input.id);
                 return;
             end
                         
@@ -58,13 +58,13 @@ classdef dpm_execute < dpm
             
             % output missing?
             if (~isempty(outputs_exist)) && ~(all(outputs_exist))
-                obj.node.log(1, '%s:   Outputs missing', input.id);                
+                obj.node.log(1, '%s:%T   Outputs missing', input.id);                
                 return;
             end
 
             % input and outputs missing (non-file node assumed)
             if (isempty(outputs_exist))
-                obj.node.log(1, '%s:   Empty outputs, assuming non-file node', input.id);                
+                obj.node.log(1, '%s:%T   Empty outputs, assuming non-file node', input.id);                
                 return;
             end
             
@@ -78,10 +78,10 @@ classdef dpm_execute < dpm
 
                 if (~all_outputs_are_younger)
 
-                    obj.node.log(0, '%s:   Old outputs detected, overwriting', input.id);
+                    obj.node.log(0, '%s:%T   Old outputs detected, overwriting', input.id);
 
-                    obj.node.log(1, '%s:     %s (in: %s)', input.id, datestr(max_input_age), f_input{input_ind});
-                    obj.node.log(1, '%s:     %s (out: %s)', input.id, datestr(min_output_age), f_output{output_ind});
+                    obj.node.log(1, '%s:%T     %s (in: %s)', input.id, datestr(max_input_age), f_input{input_ind});
+                    obj.node.log(1, '%s:%T     %s (out: %s)', input.id, datestr(min_output_age), f_output{output_ind});
 
                     return;
                 end
@@ -93,22 +93,22 @@ classdef dpm_execute < dpm
 
         function output = run_on_one(obj, input, output)
 
-            obj.node.log(0, '%s: Starting mode ''execute'' on node %s', input.id, obj.node.name);
+            obj.node.log(0, '%s:%T Starting mode ''execute'' on node %s', input.id, obj.node.name);
             output.execute.status = 'Skip';
 
             if (~obj.do_run_execute) || (~obj.do_run)
-                obj.node.log(1, '%s:   No action needed', input.id); 
+                obj.node.log(1, '%s:%T   No action needed', input.id); 
                 return;
             end
 
-            obj.node.log(1, '%s:   Testing execute conditions', input.id);
+            obj.node.log(1, '%s:%T   Testing execute conditions', input.id);
 
             if (~obj.do_run_node(input, output))                
-                obj.node.log(0, '%s:   Found no reason to execute', input.id);
+                obj.node.log(0, '%s:%T   Found no reason to execute', input.id);
                 return;
             end
 
-            obj.node.log(1, '%s:   Starting execution...', input.id);
+            obj.node.log(1, '%s:%T   Starting execution...', input.id);
             
             output.execute.status = 'Error'; % assume error
             t0 = tic;
@@ -118,7 +118,7 @@ classdef dpm_execute < dpm
             output.execute.status = 'Executed';
             output.execute.t = toc(t0);
             
-            obj.node.log(0, '%s:   Done executing %s (took %s)', ...
+            obj.node.log(0, '%s:%T   Done executing %s (took %s)', ...
                 input.id, obj.node.name, dpm_execute.time2str(toc(t0)));
 
         end

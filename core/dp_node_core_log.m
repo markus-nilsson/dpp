@@ -6,6 +6,8 @@ classdef dp_node_core_log < dp_node_core_opt & handle
 
     properties
         log_fn;
+        n_indent = 0;
+        n_indent_inc = 0;        
     end
 
 
@@ -72,8 +74,15 @@ classdef dp_node_core_log < dp_node_core_opt & handle
                 end
             end
 
+            % Provide for intendation related to iter progressive levels
             log_str = strrep(log_str, '%t', ...
                 char(zeros(1, max(0, 2*(obj.opt.c_level-1))) + ' '));
+            
+
+            % Provide for workflow indentation
+            log_str = strrep(log_str, '%T', ...
+                char(zeros(1, max(0, obj.n_indent)) + ' '));
+
             
             log_str = sprintf(log_str, log_arg{:});
 
