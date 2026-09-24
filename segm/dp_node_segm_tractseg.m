@@ -8,11 +8,20 @@ classdef dp_node_segm_tractseg < dp_node_segm
 
     % to do: flow management, e.g. deleting files and more
 
+    % this uses a patched container, run the static patch method to build it
+
     % origin: https://github.com/mic-dkfz/tractseg
+
+    properties
+        do_tractseg_preprocess = 1; % process in MNI, 0 if already in MNI
+    end
 
     methods
 
-        function obj = dp_node_segm_tractseg()
+        function obj = dp_node_segm_tractseg(do_preproc)
+
+            if (nargin > 0), obj.do_tractseg_preprocess = do_preproc; end
+
             obj.input_test = {'dmri_fn', 'bval_fn', 'bvec_fn'};
             obj.output_test = {'labels_fn'};
         end
@@ -22,17 +31,19 @@ classdef dp_node_segm_tractseg < dp_node_segm
             output.op = input.op;
 
             f = @(x) fullfile(output.op, x);
-            % output.mask_fn = f('nodif_brain_mask.nii.gz');
-            % output.dmri_fn = f('dmri.nii.gz');
-            % output.bval_fn = f('x.bvals');
-            % output.bvec_fn = f('x.bvecs');
 
-            output.mask_fn = f('nodif_brain_mask_MNI.nii.gz');
-            output.dmri_fn = f('Diffusion_MNI.nii.gz');
-            output.fa_fn = f('FA_MNI.nii.gz');
+            if (obj.do_tractseg_preprocess)
+                output.dmri_fn = f('Diffusion_MNI.nii.gz');
+                output.mask_fn = f('nodif_brain_mask_MNI.nii.gz');
+                output.fa_fn = f('FA_MNI.nii.gz');
+            else
+                output.dmri_fn = f('dmri.nii.gz');
+                output.mask_fn = f('nodif_brain_mask.nii.gz');
+            end
+
+            output.peaks_fn = f('peaks.nii.gz');
             output.bval_fn = f('x.bvals');
             output.bvec_fn = f('x.bvecs');
-
             output.labels_fn = f('bundles.nii.gz');
 
             output.tmp.bp = msf_tmp_path();
@@ -60,16 +71,31 @@ classdef dp_node_segm_tractseg < dp_node_segm
             [~,tmp] = fileattrib(output.op);
             op = tmp.Name;
 
-            % setup docker command to run
-            cmd = sprintf(...
-                'docker run -v "%s":/data -t "%s" TractSeg -i "%s" -o /data %s --bvals "%s" --bvecs "%s" %s', ...
+            % setup docker command to run (use a patched contanier to avoid
+            % root creation, also, run as user
+            cmd = sprintf([...
+                'docker run ' ...
+                '-u "$(id -u):$(id -g)" ' ... % avoid files created as root
+                '-v "%s":/data -t "%s" ' ... % docker options
+                'TractSeg -i "%s" -o /data %s ', ... % command to run
+                '--bvals "%s" --bvecs "%s" %s'], ... % command options
                 op, ...
-                'wasserth/tractseg_container:master', ... % docker name
+                'tractseg:patched', ... % use static method of class for patching
                 'data/dmri.nii.gz', ...
                 '--raw_diffusion_input', ... % options
                 'data/x.bvals', ...
-                'data/x.bvecs', ...
-                '--preprocess'); % register to mni space
+                'data/x.bvecs');
+
+
+
+            if (obj.do_tractseg_preprocess)
+                bundle_folder = 'bundle_segmentations_MNI';
+                cmd = cat(2, cmd, ' --preprocess'); % register to mni space
+            else
+                bundle_folder = 'bundle_segmentations';
+            end
+
+            msf_mkdir(fullfile(op, 'tmp'));
 
             obj.syscmd(cmd);
 
@@ -79,8 +105,8 @@ classdef dp_node_segm_tractseg < dp_node_segm
             labels = obj.segm_labels();
             R = zeros(h.dim(2), h.dim(3), h.dim(4), numel(labels));
             for c = 1:numel(labels)
-                tmp = mdm_nii_read(fullfile(output.op, ...
-                    'bundle_segmentations_MNI', ...
+                [tmp, h_tmp] = mdm_nii_read(fullfile(output.op, ...
+                    bundle_folder, ...
                     cat(2, labels{c}, '.nii.gz')));
                 R(:,:,:,c) = tmp;
             end
@@ -175,6 +201,40 @@ classdef dp_node_segm_tractseg < dp_node_segm
             labels = cellfun(@(x) b(a(x),2), txt, 'UniformOutput', false);
             ids = cellfun(@(x) c(b(a(x),1)), txt, 'UniformOutput', false);
 
+
+        end
+
+    end
+
+    methods (Static)
+
+        function patch_container()
+
+            % Create a patched container that works with local users
+            % Patch app.py, make temporary folders in the data directory
+            % Chmod .tractseg so user can write to it
+            %
+            % Problem is that when running as non-root user, the home
+            % folder is not set. In the future, address this directly (xxx)
+
+            container = 'tractseg-mod';
+            
+            cmd = sprintf([...
+                'docker create --name %s ' ...
+                '"wasserth/tractseg_container:master" ' ...
+                'bash -c "sed -i ''s|dir_path = workingDir|dir_path = \\\"/data/tmp\\\"|'' ' ...
+                '/code/mrtrix3/lib/mrtrix3/app.py && ' ...
+                'cp -r /root/.tractseg /.tractseg && chmod 777 /.tractseg"'], container);
+            system(cmd);
+
+            % Apply the modification
+            system(sprintf('docker start -a %s', container));
+
+            % Commit the modified container as a new image
+            system(sprintf('docker commit %s tractseg:patched', container));
+
+            % Remove the setup container
+            system(sprintf('docker rm %s', container));
 
         end
     end

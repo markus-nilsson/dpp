@@ -3,6 +3,9 @@ classdef dp_node_dmri_io_xps_to_bval_bvec < dp_node_dmri
     methods
 
         function obj = dp_node_dmri_io_xps_to_bval_bvec()
+    
+            obj.input_spec.add('xps_fn', 'file', 1, 1, 'Experiment parameter file');
+
             obj.output_spec.add('bval_fn', 'file', 1, 1, 'B-value file (fsl style)');
             obj.output_spec.add('bvec_fn', 'file', 1, 1, 'B-vec file (fsl style)');
         end
