@@ -28,6 +28,7 @@ classdef dp_node_ants_n4_bias_corr < dp_node
     
         function output = i2o(~, input)
             output.nii_fn = dp.new_fn(input.op, input.nii_fn, '_n4');
+            output.bias_fn = dp.new_fn(input.op, input.nii_fn, '_bias');
         end
 
         function output = execute(obj, input, output)
@@ -45,6 +46,16 @@ classdef dp_node_ants_n4_bias_corr < dp_node
             if status ~= 0
                 error('N4BiasFieldCorrection failed: %s', cmdout);
             end
+
+            A = mdm_nii_read(input.nii_fn);
+            [B,h] = mdm_nii_read(output.nii_fn);
+
+            E = 1e-5 * mean(A(:));
+            R = (A + E) ./ (B + E);
+
+            mdm_nii_write(R, output.bias_fn, h);
+
+
         end
     end
 end

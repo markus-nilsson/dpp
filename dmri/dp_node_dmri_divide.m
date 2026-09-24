@@ -11,13 +11,21 @@ classdef dp_node_dmri_divide < dp_node
     methods
 
         function obj = dp_node_dmri_divide(suffix)
+
+            if (nargin == 0), suffix = '_div'; end
+
             obj.suffix = suffix;
 
             if (suffix(1) ~= '_'), warning('probably want _suffix'); end
+
+            obj.input_test = {'dmri_fn', 'xps_fn', 'divisor_fn'};
+            obj.output_test = {'dmri_fn', 'xps_fn'};
+            
         end
 
         function output = i2o(obj, input)
             output.dmri_fn = dp.new_fn(input.op, input.dmri_fn, obj.suffix);
+            output.xps_fn = mdm_xps_fn_from_nii_fn(output.dmri_fn);
         end
 
         function output = execute(obj, input, output)
@@ -41,6 +49,9 @@ classdef dp_node_dmri_divide < dp_node
             end
 
             mdm_nii_write(I, output.dmri_fn, h);
+
+
+            copyfile(input.xps_fn, output.xps_fn);
 
         end
     end

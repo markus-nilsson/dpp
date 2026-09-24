@@ -15,6 +15,9 @@ classdef dp_node_io_select < dp_node_io_parent
             end
 
             obj.fields = fields;
+
+            obj.input_test = fields;
+            obj.output_test = fields;
         end        
 
         function output = i2o(obj, input)

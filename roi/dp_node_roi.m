@@ -62,6 +62,11 @@ classdef dp_node_roi < dp_node & dp_node_core_roi
                         continue;
                 end
 
+                % Skip the dmri file
+                if strcmp(f{c}, 'dmri_fn')
+                    continue;
+                end
+
                 try 
 
                     [I,h_I] = mdm_nii_read(input.(f{c}));

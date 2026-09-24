@@ -9,13 +9,16 @@ classdef dp_node_primary_list_lund < dp_node_primary
         bp;
         project_prefix
         n_per_subject = inf;
+        date_start = '19600101';
     end
     
     methods
 
-        function obj = dp_node_primary_list_lund(bp, project_prefix)
+        function obj = dp_node_primary_list_lund(bp, project_prefix, date_start)
             obj.bp = bp;
             obj.project_prefix = project_prefix;
+
+            if (nargin > 2), obj.date_start = date_start; end
 
             if (project_prefix(end) == '_')
                 warning('Prefix should not end with underscore');
@@ -45,6 +48,20 @@ classdef dp_node_primary_list_lund < dp_node_primary
                 d2 = dir(fullfile(obj.bp, d(c).name, '20*'));
 
                 for c2 = 1:min(obj.n_per_subject, numel(d2))
+
+                    date_exam = d2(c2).name(1:8); % assume this is a date string
+
+                    
+                    f = @(date) datetime(date, 'InputFormat', 'yyyyMMdd');
+                    try
+                        is_valid = f(date_exam) >= f(obj.date_start);
+                    catch
+                        disp(cat(2, 'Could not interpret ', d2(c2), ' as a date string'));
+                        is_valid = 0;
+                    end
+
+                    if (~is_valid), continue; end
+                    
 
                     output.bp = obj.bp;
                     output.id = fullfile(d(c).name, d2(c2).name);

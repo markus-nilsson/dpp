@@ -8,6 +8,7 @@ classdef dp_node_dmri_subsample_b0 < dp_node_dmri
         function obj = dp_node_dmri_subsample_b0()
 
             obj.input_spec.add('dmri_fn', 'file', 1, 1, 'dMRI file');
+            obj.input_spec.add('xps_fn', 'file', 1, 1, 'Experimental parameter file');
             obj.output_spec.add('nii_fn', 'file', 1, 1, 'b=0 volume');
 
         end

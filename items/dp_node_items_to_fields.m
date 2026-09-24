@@ -13,6 +13,9 @@ classdef dp_node_items_to_fields < dp_node
             if (nargin > 1)
                 obj.item_field_name = item_field_name;
             end
+
+            % We do not need to run the execute method of these io objects
+            obj.get_dpm('execute').do_run = 0;            
         end
 
         function output = i2o(obj, input)

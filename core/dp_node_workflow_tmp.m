@@ -26,7 +26,7 @@ classdef dp_node_workflow_tmp < dp_node_workflow
             % warning: generates a non-deterministic pipeline
             tmp_name = cat(2, 'tmp', num2str(keyHash(randi(2^16, 10))));
 
-            nodes = {...
+            all_nodes = {...
                 dp_node_io(tmp_name, @(x) struct(...
                     'tmp', dp_node().make_tmp(), ...
                     'bp', x.bp, ...
@@ -44,16 +44,22 @@ classdef dp_node_workflow_tmp < dp_node_workflow
                 dp_node_io_select(cat(2, fields, io_fields))}; %#ok<CCAT>
 
             if (do_mem_store)
-                nodes{end+1} = dp_node_io_mem_store(fields);
+                all_nodes{end+1} = dp_node_io_mem_store(fields);
             end
 
-            obj = obj@dp_node_workflow(nodes, name);
+            obj = obj@dp_node_workflow(all_nodes, name);
             
+            % add input tests
+            obj.input_spec = nodes{1}.input_spec;
+            obj.input_test = nodes{1}.input_test;
 
+            % add output tests
             obj.output_test = fields; 
+            obj.output_spec = dp_io_spec(obj, 'output'); % use only empty old structure for now
 
         end
 
+    
 
     end
 

@@ -31,9 +31,12 @@ classdef dp_node_workflow < dp_node % assume this is for nifti files
                 obj.nodes{c}.connect(obj.nodes{c-1});
             end
 
-            % xxx: do this for the new structure too
-            obj.output_test = obj.nodes{end}.output_test;
+            % Add input and output specs from the nodes
             obj.input_test = obj.nodes{1}.input_test;
+            obj.input_spec = obj.nodes{1}.input_spec;
+
+            obj.output_test = obj.nodes{end}.output_test;
+            obj.output_spec = obj.nodes{end}.output_spec;
 
             % (connecting the first node to allow an unbroken chain to the
             %  first primary node, but this is more of a fix than a feature)
@@ -114,15 +117,15 @@ classdef dp_node_workflow < dp_node % assume this is for nifti files
         end
 
 
-        function [status, f, age] = input_exist(obj, input)
-            [status, f, age] = obj.nodes{1}.input_exist(input);
-        end
-
-        function [status, f, age] = output_exist(obj, output)
-            % transfer output test restrictions from workflow to this node
-            obj.nodes{end}.output_test = obj.output_test;
-            [status, f, age] = obj.nodes{end}.output_exist(output);
-        end
+        % function [status, f, age] = input_exist(obj, input)
+        %     [status, f, age] = obj.nodes{1}.input_exist(input);
+        % end
+        % 
+        % function [status, f, age] = output_exist(obj, output)
+        %     % transfer output test restrictions from workflow to this node
+        %     obj.nodes{end}.output_test = obj.output_test;
+        %     [status, f, age] = obj.nodes{end}.output_exist(output);
+        % end
         
         function output = run_clean(obj, output)
 
