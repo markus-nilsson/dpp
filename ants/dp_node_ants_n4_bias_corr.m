@@ -50,6 +50,9 @@ classdef dp_node_ants_n4_bias_corr < dp_node
             A = mdm_nii_read(input.nii_fn);
             [B,h] = mdm_nii_read(output.nii_fn);
 
+            A = single(A);
+            B = single(B);
+
             E = 1e-5 * mean(A(:));
             R = (A + E) ./ (B + E);
 
