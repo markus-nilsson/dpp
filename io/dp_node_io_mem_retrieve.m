@@ -10,6 +10,16 @@ classdef dp_node_io_mem_retrieve < dp_node_io_parent
     methods
 
         function obj = dp_node_io_mem_retrieve(varargin)
+            if (numel(varargin) == 0), error('no field specified'); end
+            
+            if iscell(varargin{1})
+                if (numel(varargin) == 1) %#ok<ISCL>
+                    varargin = varargin{1};
+                else
+                    error('specify input as one cell or many strings');
+                end
+            end
+
             obj.fields_to_retrieve = varargin(:);
             obj.input_test = {};
             obj.output_test = {};

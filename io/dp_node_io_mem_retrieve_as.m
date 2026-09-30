@@ -27,7 +27,7 @@ classdef dp_node_io_mem_retrieve_as < dp_node_io_mem_retrieve
             % from memory. Restore value from input if it exists,
             % otherwise, delete it. 
             if (isfield(input, f_mem))
-                output.(f_mem) = f_mem;
+                output.(f_mem) = input.(f_mem);
             else
                 output = rmfield(output, f_mem);
             end
