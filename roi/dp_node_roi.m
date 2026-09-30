@@ -11,6 +11,10 @@ classdef dp_node_roi < dp_node & dp_node_core_roi
     %
     % to export these to a csv file, use dp_node_csv
 
+    properties
+        do_trim_zeros = 0; % only include positive image values
+    end
+
     methods
 
         function obj = dp_node_roi(name, bp, roi_names)
@@ -86,7 +90,11 @@ classdef dp_node_roi < dp_node & dp_node_core_roi
                         % check that h_I and h_R are similar
 
                         % extract values
-                        V = double(I(R(:) > 0));
+                        if (obj.do_trim_zeros)
+                            V = double(I( (R(:) > 0) & (I(:) > 0) & ~(isnan(I(:)))));
+                        else
+                            V = double(I(R(:) > 0));
+                        end
 
                         % This allows the ROI size to be different across
                         % contrasts
