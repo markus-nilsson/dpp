@@ -21,7 +21,6 @@ classdef dp_node_segm_tractseg < dp_node_segm
         function obj = dp_node_segm_tractseg(do_preproc)
 
             if (nargin > 0), obj.do_tractseg_preprocess = do_preproc; end
-
             obj.input_test = {'dmri_fn', 'bval_fn', 'bvec_fn'};
             obj.output_test = {'labels_fn'};
         end

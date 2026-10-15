@@ -9,8 +9,11 @@ classdef dp_node_core_tmp < handle
 
     methods
 
-        function tmp = make_tmp(~)
-            tmp.bp = msf_tmp_path(1);
+        function tmp = make_tmp(obj, do_mkdir)
+            if (nargin < 2)
+                do_mkdir = 1;
+            end
+            tmp.bp = msf_tmp_path(do_mkdir);
             tmp.do_delete = 1;
         end   
 

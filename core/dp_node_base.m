@@ -92,7 +92,7 @@ classdef dp_node_base < dp_node_core
                 outputs = {};
                 return;
             else
-                obj.log(0, '%tFound %i candidate items', numel(previous_outputs));   
+                obj.log(0, '%tFound %i candidate items in output of %s', numel(previous_outputs), obj.name);   
             end
 
             % Loop over all previous outputs
