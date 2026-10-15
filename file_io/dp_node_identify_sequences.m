@@ -144,15 +144,22 @@ classdef dp_node_identify_sequences < dp_node
                         
                         if (isempty(ext))
                             ext = '.nii*';
+                        else
+                            ext = cat(2, '*', ext);                        
                         end
                         
+                        d2 = dir(fullfile(input.ip, ext));
 
                         obj.log(1, '%s:   Search error: %s', input.id, me.message);   
-                        obj.log(1, '%s:   Listing %s files in %s', input.id, ext, input.nii_path);
-                        d2 = dir(fullfile(input.nii_path, ext));
 
-                        for c2 = 1:numel(d2)
-                            obj.log(1, '%s:     %s', input.id, d2(c2).name);
+                        if (numel(d2) > 0)
+                            obj.log(1, '%s:   Listing %s files in %s', input.id, ext, input.ip);
+
+                            for c2 = 1:numel(d2)
+                                obj.log(1, '%s:     %s', input.id, d2(c2).name);
+                            end
+                        else
+                            obj.log(1, '%s:   No %s files found in %s', input.id, ext, input.ip);
                         end
                     end
                     

@@ -73,12 +73,15 @@ classdef dp_node_roi < dp_node & dp_node_core_roi
 
                 try 
 
-                    [I,h_I] = mdm_nii_read(input.(f{c}));
+                    h_I = mdm_nii_read_header(input.(f{c}));
 
-                    if (size(I,4) > 1)
+                    if (h_I.dim(5) > 1)
                         disp('Cannot deal with 4D volumes at present');
                         continue;
                     end
+
+                    [I,h_I] = mdm_nii_read(input.(f{c}));
+
 
                     % For each ROI
                     for c_roi = 1:numel(obj.roi_names)
